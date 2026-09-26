@@ -1,3 +1,13 @@
+html<script>
+  // Укажите ваш секретный пароль вместо "Школа2026"
+  var password = "IMZ2026"; 
+  
+  var userPass = prompt("Введите код доступа для начала тренажера:");
+  if (userPass !== password) {
+    alert("Неверный код доступа!");
+    window.location.href = "https://microsoft.com"; // Куда скинуть ученика при ошибке
+  }
+</script>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
