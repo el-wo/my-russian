@@ -59,6 +59,10 @@
     .set.soon { box-shadow: none; background: transparent; border-style: dashed; }
     .set.soon h3 { color: var(--muted); }
 
+    .pos-btn.test { border-style: dashed; border-color: var(--accent); color: var(--accent); }
+    .pos-btn.test.active { border-style: solid; color: #fff; }
+    .tag-test { color: var(--accent); background: var(--accent-bg); border-radius: 99px; padding: 3px 12px; }
+    .note { background: var(--accent-bg); color: var(--text); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; font-size: 0.92rem; line-height: 1.6; }
     .empty-msg { text-align: center; color: var(--muted); padding: 2.5rem 1rem; border: 1px dashed var(--border); border-radius: 16px; line-height: 1.7; }
     @media (max-width: 480px) { header h1 { font-size: 1.4rem; } .pos-btn { font-size: 0.9rem; padding: 8px 14px; } }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -79,7 +83,8 @@
 /*
   КАК ДОБАВИТЬ НОВЫЙ СЕТ:
   1. Положите HTML-файл тренировки в ту же папку, что и эта страница.
-  2. Найдите нужную часть речи ниже и добавьте (или отредактируйте) объект в её списке sets:
+  2. Проверочные работы добавляются в раздел с id: "tests" (в самом конце списка).
+     Найдите нужную часть речи ниже и добавьте (или отредактируйте) объект в её списке sets:
      { title: "...", desc: "...", ex: "...", file: "имя_файла.html" }
   3. Если file не указан — карточка показывается как «В разработке».
 */
@@ -118,7 +123,23 @@ const PARTS = [
       desc: "Под ударением НЕ, без ударения НИ.",
       ex: "негде — нигде, некогда — никогда" }
   ]},
-  { id: "sluzh", name: "Служебные части речи", sets: [] }
+  { id: "sluzh", name: "Служебные части речи", sets: [] },
+  { id: "tests", name: "Проверочные работы", kind: "test",
+    note: "Для входа в проверочную работу нужен личный код из шести цифр — его выдаёт учитель. Результат сохраняется после нажатия «Завершить».",
+    sets: [
+    { title: "Правописание наречий",
+      desc: "О и Е после шипящих на конце наречий, О и А на конце наречий, Ь после шипящих. 10 заданий.",
+      ex: "певуче, засветло, навзничь",
+      file: "test_narechiya_pravopisanie.html" },
+    { title: "НЕ с разными частями речи",
+      desc: "Слитное и раздельное написание НЕ, НЕ и НИ, морфемный состав, кроссворд. 10 заданий.",
+      ex: "негодующе, не о чем, недоросль",
+      file: "test_ne_chasti_rechi.html" },
+    { title: "Дефисное написание наречий",
+      desc: "По- с -ому/-ему/-ски, в-/во- с порядковыми, кое-, -то, -либо, -нибудь, повторы. 10 заданий.",
+      ex: "по-моему, в-шестых, мало-помалу",
+      file: "test_narechiya_defis.html" }
+  ]}
 ];
 
 let current = localStorageGet() || "narech";
@@ -133,7 +154,7 @@ function readyCount(p) { return p.sets.filter(s => s.file).length; }
 function renderNav() {
   document.getElementById("pos").innerHTML = PARTS.map(p => {
     const n = readyCount(p);
-    const cls = ["pos-btn", p.id === current ? "active" : "", n ? "" : "empty"].join(" ");
+    const cls = ["pos-btn", p.id === current ? "active" : "", n ? "" : "empty", p.kind === "test" ? "test" : ""].join(" ");
     return `<button class="${cls}" onclick="select('${p.id}')" aria-pressed="${p.id === current}">
       ${p.name}${n ? `<span class="n">${n}</span>` : ""}</button>`;
   }).join("");
@@ -142,6 +163,7 @@ function renderNav() {
 function renderContent() {
   const p = PARTS.find(x => x.id === current) || PARTS[0];
   const ready = readyCount(p);
+  const isTest = p.kind === "test";
   let body;
   if (!p.sets.length) {
     body = `<div class="empty-msg">Тренировок по теме «${p.name}» пока нет.<br>Они появятся здесь, когда будут добавлены.</div>`;
@@ -149,7 +171,7 @@ function renderContent() {
     body = `<div class="sets">` + p.sets.map(s => s.file
       ? `<a class="set" href="${s.file}">
            <h3>${s.title}</h3><p>${s.desc}</p><div class="ex">${s.ex}</div>
-           <div class="foot"><span class="tag-ready">Готово</span><span class="go">Начать →</span></div>
+           <div class="foot">${isTest ? '<span class="tag-test">Проверочная</span>' : '<span class="tag-ready">Готово</span>'}<span class="go">Начать →</span></div>
          </a>`
       : `<div class="set soon">
            <h3>${s.title}</h3><p>${s.desc}</p><div class="ex">${s.ex}</div>
@@ -159,7 +181,8 @@ function renderContent() {
   }
   document.getElementById("content").innerHTML = `
     <div class="section-head"><h2>${p.name}</h2>
-      <span>${p.sets.length ? `Готово тренировок: ${ready} из ${p.sets.length}` : ""}</span></div>
+      <span>${!p.sets.length ? "" : isTest ? `Работ: ${ready}` : `Готово тренировок: ${ready} из ${p.sets.length}`}</span></div>
+    ${p.note ? `<div class="note">${p.note}</div>` : ""}
     ${body}`;
 }
 
