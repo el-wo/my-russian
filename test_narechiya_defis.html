@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Дефисное написание наречий — 10 заданий</title>
+<style>
+:root{
+  --paper:#EEF1EF; --sheet:#FFFFFF; --ink:#1B2324; --muted:#5A6668;
+  --accent:#1F5E63; --accent-soft:#E2EEEE; --line:#CBD4D3;
+  --ok:#2E6B46; --ok-bg:#E2F1E7; --bad:#A8261E; --bad-bg:#F8E3E1; --part:#9A6A12; --part-bg:#FBF0DA;
+  --hl:#6AAE4A;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141A1B; --sheet:#1D2526; --ink:#E6ECEB; --muted:#9AA8A7;
+    --accent:#7CC2C6; --accent-soft:#223436; --line:#37443F;
+    --ok:#7CC79A; --ok-bg:#1E3527; --bad:#F08A80; --bad-bg:#3D2220; --part:#E3B45C; --part-bg:#3A2F17;
+    --hl:#4E8A35;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:"PT Serif",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.5;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:880px;margin:0 auto;padding:22px 16px 60px}
+header{padding:10px 0 16px;border-bottom:2px solid var(--accent);margin-bottom:16px}
+header h1{margin:0;font-size:clamp(24px,4.5vw,34px);line-height:1.15}
+header p{margin:6px 0 0;color:var(--muted);font-size:16px}
+.steps{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.steps button{font:inherit;font-size:17px;width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
+.steps button.cur{border-color:var(--ink);border-width:3px;font-weight:700}
+.steps button.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.steps button.part{background:var(--part-bg);border-color:var(--part);color:var(--part)}
+.steps button.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.steps .finish{width:auto;border-radius:22px;padding:0 16px;margin-left:auto;border-color:var(--accent);color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.task{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:22px 22px 18px;display:none}
+.task.active{display:block}
+.task h2{font-size:21px;margin:0 0 18px;line-height:1.35}
+.task h2 .num{color:var(--accent);margin-right:6px}
+.hint{color:var(--muted);font-size:15px;margin:-10px 0 16px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.pill{font:inherit;text-align:left;padding:14px 20px;border:2px solid var(--line);border-radius:18px;background:var(--sheet);color:var(--ink);cursor:pointer}
+.opt{font:inherit;font-size:19px;text-align:left;padding:8px 12px;border:2px solid transparent;border-radius:8px;background:none;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:12px}
+.opt:hover{background:var(--accent-soft)}
+.opt .box{width:22px;height:22px;border:2px solid var(--muted);border-radius:4px;flex:none;display:grid;place-items:center;font-size:16px;line-height:1}
+.opt.on .box{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt.on .box::after{content:"✓"}
+.opt.under.on .txt{text-decoration:underline;text-decoration-thickness:3px;text-decoration-color:var(--accent);text-underline-offset:5px}
+.opt.strike.on .txt{text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:var(--bad);color:var(--muted)}
+.palette{display:flex;flex-wrap:wrap;gap:10px 18px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.swatch{font:inherit;display:flex;align-items:center;gap:10px;background:none;border:2px solid transparent;border-radius:24px;padding:4px 12px 4px 4px;color:var(--ink);cursor:pointer}
+.swatch .dot{width:30px;height:30px;border-radius:50%;border:4px solid var(--c)}
+.swatch.on{border-color:var(--c)}
+.swatch.on .dot{background:var(--c)}
+.painted{border-color:transparent!important}
+.mark{outline:3px solid var(--ok);outline-offset:2px}
+.mark.wrong{outline-color:var(--bad)}
+.defs{margin:0 0 16px;padding:0;list-style:none;columns:2}
+.defs li{margin:4px 0}
+.defs b{color:var(--accent)}
+.srow{display:flex;align-items:center;gap:16px;margin:12px 0;flex-wrap:wrap}
+select{font:inherit;font-size:17px;padding:6px 10px;border:2px solid var(--line);border-radius:6px;background:var(--sheet);color:var(--ink);min-width:120px}
+.scheme{color:var(--ink)}
+.rule{font-size:19px;margin:14px 0;line-height:2.1}
+.rule select{margin:0 4px}
+.ordered{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+@media (max-width:560px){.ordered{grid-template-columns:1fr 1fr}}
+.ordered label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:15px}
+.ordered input,.cw-answer input{font:inherit;font-size:18px;padding:6px 8px;border:2px solid var(--line);border-radius:6px;background:var(--sheet);color:var(--ink);width:100%}
+.proverbs{margin:0;padding-left:1.4em}
+.proverbs li{margin:6px 0}
+input.ok,select.ok{border-color:var(--ok)!important;background:var(--ok-bg)!important}
+input.bad,select.bad{border-color:var(--bad)!important;background:var(--bad-bg)!important}
+/* sort */
+.zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+@media (max-width:640px){.zones{grid-template-columns:1fr}}
+.zone{border:2px dashed var(--line);border-radius:12px;min-height:140px;padding:0 0 8px;cursor:pointer;display:flex;flex-direction:column}
+.zone.target{border-color:var(--accent)}
+.zone h3{margin:0;padding:10px;text-align:center;font-size:18px;border-bottom:1px dashed var(--line);min-height:62px;display:flex;align-items:center;justify-content:center}
+.zone .chips{display:flex;flex-direction:column;gap:6px;padding:8px}
+.zone .empty{color:var(--muted);font-size:14px;font-style:italic;text-align:center}
+.card{font:inherit;font-size:17px;text-align:left;padding:8px 12px;border:2px dashed var(--line);border-radius:14px;background:var(--sheet);color:var(--ink);cursor:pointer}
+.card.sel{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.card.ok{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
+.card.bad{border-style:solid;border-color:var(--bad);background:var(--bad-bg)}
+.pool{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+/* crossword */
+.cw-wrap{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start}
+@media (max-width:720px){.cw-wrap{grid-template-columns:1fr}}
+.cw{border-collapse:collapse}
+.cw td{padding:0}
+.cw .n{font-weight:700;padding-right:8px;font-size:16px;text-align:right}
+.cw input{width:38px;height:38px;border:1.5px solid var(--ink);text-align:center;font:inherit;font-weight:700;font-size:19px;text-transform:uppercase;background:var(--sheet);color:var(--ink);border-radius:0;padding:0}
+.cw input.hl{background:var(--hl);color:#fff}
+.cw input[readonly]{background:var(--accent-soft)}
+.cw input.hl[readonly]{background:var(--hl)}
+.cw tr.ok input{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
+.cw tr.bad input{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
+.clues{margin:0;padding-left:1.4em;font-size:17px}
+.clues li{margin:6px 0}
+.cw-answer{display:flex;align-items:center;gap:10px;margin-top:18px;max-width:420px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:22px;padding-top:14px;border-top:1px solid var(--line)}
+.btn{font:inherit;font-size:16px;padding:8px 16px;border-radius:6px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.btn.main{background:#F5C518;border-color:#F5C518;color:#1B2324;font-weight:700}
+.btn.quiet{border-color:var(--line);color:var(--muted)}
+.fb{margin-left:auto;font-size:16px}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)} .fb.part{color:var(--part)}
+.results{display:none;background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:22px}
+.results.active{display:block}
+.results table{width:100%;border-collapse:collapse;margin:12px 0}
+.results td{padding:6px 8px;border-bottom:1px solid var(--line)}
+.results td:last-child{text-align:right;font-weight:700;white-space:nowrap}
+.big{font-size:30px;font-weight:700;color:var(--accent)}
+@media (max-width:520px){.task{padding:16px 14px}.defs{columns:1}.cw input{width:32px;height:32px;font-size:17px}}
+
+.pill.outlined{border-width:4px}
+.sent{font-size:19px;margin:16px 0;line-height:2.2}
+.sent input,.frow input{font:inherit;font-size:18px;padding:3px 8px;border:none;border-bottom:2px solid var(--accent);background:var(--accent-soft);color:var(--ink);width:9.5em;border-radius:4px 4px 0 0}
+.bank{margin-top:16px;padding:10px 14px;background:var(--accent-soft);border-radius:6px;font-size:17px}
+.frow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0;font-size:19px}
+.frow .lab{min-width:14em}
+.pz{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start}
+@media (max-width:680px){.pz{grid-template-columns:1fr}}
+.tiles{border-collapse:collapse}
+.tiles td{padding:0}
+.tiles button{font:inherit;font-weight:700;font-size:18px;width:66px;height:46px;border:1.5px solid var(--ink);background:var(--sheet);color:var(--ink);cursor:pointer}
+.tiles button.used{background:var(--accent-soft);color:var(--muted);text-decoration:line-through}
+.pz-inputs{display:flex;flex-direction:column;gap:8px}
+.pz-inputs label{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:15px}
+.pz-inputs input{font:inherit;font-size:18px;padding:6px 8px;border:2px solid var(--line);border-radius:6px;background:var(--sheet);color:var(--ink);width:100%;max-width:280px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a href="index.html" style="display:inline-block;margin-bottom:8px;color:var(--accent);font-size:15px;text-decoration:none">← Ко всем заданиям</a>
+  <h1>Дефисное написание наречий</h1>
+  <p>Наречия с приставками по-, в- (во-), кое-, постфиксами -то, -либо, -нибудь · повторы и сочетания</p>
+</header>
+<div class="steps" id="steps"></div>
+<div id="tasks"></div>
+<div class="results" id="results"></div>
+</div>
+<script>
+const norm = s => (s||'').toLowerCase().replace(/ё/g,'е').replace(/[‐‑–—]/g,'-').replace(/[^а-яa-z -]/g,'').replace(/\s*-\s*/g,'-').replace(/\s+/g,' ').trim();
+const COL={red:'#C62A2A',green:'#12C45A',purple:'#6D1FD0',pink:'#E3196B',blue:'#0EA5DB'};
+
+const TASKS=[
+ {type:'paint', title:'Закрасьте фигуры с высказываниями в соответствующие цвета.', hint:'Выбери цвет, а затем нажимай на высказывания.',
+  palette:[{id:'f',label:'высказывание ложно',c:COL.red,fg:'#fff'},{id:'t',label:'высказывание верно',c:COL.green,fg:'#fff'}],
+  items:[['Наречия с постфиксами <i>-то, -либо, -нибудь</i> и приставкой <i>кое-</i> пишутся через дефис','t'],
+         ['Наречия с постфиксами <i>-то, -либо, -нибудь</i> и приставкой <i>кое-</i> образуются от вопросительных наречий','t'],
+         ['Все наречия с приставкой <i>по-</i> пишутся через дефис','f'],
+         ['В наречиях после приставок <i>по-, в- (во-)</i>, если в слове есть суффиксы <i>-ому (-ему), -ых (-их), -и</i>, пишется дефис','t'],
+         ['Наречие <i>бок(о)бок</i> пишется так же, как и наречие <i>точь(в)точь</i>','f']].map(([t,a])=>({t,a}))},
+
+ {type:'match', title:'Восстановите наречия, которые пишутся через дефис.', hint:'Выбери для каждой второй части номер подходящего начала.',
+  defs:['Худо-','Шито-','С бухты-','Нежданно-','Так-','Подобру-','Туда-'],
+  rows:[['сяк',5],['сюда',7],['крыто',2],['барахты',3],['негаданно',4],['поздорову',6],['бедно',1]].map(([t,a])=>({t,a}))},
+
+ {type:'paint', outline:true, cols:true, title:'Определите, какие наречия с приставкой ПО- пишутся слитно, какие — через дефис. Выделите наречия соответствующим цветом.', hint:'Выбери цвет, а затем нажимай на слова.',
+  palette:[{id:'s',label:'Слитно',c:COL.green},{id:'d',label:'Через дефис',c:COL.purple}],
+  items:[['(по)дешевле','s'],['(по)лучше','s'],['(по)мужски','d'],['(по)больше','s'],['(по)царски','d'],['(по)тоньше','s'],['(по)дальше','s'],['(по)многу','s'],['(по)заячьи','d'],['(по)ярче','s'],['(по)английски','d'],['(по)детски','d']].map(([t,a])=>({t,a}))},
+
+ {type:'form', title:'Образуйте от разных частей речи наречия, учитывая морфемы, данные в скобках. Запишите эти наречия.',
+  rows:[['Пятый (в-, -ых) –','в-пятых'],['Настоящий (по-, -ему) –','по-настоящему'],['Всякий (по-, -ому) –','по-всякому'],['Куда (-либо) –','куда-либо'],['Мой (по-, -ему) –','по-моему']].map(([t,a])=>({t,a}))},
+
+ {type:'toggle', mode:'strike', cols:2, title:'Зачеркните наречия, в которых допущены ошибки.', hint:'Нажми на слово, чтобы зачеркнуть его.',
+  items:[['Почемуто',1],['Во-первых',0],['По-громче',1],['Откуда-либо',0],['Волей неволей',1],['Кое-куда',0],['Один-на-один',1],['Крест-накрест',0],['Едва-едва',0],['Видимо-невидимо',0]].map(([t,a])=>({t,a:!!a}))},
+
+ {type:'paint', cols:true, title:'Закрасьте фигуры соответствующим цветом.', hint:'Выбери цвет, а затем нажимай на слова.',
+  palette:[{id:'s',label:'наречия пишутся слитно',c:COL.pink,fg:'#fff'},{id:'r',label:'наречия пишутся раздельно',c:COL.blue,fg:'#fff'},{id:'d',label:'наречия пишутся через дефис',c:COL.green,fg:'#fff'}],
+  items:[['(ни)чуть','s'],['когда(то)','d'],['давным(давно)','d'],['(по)ниже','s'],['(не)когда','s'],['(кое)где','d'],['(лоб)в(лоб)','r'],['(бок)о(бок)','r'],['полным(полно)','d']].map(([t,a])=>({t,a}))},
+
+ {type:'paint', outline:true, title:'Определите, какой частью речи являются зависимые слова в словосочетаниях, и выделите их контурами соответствующего цвета.', hint:'Выбери цвет, а затем нажимай на словосочетания.',
+  palette:[{id:'adv',label:'Наречие',c:COL.red},{id:'pr',label:'Местоимение',c:COL.green},{id:'adj',label:'Прилагательное',c:COL.purple}],
+  items:[['Выполнил (по)своему','adv'],['Понимать (по)разному','adv'],['(По)прежнему пути','adj'],['Видеть (по)новому','adv'],['(По)моему плану','pr']].map(([t,a])=>({t,a}))},
+
+ {type:'rules', title:'С помощью выпадающего списка укажите синтаксическую функцию слов в предложениях, выделенных курсивом.',
+  opts:['обстоятельство','определение','дополнение'],
+  rows:[{t:'Николай был одет <i>по-дорожному</i>. {}',a:'обстоятельство'},{t:'Лошади тяжело ступали <i>по глубокому</i> снегу. {}',a:'определение'},
+        {t:'Темнело быстро, <i>по-осеннему</i>. {}',a:'обстоятельство'},{t:'Дорога шла <i>по крутому</i> берегу. {}',a:'определение'}]},
+
+ {type:'gaps', title:'Впишите подходящие наречия, раскрыв скобки (используйте слова для справок).',
+  sents:['Всё тут было {по-старому}.','А {тут-то} так и хочется болтать {по-русски}.','Как и все бывшие военные, он не умел одеваться {по-модному}.','Перескочил с седла на шею и {чуть-чуть} не улетел.'],
+  bank:'<i>чуть(чуть), (по)модному, (по)старому, тут(то), (по)русски.</i>'},
+
+ {type:'puzzle', title:'Соберите из перепутанных морфем наречия, которые пишутся через дефис. Впишите наречия в алфавитном порядке (сверху вниз). Из оставшихся букв сложите слово, оценивающее вашу работу.', hint:'Нажми на клетку, чтобы вычеркнуть использованную морфему.',
+  grid:[['ПО','ПО','Л','Н','ПО','Ч'],['МАЛ','Т','НАШ','Н','ЕМУ','У'],['О','О','В','ЕМУ','И','ШЕСТ'],['ЫХ','КАК','МАЛ','О','ЛЕТ','ТО']],
+  answer:['в-шестых','как-то','мало-помалу','по-летнему','по-нашему'], final:'отлично'}
+];
+
+const S=TASKS.map(()=>({v:{},result:null})); let cur=0;
+const tasksEl=document.getElementById('tasks'), stepsEl=document.getElementById('steps');
+function el(tag,cls,html){const e=document.createElement(tag); if(cls)e.className=cls; if(html!==undefined)e.innerHTML=html; return e;}
+function textInput(k){const i=el('input'); i.type='text'; i.autocomplete='off'; i.spellcheck=false; i.dataset.k=k; return i;}
+
+function build(i){
+  const t=TASKS[i], st=S[i], box=el('div','task'); box.id='task'+i;
+  box.appendChild(el('h2','',`<span class="num">${i+1}.</span>${t.title}`));
+  if(t.hint) box.appendChild(el('p','hint',t.hint));
+  const body=el('div'); box.appendChild(body);
+
+  if(t.type==='toggle'){
+    const wrap=el('div',t.cols===2?'grid2':'stack');
+    t.items.forEach((it,k)=>{const b=el('button','opt '+t.mode,`<span class="txt">${it.t}</span>`); b.dataset.k=k;
+      b.onclick=()=>{st.v[k]=!st.v[k]; b.classList.toggle('on',st.v[k]); clearMarks(i);}; wrap.appendChild(b);});
+    body.appendChild(wrap);
+  }
+  if(t.type==='paint'){
+    const pal=el('div','palette'); st.brush=t.palette[0].id;
+    t.palette.forEach(p=>{const b=el('button','swatch'+(p.id===st.brush?' on':''),`<span class="dot"></span><span>${p.label}</span>`);
+      b.style.setProperty('--c',p.c); b.onclick=()=>{st.brush=p.id; pal.querySelectorAll('.swatch').forEach(x=>x.classList.toggle('on',x===b));}; pal.appendChild(b);});
+    body.appendChild(pal);
+    const wrap=el('div',t.cols?'grid2':'stack'); if(t.cols) wrap.style.gridTemplateColumns='repeat(auto-fill,minmax(200px,1fr))';
+    t.items.forEach((it,k)=>{const b=el('button','pill',it.t); b.dataset.k=k; if(t.cols) b.style.textAlign='center';
+      b.onclick=()=>{st.v[k]=st.v[k]===st.brush?undefined:st.brush; const p=t.palette.find(x=>x.id===st.v[k]);
+        if(t.outline){b.classList.toggle('outlined',!!p); b.style.borderColor=p?p.c:'';}
+        else{b.classList.toggle('painted',!!p); b.style.background=p?p.c:''; b.style.color=p?p.fg:'';}
+        clearMarks(i);};
+      wrap.appendChild(b);});
+    body.appendChild(wrap);
+  }
+  if(t.type==='match'){
+    const ul=el('ul','defs'); t.defs.forEach((d,k)=>ul.appendChild(el('li','',`<b>${k+1}.</b> ${d}`))); body.appendChild(ul);
+    body.appendChild(el('p','','<b>Ответы</b>'));
+    t.rows.forEach((r,k)=>{const row=el('div','srow'), s=el('select');
+      s.innerHTML='<option value="">—</option>'+t.defs.map((_,n)=>`<option value="${n+1}">${n+1}</option>`).join('');
+      s.dataset.k=k; s.onchange=()=>s.className=''; row.appendChild(s); row.appendChild(el('span','',r.t)); body.appendChild(row);});
+  }
+  if(t.type==='form'){
+    t.rows.forEach((r,k)=>{const row=el('div','frow'); row.appendChild(el('span','lab',r.t)); const inp=textInput(k); inp.oninput=()=>inp.className=''; row.appendChild(inp); body.appendChild(row);});
+  }
+  if(t.type==='rules'){
+    t.rows.forEach((r,k)=>{const p=el('div','rule'); p.innerHTML=r.t.replace('{}',`<select data-k="${k}"><option value="">Выбрать</option>${t.opts.map(o=>`<option>${o}</option>`).join('')}</select>`); body.appendChild(p);});
+    body.querySelectorAll('select').forEach(s=>s.onchange=()=>s.className='');
+  }
+  if(t.type==='gaps'){
+    let g=0; st.ans=[];
+    t.sents.forEach(s=>{const p=el('div','sent'); p.innerHTML=s.replace(/\{(.+?)\}/g,(_,a)=>{st.ans.push(a); return `<input type="text" data-k="${g++}" autocomplete="off" spellcheck="false" aria-label="пропуск">`;}); body.appendChild(p);});
+    body.querySelectorAll('input').forEach(inp=>inp.oninput=()=>inp.className='');
+    body.appendChild(el('div','bank',`<b>Слова для справок:</b> ${t.bank}`));
+  }
+  if(t.type==='puzzle'){
+    const wrap=el('div','pz'), tbl=el('table','tiles');
+    t.grid.forEach(row=>{const tr=el('tr'); row.forEach(m=>{const td=el('td'), b=el('button','',m); b.onclick=()=>b.classList.toggle('used'); td.appendChild(b); tr.appendChild(td);}); tbl.appendChild(tr);});
+    const inputs=el('div','pz-inputs');
+    t.answer.forEach((_,k)=>{const l=el('label','',`${k+1}.`), inp=textInput(k); inp.oninput=()=>inp.className=''; l.appendChild(inp); inputs.appendChild(l);});
+    const lf=el('label','','<b style="color:var(--ink)">Оценка:</b>'), fi=textInput('f'); fi.oninput=()=>fi.className=''; lf.style.marginTop='10px'; lf.appendChild(fi); inputs.appendChild(lf);
+    wrap.appendChild(tbl); wrap.appendChild(inputs); body.appendChild(wrap);
+  }
+
+  const bar=el('div','bar');
+  const chk=el('button','btn main','Проверить'), rst=el('button','btn quiet','Сбросить'), nxt=el('button','btn',i<TASKS.length-1?'Следующее задание':'Итоги'), fb=el('span','fb');
+  chk.onclick=()=>check(i); rst.onclick=()=>reset(i); nxt.onclick=()=>i<TASKS.length-1?go(i+1):showResults();
+  bar.append(chk,rst,nxt,fb); box.appendChild(bar); box._fb=fb; return box;
+}
+function clearMarks(i){document.querySelectorAll(`#task${i} .mark`).forEach(x=>x.classList.remove('mark','wrong'));}
+
+function check(i){
+  const t=TASKS[i], st=S[i], box=document.getElementById('task'+i); let right=0,total=0;
+  const mark=(b,ok)=>{b.classList.add('mark'); b.classList.toggle('wrong',!ok);};
+  const inp=(x,ok)=>{total++; if(ok)right++; x.className=ok?'ok':'bad';};
+  clearMarks(i);
+  if(t.type==='toggle') box.querySelectorAll('.opt').forEach(b=>{const k=+b.dataset.k, sel=!!st.v[k], ok=sel===t.items[k].a; total++; if(ok)right++; if(sel||!ok) mark(b,ok);});
+  if(t.type==='paint') box.querySelectorAll('.pill').forEach(b=>{const k=+b.dataset.k, ok=st.v[k]===t.items[k].a; total++; if(ok)right++; mark(b,ok);});
+  if(t.type==='match') box.querySelectorAll('select').forEach(s=>inp(s,s.value===String(t.rows[+s.dataset.k].a)));
+  if(t.type==='rules') box.querySelectorAll('select').forEach(s=>inp(s,s.value===t.rows[+s.dataset.k].a));
+  if(t.type==='form') box.querySelectorAll('input').forEach(x=>inp(x,norm(x.value)===norm(t.rows[+x.dataset.k].a)));
+  if(t.type==='gaps') box.querySelectorAll('.sent input').forEach(x=>inp(x,norm(x.value)===norm(st.ans[+x.dataset.k])));
+  if(t.type==='puzzle') box.querySelectorAll('.pz-inputs input').forEach(x=>{const k=x.dataset.k; inp(x, k==='f'?norm(x.value)===t.final:norm(x.value)===t.answer[+k]);});
+  st.result={right,total};
+  const fb=box._fb; fb.className='fb '+(right===total?'ok':right>0?'part':'bad');
+  fb.textContent=right===total?`Всё верно! ${right} из ${total}`:`Верно ${right} из ${total}. Исправь ошибки и проверь ещё раз.`;
+  renderSteps();
+}
+function reset(i){S[i]={v:{},result:null}; const old=document.getElementById('task'+i), n=build(i); n.classList.toggle('active',old.classList.contains('active')); old.replaceWith(n); renderSteps();}
+function renderSteps(){
+  stepsEl.innerHTML=''; const inRes=document.getElementById('results').classList.contains('active');
+  TASKS.forEach((_,i)=>{const r=S[i].result, b=el('button','',i+1); if(i===cur&&!inRes)b.classList.add('cur');
+    if(r)b.classList.add(r.right===r.total?'ok':r.right>0?'part':'bad'); b.setAttribute('aria-label','Задание '+(i+1)); b.onclick=()=>go(i); stepsEl.appendChild(b);});
+  const f=el('button','finish','Завершить'); f.onclick=showResults; stepsEl.appendChild(f);
+}
+function go(i){cur=i; document.getElementById('results').classList.remove('active'); document.querySelectorAll('.task').forEach((t,k)=>t.classList.toggle('active',k===i)); renderSteps(); window.scrollTo({top:0,behavior:'smooth'});}
+function showResults(){
+  const res=document.getElementById('results'); TASKS.forEach((_,i)=>{if(!S[i].result)check(i);});
+  document.querySelectorAll('.task').forEach(t=>t.classList.remove('active'));
+  let sum=0; const rows=TASKS.map((t,i)=>{const r=S[i].result; sum+=r.right/r.total; const ti=t.title.replace(/<[^>]+>/g,'');
+    return `<tr><td>${i+1}. ${ti.length>70?ti.slice(0,70)+'…':ti}</td><td>${r.right} / ${r.total}</td></tr>`;}).join('');
+  res.innerHTML=`<h2 style="margin-top:0">Итоги</h2><div class="big">${Math.round(sum/TASKS.length*100)}%</div>
+    <p style="color:var(--muted);margin:4px 0 0">Каждое задание весит одинаково. Нажми на номер задания вверху, чтобы вернуться и исправить ошибки.</p><table>${rows}</table>`;
+  res.classList.add('active'); renderSteps(); window.scrollTo({top:0,behavior:'smooth'});
+}
+TASKS.forEach((_,i)=>tasksEl.appendChild(build(i))); go(0);
+
+/* ================= УЧЁТ РЕЗУЛЬТАТОВ (Google Таблица) ================= */
+(function(){
+const API='https://script.google.com/macros/s/AKfycbwzFjFEKrQWwLOX6fUnfqDWY81fkiL4EuTGuLf8c_ifyPLBDdJ8XapnTCb1k5w1Z9Hi/exec';
+const TRAINER=document.title.split(' — ')[0];
+const KEY_USER='trainer_user', KEY_QUEUE='trainer_queue';
+let user=null, started=Date.now(), dirty=false, lastSend=null;
+
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},
+          set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
+          del(k){try{localStorage.removeItem(k);}catch(e){}}};
+
+const css=document.createElement('style');
+css.textContent=`
+.gate{position:fixed;inset:0;z-index:50;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-card{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:26px 24px;max-width:400px;width:100%}
+.gate-card h2{margin:0 0 6px;font-size:22px}
+.gate-card p{margin:0 0 14px;color:var(--muted);font-size:16px}
+.gate-card input{font:inherit;font-size:28px;letter-spacing:.3em;text-align:center;width:100%;padding:8px;border:2px solid var(--line);border-radius:8px;background:var(--sheet);color:var(--ink)}
+.gate-card .row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.gate-msg{min-height:1.4em;margin-top:10px;font-size:15px}
+.gate-msg.bad{color:var(--bad)}
+.who{margin-top:8px;font-size:16px;color:var(--muted)}
+.who b{color:var(--ink)}
+.who button{font:inherit;font-size:14px;background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0 4px}
+.save{margin-top:14px;padding:10px 14px;border-radius:6px;font-size:16px}
+.save.ok{background:var(--ok-bg);color:var(--ok)} .save.bad{background:var(--bad-bg);color:var(--bad)} .save.wait{background:var(--accent-soft);color:var(--muted)}
+`;
+document.head.appendChild(css);
+
+async function api(payload){
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  return r.json();
+}
+
+/* ---------- вход по коду ---------- */
+function showGate(){
+  const g=document.createElement('div'); g.className='gate';
+  g.innerHTML=`<div class="gate-card" role="dialog" aria-labelledby="gt">
+    <h2 id="gt">Вход в проверочную работу</h2><p>Введи свой личный код из шести цифр.</p>
+    <input id="gcode" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="Личный код">
+    <div class="row"><button class="btn main" id="gbtn">Войти</button></div>
+    <div class="gate-msg" id="gmsg"></div></div>`;
+  document.body.appendChild(g);
+  const inp=g.querySelector('#gcode'), msg=g.querySelector('#gmsg'), btn=g.querySelector('#gbtn');
+  inp.focus();
+  inp.oninput=()=>{inp.value=inp.value.replace(/\D/g,'').slice(0,6); msg.textContent=''; msg.className='gate-msg';};
+  inp.onkeydown=e=>{if(e.key==='Enter')btn.click();};
+  btn.onclick=async()=>{
+    const code=inp.value.trim();
+    if(code.length!==6){msg.textContent='В коде должно быть 6 цифр.'; msg.className='gate-msg bad'; return;}
+    btn.disabled=true; msg.textContent='Проверяю…'; msg.className='gate-msg';
+    try{
+      const res=await api({action:'login',code});
+      if(res.ok){ user={code,name:res.name}; ls.set(KEY_USER,user); g.remove(); started=Date.now(); showWho(); flushQueue(); }
+      else { msg.textContent='Такого кода нет. Проверь цифры или спроси учителя.'; msg.className='gate-msg bad'; }
+    }catch(e){
+      msg.innerHTML='Нет связи с журналом. Можно выполнять задания, но результат не сохранится. <button class="btn quiet" id="goff" style="margin-top:8px">Продолжить без входа</button>';
+      msg.className='gate-msg bad';
+      g.querySelector('#goff').onclick=()=>{g.remove(); showWho();};
+    }
+    btn.disabled=false;
+  };
+}
+function showWho(){
+  let w=document.querySelector('header .who');
+  if(!w){w=document.createElement('div'); w.className='who'; document.querySelector('header').appendChild(w);}
+  w.innerHTML=user?`Ученик: <b></b> <button type="button">Не ты? Выйти</button>`:`Вход не выполнен — результат не сохранится. <button type="button">Войти</button>`;
+  if(user) w.querySelector('b').textContent=user.name;
+  w.querySelector('button').onclick=()=>{user=null; ls.del(KEY_USER); showGate(); showWho();};
+}
+
+/* ---------- сбор результатов ---------- */
+function describe(i){
+  const box=document.getElementById('task'+i), out=[];
+  box.querySelectorAll('.mark.wrong, input.bad, select.bad, tr.bad, .card.bad').forEach(el=>{
+    if(el.tagName==='TR'){ out.push(`слово ${+el.dataset.r+1}: «${[...el.querySelectorAll('input')].map(x=>x.value).join('').toLowerCase()}»`); return; }
+    if(el.tagName==='INPUT'){ out.push(`«${el.value.trim()||'—'}»`); return; }
+    if(el.tagName==='SELECT'){ const ctx=(el.closest('.srow,.prefix-row,.rule')||el.parentNode).textContent.replace(/\s+/g,' ').replace(/Выбрать|—/g,'').trim().slice(0,50); out.push(`${ctx}: ${el.value||'не выбрано'}`); return; }
+    const txt=el.textContent.replace(/\s+/g,' ').trim().slice(0,60);
+    if(el.classList.contains('opt')) out.push(`${txt} (${el.classList.contains('on')?'отмечено зря':'пропущено'})`);
+    else out.push(txt);
+  });
+  return out;
+}
+function collect(){
+  let sum=0; const by=[], ans=[];
+  TASKS.forEach((_,i)=>{const r=S[i].result; sum+=r.right/r.total; by.push(`${i+1}: ${r.right}/${r.total}`);
+    const errs=describe(i); if(errs.length) ans.push(`Зад. ${i+1} — ${errs.join('; ')}`);});
+  return {percent:Math.round(sum/TASKS.length*100), byTask:by.join('  '), answers:ans.length?ans.join(' | '):'без ошибок',
+          minutes:(Date.now()-started)/60000};
+}
+
+async function send(payload){
+  try{ const res=await api(payload); if(res.ok) return res; throw new Error(res.error||'fail'); }
+  catch(e){ const q=ls.get(KEY_QUEUE)||[]; if(!q.some(x=>x.id===payload.id)){q.push(payload); ls.set(KEY_QUEUE,q);} return null; }
+}
+async function flushQueue(){
+  const q=ls.get(KEY_QUEUE)||[]; if(!q.length) return;
+  const left=[];
+  for(const p of q){ try{ const r=await api(p); if(!r.ok && r.error!=='unknown_code') left.push(p); }catch(e){ left.push(p); } }
+  if(left.length) ls.set(KEY_QUEUE,left); else ls.del(KEY_QUEUE);
+}
+
+/* ---------- встраиваемся в тренажёр ---------- */
+const origCheck=check;
+check=function(i){ origCheck(i); dirty=true; };
+
+const origShow=showResults;
+showResults=async function(){
+  origShow();
+  const res=document.getElementById('results');
+  const st=document.createElement('div'); st.className='save'; res.appendChild(st);
+  const again=document.createElement('button'); again.className='btn'; again.style.marginTop='12px'; again.textContent='Новая попытка';
+  again.onclick=()=>{ TASKS.forEach((_,i)=>reset(i)); started=Date.now(); dirty=false; lastSend=null; go(0); };
+  res.appendChild(again);
+
+  if(!user){ st.className='save bad'; st.textContent='Вход не выполнен — результат не сохранён.'; return; }
+  if(!dirty && lastSend){ st.className='save ok'; st.textContent=lastSend; return; }
+  dirty=false;
+  const data=collect();
+  st.className='save wait'; st.textContent='Сохраняю результат…';
+  const payload={action:'result', id:Date.now()+'-'+Math.random().toString(36).slice(2), code:user.code, trainer:TRAINER, ...data};
+  const r=await send(payload);
+  if(r){ lastSend=`Результат сохранён: попытка № ${r.attempt}, ${data.percent}%.`; st.className='save ok'; st.textContent=lastSend; }
+  else { lastSend=null; st.className='save bad'; st.textContent='Нет связи с журналом. Результат сохранён на этом устройстве и отправится автоматически, когда появится интернет.'; }
+};
+
+user=ls.get(KEY_USER);
+if(user) showWho(); else showGate();
+renderSteps();
+flushQueue();
+window.addEventListener('online',flushQueue);
+})();
+</script>
+</body>
+</html>
