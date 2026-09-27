@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Орфография: тренировки по частям речи</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 4rem; }
+    .wrap { max-width: 860px; margin: 0 auto; }
+    header { text-align: center; margin-bottom: 2.2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.8rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.95rem; color: var(--muted); margin-top: 0.5rem; }
+
+    .pos-grid { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-bottom: 2.4rem; }
+    .pos-btn {
+      font-family: var(--serif); font-size: 1rem; font-weight: 700;
+      padding: 10px 20px; border-radius: 99px; border: 2px solid var(--border);
+      background: var(--surface); color: var(--text); cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .pos-btn .n { font-family: var(--sans); font-size: 0.72rem; font-weight: 700; color: var(--hint); }
+    .pos-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .pos-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .pos-btn.active .n { color: #d9d5f7; }
+    .pos-btn.empty { color: var(--muted); }
+    .pos-btn:focus-visible, .set:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+    .section-head { display: flex; align-items: baseline; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.2rem; border-bottom: 1px solid var(--border); padding-bottom: 0.8rem; }
+    .section-head h2 { font-family: var(--serif); font-size: 1.4rem; }
+    .section-head span { font-size: 0.85rem; color: var(--muted); }
+
+    .sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; }
+    .set {
+      display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--text);
+      background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+      padding: 1.3rem 1.3rem 1.1rem; box-shadow: var(--shadow);
+      transition: border-color 0.15s, transform 0.15s;
+    }
+    a.set:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .set h3 { font-family: var(--serif); font-size: 1.05rem; line-height: 1.4; }
+    .set p { font-size: 0.87rem; color: var(--muted); line-height: 1.6; flex: 1; }
+    .set .ex { font-family: var(--serif); font-style: italic; font-size: 0.85rem; color: var(--hint); }
+    .set .foot { display: flex; justify-content: space-between; align-items: center; margin-top: 4px; font-size: 0.8rem; font-weight: 700; }
+    .tag-ready { color: var(--green); background: var(--green-bg); border-radius: 99px; padding: 3px 12px; }
+    .tag-soon { color: var(--hint); border: 1px dashed var(--border); border-radius: 99px; padding: 2px 12px; }
+    .set .go { color: var(--accent); }
+    .set.soon { box-shadow: none; background: transparent; border-style: dashed; }
+    .set.soon h3 { color: var(--muted); }
+
+    .pos-btn.test { border-style: dashed; border-color: var(--accent); color: var(--accent); }
+    .pos-btn.test.active { border-style: solid; color: #fff; }
+    .tag-test { color: var(--accent); background: var(--accent-bg); border-radius: 99px; padding: 3px 12px; }
+    .note { background: var(--accent-bg); color: var(--text); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; font-size: 0.92rem; line-height: 1.6; }
+    .empty-msg { text-align: center; color: var(--muted); padding: 2.5rem 1rem; border: 1px dashed var(--border); border-radius: 16px; line-height: 1.7; }
+    @media (max-width: 480px) { header h1 { font-size: 1.4rem; } .pos-btn { font-size: 0.9rem; padding: 8px 14px; } }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Орфография по частям речи</h1>
+    <p>Выбери часть речи, а затем тренировку</p>
+  </header>
+
+  <nav class="pos-grid" id="pos"></nav>
+  <main id="content"></main>
+</div>
+
+<script>
+/*
+  КАК ДОБАВИТЬ НОВЫЙ СЕТ:
+  1. Положите HTML-файл тренировки в ту же папку, что и эта страница.
+  2. Проверочные работы добавляются в раздел с id: "tests" (в самом конце списка).
+     Найдите нужную часть речи ниже и добавьте (или отредактируйте) объект в её списке sets:
+     { title: "...", desc: "...", ex: "...", file: "имя_файла.html" }
+  3. Если file не указан — карточка показывается как «В разработке».
+*/
+const PARTS = [
+  { id: "sush",  name: "Существительное", sets: [] },
+  { id: "pril",  name: "Прилагательное",  sets: [] },
+  { id: "chisl", name: "Числительное",    sets: [] },
+  { id: "mest",  name: "Местоимение",     sets: [] },
+  { id: "glag",  name: "Глагол",          sets: [] },
+  { id: "prich", name: "Причастие",       sets: [] },
+  { id: "deepr", name: "Деепричастие",    sets: [] },
+  { id: "narech", name: "Наречие", sets: [
+    { title: "Слитно или раздельно: слова для запоминания",
+      desc: "Исключения, фразеологизмы и наречные сочетания, написание которых нужно запомнить.",
+      ex: "на боковую, доверху, ни при чём, впопыхах",
+      file: "flashcards_narechiya.html" },
+    { title: "Наречия через дефис",
+      desc: "Приставка по- + -ому/-ему/-ски, во-/в- с порядковыми, кое-, -то, -либо, -нибудь, повторы.",
+      ex: "по-новому, в-третьих, кое-где, еле-еле" },
+    { title: "Н и НН в наречиях",
+      desc: "Сколько Н в наречии на -о, столько же, сколько в прилагательном или причастии.",
+      ex: "туманно, ветрено, взволнованно" },
+    { title: "О и А на конце наречий",
+      desc: "Приставки из-, до-, с- → -а; в-, на-, за- → -о.",
+      ex: "досуха, издалека, вправо, заново" },
+    { title: "О и Е после шипящих на конце",
+      desc: "Под ударением -о, без ударения -е. Исключение: ещё.",
+      ex: "горячо, певуче, свежо" },
+    { title: "Ь после шипящих на конце",
+      desc: "После шипящих на конце наречий пишется Ь, кроме уж, замуж, невтерпёж.",
+      ex: "сплошь, настежь, вскачь" },
+    { title: "НЕ с наречиями",
+      desc: "Слитно и раздельно: синонимы без не, противопоставление, слова «далеко не», «вовсе не».",
+      ex: "неглубоко, не глубоко, а мелко" },
+    { title: "НЕ и НИ в отрицательных наречиях",
+      desc: "Под ударением НЕ, без ударения НИ.",
+      ex: "негде — нигде, некогда — никогда" }
+  ]},
+  { id: "sluzh", name: "Служебные части речи", sets: [] },
+  { id: "tests", name: "Проверочные работы", kind: "test",
+    note: "Для входа в проверочную работу нужен личный код из шести цифр — его выдаёт учитель. Результат сохраняется после нажатия «Завершить».",
+    sets: [
+    { title: "Правописание наречий",
+      desc: "О и Е после шипящих на конце наречий, О и А на конце наречий, Ь после шипящих. 10 заданий.",
+      ex: "певуче, засветло, навзничь",
+      file: "test_narechiya_pravopisanie.html" },
+    { title: "НЕ с разными частями речи",
+      desc: "Слитное и раздельное написание НЕ, НЕ и НИ, морфемный состав, кроссворд. 10 заданий.",
+      ex: "негодующе, не о чем, недоросль",
+      file: "test_ne_chasti_rechi.html" },
+    { title: "Дефисное написание наречий",
+      desc: "По- с -ому/-ему/-ски, в-/во- с порядковыми, кое-, -то, -либо, -нибудь, повторы. 10 заданий.",
+      ex: "по-моему, в-шестых, мало-помалу",
+      file: "test_narechiya_defis.html" }
+  ]}
+];
+
+let current = localStorageGet() || "narech";
+
+function localStorageGet() {
+  try { return localStorage.getItem("orfo-pos"); } catch (e) { return null; }
+}
+function localStorageSet(v) { try { localStorage.setItem("orfo-pos", v); } catch (e) {} }
+
+function readyCount(p) { return p.sets.filter(s => s.file).length; }
+
+function renderNav() {
+  document.getElementById("pos").innerHTML = PARTS.map(p => {
+    const n = readyCount(p);
+    const cls = ["pos-btn", p.id === current ? "active" : "", n ? "" : "empty", p.kind === "test" ? "test" : ""].join(" ");
+    return `<button class="${cls}" onclick="select('${p.id}')" aria-pressed="${p.id === current}">
+      ${p.name}${n ? `<span class="n">${n}</span>` : ""}</button>`;
+  }).join("");
+}
+
+function renderContent() {
+  const p = PARTS.find(x => x.id === current) || PARTS[0];
+  const ready = readyCount(p);
+  const isTest = p.kind === "test";
+  let body;
+  if (!p.sets.length) {
+    body = `<div class="empty-msg">Тренировок по теме «${p.name}» пока нет.<br>Они появятся здесь, когда будут добавлены.</div>`;
+  } else {
+    body = `<div class="sets">` + p.sets.map(s => s.file
+      ? `<a class="set" href="${s.file}">
+           <h3>${s.title}</h3><p>${s.desc}</p><div class="ex">${s.ex}</div>
+           <div class="foot">${isTest ? '<span class="tag-test">Проверочная</span>' : '<span class="tag-ready">Готово</span>'}<span class="go">Начать →</span></div>
+         </a>`
+      : `<div class="set soon">
+           <h3>${s.title}</h3><p>${s.desc}</p><div class="ex">${s.ex}</div>
+           <div class="foot"><span class="tag-soon">В разработке</span></div>
+         </div>`
+    ).join("") + `</div>`;
+  }
+  document.getElementById("content").innerHTML = `
+    <div class="section-head"><h2>${p.name}</h2>
+      <span>${!p.sets.length ? "" : isTest ? `Работ: ${ready}` : `Готово тренировок: ${ready} из ${p.sets.length}`}</span></div>
+    ${p.note ? `<div class="note">${p.note}</div>` : ""}
+    ${body}`;
+}
+
+function select(id) { current = id; localStorageSet(id); renderNav(); renderContent(); }
+
+renderNav(); renderContent();
+</script>
+</body>
+</html>

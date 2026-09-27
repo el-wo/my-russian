@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>НЕ с разными частями речи — 10 заданий</title>
+<style>
+:root{
+  --paper:#EEF1EF; --sheet:#FFFFFF; --ink:#1B2324; --muted:#5A6668;
+  --accent:#1F5E63; --accent-soft:#E2EEEE; --line:#CBD4D3;
+  --ok:#2E6B46; --ok-bg:#E2F1E7; --bad:#A8261E; --bad-bg:#F8E3E1; --part:#9A6A12; --part-bg:#FBF0DA;
+  --hl:#6AAE4A;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#141A1B; --sheet:#1D2526; --ink:#E6ECEB; --muted:#9AA8A7;
+    --accent:#7CC2C6; --accent-soft:#223436; --line:#37443F;
+    --ok:#7CC79A; --ok-bg:#1E3527; --bad:#F08A80; --bad-bg:#3D2220; --part:#E3B45C; --part-bg:#3A2F17;
+    --hl:#4E8A35;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--paper);color:var(--ink);font-family:"PT Serif",Georgia,"Times New Roman",serif;font-size:18px;line-height:1.5;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.wrap{max-width:880px;margin:0 auto;padding:22px 16px 60px}
+header{padding:10px 0 16px;border-bottom:2px solid var(--accent);margin-bottom:16px}
+header h1{margin:0;font-size:clamp(24px,4.5vw,34px);line-height:1.15}
+header p{margin:6px 0 0;color:var(--muted);font-size:16px}
+.steps{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.steps button{font:inherit;font-size:17px;width:44px;height:44px;border-radius:50%;border:2px solid var(--line);background:var(--sheet);color:var(--ink);cursor:pointer}
+.steps button.cur{border-color:var(--ink);border-width:3px;font-weight:700}
+.steps button.ok{background:var(--ok-bg);border-color:var(--ok);color:var(--ok)}
+.steps button.part{background:var(--part-bg);border-color:var(--part);color:var(--part)}
+.steps button.bad{background:var(--bad-bg);border-color:var(--bad);color:var(--bad)}
+.steps .finish{width:auto;border-radius:22px;padding:0 16px;margin-left:auto;border-color:var(--accent);color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.task{background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:22px 22px 18px;display:none}
+.task.active{display:block}
+.task h2{font-size:21px;margin:0 0 18px;line-height:1.35}
+.task h2 .num{color:var(--accent);margin-right:6px}
+.hint{color:var(--muted);font-size:15px;margin:-10px 0 16px}
+.stack{display:flex;flex-direction:column;gap:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px 24px}
+@media (max-width:560px){.grid2{grid-template-columns:1fr}}
+.pill{font:inherit;text-align:left;padding:14px 20px;border:2px solid var(--line);border-radius:18px;background:var(--sheet);color:var(--ink);cursor:pointer}
+.opt{font:inherit;font-size:19px;text-align:left;padding:8px 12px;border:2px solid transparent;border-radius:8px;background:none;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:12px}
+.opt:hover{background:var(--accent-soft)}
+.opt .box{width:22px;height:22px;border:2px solid var(--muted);border-radius:4px;flex:none;display:grid;place-items:center;font-size:16px;line-height:1}
+.opt.on .box{background:var(--accent);border-color:var(--accent);color:#fff}
+.opt.on .box::after{content:"✓"}
+.opt.under.on .txt{text-decoration:underline;text-decoration-thickness:3px;text-decoration-color:var(--accent);text-underline-offset:5px}
+.opt.strike.on .txt{text-decoration:line-through;text-decoration-thickness:3px;text-decoration-color:var(--bad);color:var(--muted)}
+.palette{display:flex;flex-wrap:wrap;gap:10px 18px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.swatch{font:inherit;display:flex;align-items:center;gap:10px;background:none;border:2px solid transparent;border-radius:24px;padding:4px 12px 4px 4px;color:var(--ink);cursor:pointer}
+.swatch .dot{width:30px;height:30px;border-radius:50%;border:4px solid var(--c)}
+.swatch.on{border-color:var(--c)}
+.swatch.on .dot{background:var(--c)}
+.painted{border-color:transparent!important}
+.mark{outline:3px solid var(--ok);outline-offset:2px}
+.mark.wrong{outline-color:var(--bad)}
+.defs{margin:0 0 16px;padding:0;list-style:none;columns:2}
+.defs li{margin:4px 0}
+.defs b{color:var(--accent)}
+.srow{display:flex;align-items:center;gap:16px;margin:12px 0;flex-wrap:wrap}
+select{font:inherit;font-size:17px;padding:6px 10px;border:2px solid var(--line);border-radius:6px;background:var(--sheet);color:var(--ink);min-width:120px}
+.scheme{color:var(--ink)}
+.rule{font-size:19px;margin:14px 0;line-height:2.1}
+.rule select{margin:0 4px}
+.ordered{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+@media (max-width:560px){.ordered{grid-template-columns:1fr 1fr}}
+.ordered label{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:15px}
+.ordered input,.cw-answer input{font:inherit;font-size:18px;padding:6px 8px;border:2px solid var(--line);border-radius:6px;background:var(--sheet);color:var(--ink);width:100%}
+.proverbs{margin:0;padding-left:1.4em}
+.proverbs li{margin:6px 0}
+input.ok,select.ok{border-color:var(--ok)!important;background:var(--ok-bg)!important}
+input.bad,select.bad{border-color:var(--bad)!important;background:var(--bad-bg)!important}
+/* sort */
+.zones{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+@media (max-width:640px){.zones{grid-template-columns:1fr}}
+.zone{border:2px dashed var(--line);border-radius:12px;min-height:140px;padding:0 0 8px;cursor:pointer;display:flex;flex-direction:column}
+.zone.target{border-color:var(--accent)}
+.zone h3{margin:0;padding:10px;text-align:center;font-size:18px;border-bottom:1px dashed var(--line);min-height:62px;display:flex;align-items:center;justify-content:center}
+.zone .chips{display:flex;flex-direction:column;gap:6px;padding:8px}
+.zone .empty{color:var(--muted);font-size:14px;font-style:italic;text-align:center}
+.card{font:inherit;font-size:17px;text-align:left;padding:8px 12px;border:2px dashed var(--line);border-radius:14px;background:var(--sheet);color:var(--ink);cursor:pointer}
+.card.sel{border-style:solid;border-color:var(--accent);background:var(--accent-soft)}
+.card.ok{border-style:solid;border-color:var(--ok);background:var(--ok-bg)}
+.card.bad{border-style:solid;border-color:var(--bad);background:var(--bad-bg)}
+.pool{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+/* crossword */
+.cw-wrap{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start}
+@media (max-width:720px){.cw-wrap{grid-template-columns:1fr}}
+.cw{border-collapse:collapse}
+.cw td{padding:0}
+.cw .n{font-weight:700;padding-right:8px;font-size:16px;text-align:right}
+.cw input{width:38px;height:38px;border:1.5px solid var(--ink);text-align:center;font:inherit;font-weight:700;font-size:19px;text-transform:uppercase;background:var(--sheet);color:var(--ink);border-radius:0;padding:0}
+.cw input.hl{background:var(--hl);color:#fff}
+.cw input[readonly]{background:var(--accent-soft)}
+.cw input.hl[readonly]{background:var(--hl)}
+.cw tr.ok input{border-color:var(--ok);box-shadow:inset 0 0 0 1px var(--ok)}
+.cw tr.bad input{border-color:var(--bad);box-shadow:inset 0 0 0 1px var(--bad)}
+.clues{margin:0;padding-left:1.4em;font-size:17px}
+.clues li{margin:6px 0}
+.cw-answer{display:flex;align-items:center;gap:10px;margin-top:18px;max-width:420px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:22px;padding-top:14px;border-top:1px solid var(--line)}
+.btn{font:inherit;font-size:16px;padding:8px 16px;border-radius:6px;border:2px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.btn.main{background:#F5C518;border-color:#F5C518;color:#1B2324;font-weight:700}
+.btn.quiet{border-color:var(--line);color:var(--muted)}
+.fb{margin-left:auto;font-size:16px}
+.fb.ok{color:var(--ok)} .fb.bad{color:var(--bad)} .fb.part{color:var(--part)}
+.results{display:none;background:var(--sheet);border:1px solid var(--line);border-radius:8px;padding:22px}
+.results.active{display:block}
+.results table{width:100%;border-collapse:collapse;margin:12px 0}
+.results td{padding:6px 8px;border-bottom:1px solid var(--line)}
+.results td:last-child{text-align:right;font-weight:700;white-space:nowrap}
+.big{font-size:30px;font-weight:700;color:var(--accent)}
+@media (max-width:520px){.task{padding:16px 14px}.defs{columns:1}.cw input{width:32px;height:32px;font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <a href="index.html" style="display:inline-block;margin-bottom:8px;color:var(--accent);font-size:15px;text-decoration:none">← Ко всем заданиям</a>
+  <h1>Правописание НЕ с разными частями речи</h1>
+  <p>Слитное и раздельное написание НЕ · НЕ и НИ · морфемный состав</p>
+</header>
+<div class="steps" id="steps"></div>
+<div id="tasks"></div>
+<div class="results" id="results"></div>
+</div>
+
+<script>
+const norm = s => (s||'').toLowerCase().replace(/ё/g,'е').replace(/[^а-яa-z-]/g,'').trim();
+const COL = {blue:'#0EA5DB',yellow:'#F7C72E',purple:'#6D1FD0',green:'#12C45A',orange:'#FF5A2A',pink:'#E3196B'};
+
+/* Морфемные схемы: p — приставка, r — корень, s — суффикс, e — окончание */
+function scheme(code){
+  let x=4, parts=[];
+  for(const c of code){
+    if(c==='p'){parts.push(`<path d="M${x} 12 H${x+40} V24" />`); x+=52;}
+    if(c==='r'){parts.push(`<path d="M${x} 34 Q${x+36} -4 ${x+72} 34" />`); x+=82;}
+    if(c==='s'){parts.push(`<path d="M${x} 38 L${x+17} 12 L${x+34} 38" />`); x+=44;}
+    if(c==='e'){parts.push(`<rect x="${x}" y="10" width="30" height="30" />`); x+=40;}
+  }
+  return `<svg class="scheme" width="${x}" height="44" viewBox="0 0 ${x} 44" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round" role="img" aria-label="схема ${code}">${parts.join('')}</svg>`;
+}
+
+/* ================= ДАННЫЕ ================= */
+const TASKS = [
+ {type:'toggle', mode:'check', cols:2, title:'Отметьте слова, которые всегда (в любом контексте) пишутся слитно с НЕ.',
+  items:[['(не) далеко',0],['(не) взрачно',1],['(не) годующе',1],['(не) избежно',1],['(не) лепо',1],['(не) друг',0],['(не) вежливо',0],['(не) красиво',0],['(не) брежно',1],['(не) быстро',0]].map(([t,a])=>({t,a:!!a}))},
+
+ {type:'ordered', title:'Из пословиц выпишите существительные с НЕ в алфавитном порядке (не изменяя форму слов).',
+  text:['Счастье ума прибавляет, а несчастье последний отнимает.','Незнайка лежит, а знайка далеко бежит.','Мутную воду пьют в невзгоду.','И медведь в неволе пляшет.','Родину предать — негодяем стать.','Невежда стремится к обогащению, а умный к совершенству.'],
+  answer:['невежда','невзгоду','неволе','негодяем','незнайка','несчастье']},
+
+ {type:'toggle', mode:'under', cols:2, title:'Подчеркните слова, которые пишутся с НЕ, НИ раздельно.', hint:'Нажми на слово, чтобы подчеркнуть его.',
+  items:[['(не) (о) чем',1],['(не) где',0],['(ни) кого',0],['далеко (не) известный',1],['(не) когда',0],['отнюдь (не) тихо',1],['(ни) (у) кого',1],['(не) (с) кем',1],['(ни) когда',0],['вовсе (не) глубокий',1]].map(([t,a])=>({t,a:!!a}))},
+
+ {type:'schemes', title:'Установите соответствие между словами и их морфемным составом.', hint:'Выбери для каждой схемы номер подходящего слова.',
+  words:['нести','неуверенный','неумелый','неволя','небесный','нелегально'],
+  rows:[['re',1],['pre',4],['prss',6],['pprse',2],['rsse',5],['prse',3]].map(([c,a])=>({c,a}))},
+
+ {type:'paint', wide:true, title:'Закрасьте фигуры зелёным цветом, если НЕ нужно писать слитно, жёлтым цветом — если НЕ нужно писать раздельно.', hint:'Выбери цвет, а затем нажимай на предложения.',
+  palette:[{id:'g',label:'слитно',c:COL.green,fg:'#fff'},{id:'y',label:'раздельно',c:COL.yellow,fg:'#1B2324'}],
+  items:[['Няня (не)досмотрела за ребёнком, и он ударился.','g'],['Опоздаем на автобус — (не)доберёмся на учёбу вовремя.','y'],['Семья была неблагополучной, и дети часто (не)доедали.','g'],['Мясо сегодня было (не)дожарено.','g'],['Я вчера уснула и (не)досмотрела фильм до конца.','y'],['Детишки в детском саду часто (не)доедают суп.','y']].map(([t,a])=>({t,a}))},
+
+ {type:'sort', title:'Перенесите слова в соответствующие области.', hint:'Выбери карточку, а затем нажми на область. Карточку в области можно выбрать снова и перенести.',
+  zones:[{h:'<b>НЕ — частица</b>'},{h:'<svg width="90" height="46" viewBox="0 0 90 46" role="img" aria-label="НЕ — приставка"><path d="M18 8 H70 V22" fill="none" stroke="currentColor" stroke-width="3"/><text x="44" y="40" text-anchor="middle" font-weight="700" font-size="20" fill="currentColor">НЕ</text></svg>'},{h:'<svg width="110" height="50" viewBox="0 0 110 50" role="img" aria-label="НЕ — часть корня"><path d="M10 26 Q55 -8 100 26" fill="none" stroke="currentColor" stroke-width="3"/><text x="55" y="44" text-anchor="middle" font-weight="700" font-size="20" fill="currentColor">НЕ…</text></svg>'}],
+  items:[['(не) большой, но красивый',1],['(не) винный человек',1],['(не) глупый, а умный',0],['(не) решительный',1],['(не) брежно',2],['(не) вежа',2],['ничуть (не) грубый',0],['(нé) нависть',2],['(не) спят',0],['(не) богатый мужчина',1],['(не) достаток',1],['абсолютно (не) правильный',0]].map(([t,a])=>({t,a}))},
+
+ {type:'rules', title:'Продолжите правила на тему «Правописание НЕ с разными частями речи», выбирая ответ из выпадающего списка.',
+  opts:['слитно','раздельно'],
+  rows:[{t:'Со всеми словами, которые пишутся через дефис, <b><i>НЕ</i></b> пишется {}.',a:'раздельно'},
+        {t:'Если нет зависимых слов и противопоставления, <b><i>НЕ</i></b> с причастиями пишется {}.',a:'слитно'},
+        {t:'Причастия в краткой форме с <b><i>НЕ</i></b> пишутся {}.',a:'раздельно'},
+        {t:'<b><i>НЕ</i></b> с наречиями на <b><i>-о, -е</i></b> пишется {}, если можно заменить синонимом без <b><i>НЕ</i></b>.',a:'слитно'},
+        {t:'<b><i>НЕ</i></b> с числительными, с деепричастиями, с предикативными наречиями пишется {}.',a:'раздельно'},
+        {t:'<b><i>НЕ</i></b> всегда пишется {} со словами, которые без <b><i>НЕ</i></b> не употребляются.',a:'слитно'}]},
+
+ {type:'toggle', mode:'strike', cols:2, title:'Зачеркните словосочетания, в которых допущены ошибки.', hint:'Нажми на словосочетание, чтобы зачеркнуть его.',
+  items:[['недесятый этаж',1],['совершенно не верный ответ',1],['не связанное, а сшитое платье',0],['не жданно-не гаданно',1],['не написал заявление',0],['ненавидеть',0],['комната не убрана',0],['так не лепо',1],['воет не по-волчьи',0],['идти не торопливо',1],['сидит неуклюже',0],['нездесь',1]].map(([t,a])=>({t,a:!!a}))},
+
+ {type:'paint', wide:true, title:'Укажите, с какой частью речи НЕ пишется раздельно в следующих предложениях, закрасив фигуру соответствующим цветом.', hint:'Выбери цвет, а затем нажимай на предложения.',
+  palette:[{id:'adv',label:'наречие',c:COL.blue,fg:'#fff'},{id:'adj',label:'краткое прилагательное',c:COL.yellow,fg:'#1B2324'},{id:'v',label:'глагол',c:COL.purple,fg:'#fff'},{id:'part',label:'причастие',c:COL.green,fg:'#fff'},{id:'pr',label:'местоимение',c:COL.orange,fg:'#fff'},{id:'n',label:'имя существительное',c:COL.pink,fg:'#fff'}],
+  items:[['Без соли <i><b>не вкусно</b></i>, без хлеба <i><b>не сытно</b></i>.','adv'],['Он поступил <i><b>не разумно</b></i>, а глупо.','adv'],['<i><b>Не печь</b></i> кормит, а поле.','n'],['Глупа та птица, которой своё гнездо никогда <i><b>не мило</b></i>.','adj'],['Её предложение отнюдь <i><b>не разумно</b></i>.','adj'],['<i><b>Не бросай</b></i> друга в несчастье.','v']].map(([t,a])=>({t,a}))},
+
+ {type:'crossword', title:'Разгадайте кроссворд. Из букв в выделенных клеточках составьте слово со значением «специалист, изучающий заболевания нервной системы». Запишите это слово в ответе.',
+  words:[['не',0],['нем',1],['небо',3],['недуг',4],['нефрит',3],['невежда',2],['нежность',4],['недоросль',7]],
+  clues:['Отрицательная частица.','Человек, лишённый способности говорить. (Кратк. прилаг.)','Всё видимое над Землёй пространство.','То же, что и болезнь.','Полупрозрачный минерал зелёного, серовато-белого или белого цвета.','Малообразованный человек, а также человек, несведущий в какой-нибудь области.','Ласковость и мягкость в отношении к кому-либо.','Молодой дворянин, не достигший совершеннолетия и не поступивший ещё на государственную службу.'],
+  answer:'невролог'}
+];
+
+/* ================= СОСТОЯНИЕ ================= */
+const S = TASKS.map(()=>({v:{}, result:null}));
+let cur = 0;
+const tasksEl=document.getElementById('tasks'), stepsEl=document.getElementById('steps');
+function el(tag,cls,html){const e=document.createElement(tag); if(cls)e.className=cls; if(html!==undefined)e.innerHTML=html; return e;}
+
+/* ================= РЕНДЕР ================= */
+function build(i){
+  const t=TASKS[i], st=S[i], box=el('div','task'); box.id='task'+i;
+  box.appendChild(el('h2','',`<span class="num">${i+1}.</span>${t.title}`));
+  if(t.hint) box.appendChild(el('p','hint',t.hint));
+  const body=el('div'); box.appendChild(body);
+
+  if(t.type==='toggle'){
+    const wrap=el('div', t.cols===2?'grid2':'stack');
+    t.items.forEach((it,k)=>{
+      const b=el('button','opt '+t.mode, `${t.mode==='check'?'<span class="box"></span>':''}<span class="txt">${it.t}</span>`);
+      b.dataset.k=k; b.setAttribute('aria-pressed','false');
+      b.onclick=()=>{st.v[k]=!st.v[k]; b.classList.toggle('on',st.v[k]); b.setAttribute('aria-pressed',st.v[k]); clearMarks(i);};
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  }
+
+  if(t.type==='ordered'){
+    const ol=el('ol','proverbs'); t.text.forEach(s=>ol.appendChild(el('li','',s))); body.appendChild(ol);
+    const g=el('div','ordered');
+    t.answer.forEach((_,k)=>{const l=el('label','',`${k+1}.`); const inp=el('input'); inp.type='text'; inp.autocomplete='off'; inp.spellcheck=false; inp.dataset.k=k;
+      inp.oninput=()=>{st.v[k]=inp.value; inp.className='';}; l.appendChild(inp); g.appendChild(l);});
+    body.appendChild(g);
+  }
+
+  if(t.type==='schemes'){
+    const ol=el('ul','defs'); t.words.forEach((w,k)=>ol.appendChild(el('li','',`<b>${k+1}.</b> ${w}`))); body.appendChild(ol);
+    body.appendChild(el('p','','<b>Ответы</b>'));
+    t.rows.forEach((r,k)=>{
+      const row=el('div','srow'), s=el('select');
+      s.innerHTML='<option value="">—</option>'+t.words.map((_,n)=>`<option value="${n+1}">${n+1}</option>`).join('');
+      s.dataset.k=k; s.onchange=()=>{st.v[k]=s.value; s.className='';};
+      row.appendChild(s); row.appendChild(el('span','',scheme(r.c))); body.appendChild(row);
+    });
+  }
+
+  if(t.type==='paint'){
+    const pal=el('div','palette'); st.brush=t.palette[0].id;
+    t.palette.forEach(p=>{
+      const b=el('button','swatch'+(p.id===st.brush?' on':''),`<span class="dot"></span><span>${p.label}</span>`);
+      b.style.setProperty('--c',p.c);
+      b.onclick=()=>{st.brush=p.id; pal.querySelectorAll('.swatch').forEach(x=>x.classList.toggle('on',x===b));};
+      pal.appendChild(b);
+    });
+    body.appendChild(pal);
+    const wrap=el('div','stack');
+    t.items.forEach((it,k)=>{
+      const b=el('button','pill',it.t); b.dataset.k=k;
+      b.onclick=()=>{
+        st.v[k]= st.v[k]===st.brush ? undefined : st.brush;
+        const p=t.palette.find(x=>x.id===st.v[k]);
+        b.classList.toggle('painted',!!p); b.style.background=p?p.c:''; b.style.color=p?p.fg:''; clearMarks(i);
+      };
+      wrap.appendChild(b);
+    });
+    body.appendChild(wrap);
+  }
+
+  if(t.type==='sort'){
+    st.sel=null;
+    const zones=el('div','zones'), pool=el('div','pool');
+    body.appendChild(zones); body.appendChild(el('p','hint','Карточки:')); body.appendChild(pool);
+    st.render=()=>{
+      zones.innerHTML=''; pool.innerHTML='';
+      t.zones.forEach((z,zi)=>{
+        const zb=el('div','zone'+(st.sel!==null&&st.v[st.sel]!==zi?' target':''),`<h3>${z.h}</h3>`); zb.tabIndex=0;
+        const chips=el('div','chips'); const inZ=t.items.map((it,k)=>k).filter(k=>st.v[k]===zi);
+        if(!inZ.length) chips.appendChild(el('span','empty','перенеси сюда карточки'));
+        inZ.forEach(k=>chips.appendChild(card(k)));
+        zb.appendChild(chips);
+        zb.onclick=()=>{ if(st.sel===null)return; st.v[st.sel]=zi; st.sel=null; st.checked=false; st.render(); };
+        zb.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault(); zb.click();}};
+        zb.ondragover=e=>e.preventDefault();
+        zb.ondrop=e=>{e.preventDefault(); st.v[+e.dataTransfer.getData('text/plain')]=zi; st.sel=null; st.checked=false; st.render();};
+        zones.appendChild(zb);
+      });
+      t.items.forEach((it,k)=>{ if(st.v[k]===undefined) pool.appendChild(card(k)); });
+      if(!pool.children.length) pool.appendChild(el('span','empty','Все карточки разложены.'));
+    };
+    const card=k=>{
+      const c=el('button','card'+(st.sel===k?' sel':''),t.items[k].t); c.draggable=true;
+      if(st.checked && st.v[k]!==undefined) c.classList.add(st.v[k]===t.items[k].a?'ok':'bad');
+      c.onclick=e=>{e.stopPropagation(); st.sel= st.sel===k?null:k; st.render();};
+      c.ondragstart=e=>e.dataTransfer.setData('text/plain',k);
+      return c;
+    };
+    pool.ondragover=e=>e.preventDefault();
+    pool.ondrop=e=>{e.preventDefault(); delete st.v[+e.dataTransfer.getData('text/plain')]; st.checked=false; st.render();};
+    st.render();
+  }
+
+  if(t.type==='rules'){
+    t.rows.forEach((r,k)=>{
+      const p=el('div','rule');
+      p.innerHTML=r.t.replace('{}',`<select data-k="${k}"><option value="">Выбрать</option>${t.opts.map(o=>`<option>${o}</option>`).join('')}</select>`);
+      body.appendChild(p);
+    });
+    body.querySelectorAll('select').forEach(s=>s.onchange=()=>{st.v[s.dataset.k]=s.value; s.className='';});
+  }
+
+  if(t.type==='crossword'){
+    const wrap=el('div','cw-wrap'), tbl=el('table','cw'), maxLen=Math.max(...t.words.map(w=>w[0].length));
+    t.words.forEach(([w,h],r)=>{
+      const tr=el('tr'); tr.dataset.r=r; tr.appendChild(el('td','n',`${r+1}.`));
+      for(let c=0;c<maxLen;c++){
+        const td=el('td');
+        if(c<w.length){
+          const inp=el('input'); inp.maxLength=1; inp.dataset.r=r; inp.dataset.c=c; inp.autocomplete='off'; inp.setAttribute('aria-label',`слово ${r+1}, буква ${c+1}`);
+          if(c===h) inp.classList.add('hl');
+          if(c<2){inp.value=w[c].toUpperCase(); inp.readOnly=true; inp.tabIndex=-1;}
+          inp.oninput=()=>{inp.value=inp.value.slice(-1).toUpperCase(); tr.className='';
+            if(inp.value){const nx=tbl.querySelector(`input[data-r="${r}"][data-c="${c+1}"]`); if(nx) nx.focus();}};
+          inp.onkeydown=e=>{ if(e.key==='Backspace'&&!inp.value&&c>2){const pv=tbl.querySelector(`input[data-r="${r}"][data-c="${c-1}"]`); if(pv){pv.focus();}} };
+          td.appendChild(inp);
+        }
+        tr.appendChild(td);
+      }
+      tbl.appendChild(tr);
+    });
+    const left=el('div'); left.appendChild(tbl);
+    const clues=el('ol','clues'); t.clues.forEach(c=>clues.appendChild(el('li','',c)));
+    wrap.appendChild(left); wrap.appendChild(clues); body.appendChild(wrap);
+    const ans=el('div','cw-answer','<b>Ответ:</b>'); const ai=el('input'); ai.type='text'; ai.autocomplete='off'; ai.spellcheck=false; ai.dataset.final='1';
+    ai.oninput=()=>ai.className=''; ans.appendChild(ai); body.appendChild(ans);
+  }
+
+  const bar=el('div','bar');
+  const chk=el('button','btn main','Проверить'), rst=el('button','btn quiet','Сбросить'), nxt=el('button','btn',i<TASKS.length-1?'Следующее задание':'Итоги'), fb=el('span','fb');
+  chk.onclick=()=>check(i); rst.onclick=()=>reset(i); nxt.onclick=()=>i<TASKS.length-1?go(i+1):showResults();
+  bar.append(chk,rst,nxt,fb); box.appendChild(bar); box._fb=fb;
+  return box;
+}
+
+function clearMarks(i){ document.querySelectorAll(`#task${i} .mark`).forEach(x=>x.classList.remove('mark','wrong')); }
+
+/* ================= ПРОВЕРКА ================= */
+function check(i){
+  const t=TASKS[i], st=S[i], box=document.getElementById('task'+i);
+  let right=0, total=0;
+  const mark=(b,ok)=>{b.classList.add('mark'); b.classList.toggle('wrong',!ok);};
+  clearMarks(i);
+
+  if(t.type==='toggle'){
+    box.querySelectorAll('.opt').forEach(b=>{const k=+b.dataset.k, sel=!!st.v[k], ok=sel===t.items[k].a;
+      total++; if(ok)right++; if(sel||!ok) mark(b,ok);});
+  }
+  if(t.type==='ordered'){
+    box.querySelectorAll('.ordered input').forEach(inp=>{const k=+inp.dataset.k, ok=norm(inp.value)===t.answer[k];
+      total++; if(ok)right++; inp.className=ok?'ok':'bad';});
+  }
+  if(t.type==='schemes'){
+    box.querySelectorAll('select').forEach(s=>{const ok=s.value===String(t.rows[+s.dataset.k].a);
+      total++; if(ok)right++; s.className=ok?'ok':'bad';});
+  }
+  if(t.type==='rules'){
+    box.querySelectorAll('select').forEach(s=>{const ok=s.value===t.rows[+s.dataset.k].a;
+      total++; if(ok)right++; s.className=ok?'ok':'bad';});
+  }
+  if(t.type==='paint'){
+    box.querySelectorAll('.pill').forEach(b=>{const k=+b.dataset.k, ok=st.v[k]===t.items[k].a;
+      total++; if(ok)right++; mark(b,ok);});
+  }
+  if(t.type==='sort'){
+    t.items.forEach((it,k)=>{total++; if(st.v[k]===it.a) right++;});
+    st.checked=true; st.sel=null; st.render();
+  }
+  if(t.type==='crossword'){
+    t.words.forEach(([w],r)=>{
+      const tr=box.querySelector(`tr[data-r="${r}"]`);
+      const got=[...tr.querySelectorAll('input')].map(x=>x.value).join('');
+      const ok=norm(got)===norm(w); total++; if(ok)right++; tr.className=ok?'ok':'bad';
+    });
+    const ai=box.querySelector('input[data-final]'), ok=norm(ai.value)===t.answer;
+    total++; if(ok)right++; ai.className=ok?'ok':'bad';
+  }
+  st.result={right,total};
+  const fb=box._fb;
+  fb.className='fb '+(right===total?'ok':right>0?'part':'bad');
+  fb.textContent= right===total ? `Всё верно! ${right} из ${total}` : `Верно ${right} из ${total}. Исправь ошибки и проверь ещё раз.`;
+  renderSteps();
+}
+
+function reset(i){
+  S[i]={v:{},result:null};
+  const old=document.getElementById('task'+i), n=build(i); n.classList.toggle('active',old.classList.contains('active'));
+  old.replaceWith(n); renderSteps();
+}
+
+/* ================= НАВИГАЦИЯ ================= */
+function renderSteps(){
+  stepsEl.innerHTML='';
+  const inResults=document.getElementById('results').classList.contains('active');
+  TASKS.forEach((_,i)=>{
+    const r=S[i].result, b=el('button','',i+1);
+    if(i===cur && !inResults) b.classList.add('cur');
+    if(r) b.classList.add(r.right===r.total?'ok':r.right>0?'part':'bad');
+    b.setAttribute('aria-label','Задание '+(i+1)); b.onclick=()=>go(i); stepsEl.appendChild(b);
+  });
+  const f=el('button','finish','Завершить'); f.onclick=showResults; stepsEl.appendChild(f);
+}
+function go(i){
+  cur=i; document.getElementById('results').classList.remove('active');
+  document.querySelectorAll('.task').forEach((t,k)=>t.classList.toggle('active',k===i));
+  renderSteps(); window.scrollTo({top:0,behavior:'smooth'});
+}
+function showResults(){
+  const res=document.getElementById('results');
+  TASKS.forEach((_,i)=>{ if(!S[i].result) check(i); });
+  document.querySelectorAll('.task').forEach(t=>t.classList.remove('active'));
+  let sum=0;
+  const rows=TASKS.map((t,i)=>{const r=S[i].result; sum+=r.right/r.total; const title=t.title.replace(/<[^>]+>/g,'');
+    return `<tr><td>${i+1}. ${title.length>70?title.slice(0,70)+'…':title}</td><td>${r.right} / ${r.total}</td></tr>`;}).join('');
+  const pct=Math.round(sum/TASKS.length*100);
+  res.innerHTML=`<h2 style="margin-top:0">Итоги</h2><div class="big">${pct}%</div>
+    <p style="color:var(--muted);margin:4px 0 0">Каждое задание весит одинаково. Нажми на номер задания вверху, чтобы вернуться и исправить ошибки.</p>
+    <table>${rows}</table>`;
+  res.classList.add('active'); renderSteps(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+TASKS.forEach((_,i)=>tasksEl.appendChild(build(i)));
+go(0);
+
+/* ================= УЧЁТ РЕЗУЛЬТАТОВ (Google Таблица) ================= */
+(function(){
+const API='https://script.google.com/macros/s/AKfycbwzFjFEKrQWwLOX6fUnfqDWY81fkiL4EuTGuLf8c_ifyPLBDdJ8XapnTCb1k5w1Z9Hi/exec';
+const TRAINER=document.title.split(' — ')[0];
+const KEY_USER='trainer_user', KEY_QUEUE='trainer_queue';
+let user=null, started=Date.now(), dirty=false, lastSend=null;
+
+const ls={get(k){try{return JSON.parse(localStorage.getItem(k));}catch(e){return null;}},
+          set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}},
+          del(k){try{localStorage.removeItem(k);}catch(e){}}};
+
+const css=document.createElement('style');
+css.textContent=`
+.gate{position:fixed;inset:0;z-index:50;background:var(--paper);display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-card{background:var(--sheet);border:1px solid var(--line);border-radius:10px;padding:26px 24px;max-width:400px;width:100%}
+.gate-card h2{margin:0 0 6px;font-size:22px}
+.gate-card p{margin:0 0 14px;color:var(--muted);font-size:16px}
+.gate-card input{font:inherit;font-size:28px;letter-spacing:.3em;text-align:center;width:100%;padding:8px;border:2px solid var(--line);border-radius:8px;background:var(--sheet);color:var(--ink)}
+.gate-card .row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.gate-msg{min-height:1.4em;margin-top:10px;font-size:15px}
+.gate-msg.bad{color:var(--bad)}
+.who{margin-top:8px;font-size:16px;color:var(--muted)}
+.who b{color:var(--ink)}
+.who button{font:inherit;font-size:14px;background:none;border:none;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0 4px}
+.save{margin-top:14px;padding:10px 14px;border-radius:6px;font-size:16px}
+.save.ok{background:var(--ok-bg);color:var(--ok)} .save.bad{background:var(--bad-bg);color:var(--bad)} .save.wait{background:var(--accent-soft);color:var(--muted)}
+`;
+document.head.appendChild(css);
+
+async function api(payload){
+  const r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  return r.json();
+}
+
+/* ---------- вход по коду ---------- */
+function showGate(){
+  const g=document.createElement('div'); g.className='gate';
+  g.innerHTML=`<div class="gate-card" role="dialog" aria-labelledby="gt">
+    <h2 id="gt">Вход в проверочную работу</h2><p>Введи свой личный код из шести цифр.</p>
+    <input id="gcode" inputmode="numeric" autocomplete="off" maxlength="6" aria-label="Личный код">
+    <div class="row"><button class="btn main" id="gbtn">Войти</button></div>
+    <div class="gate-msg" id="gmsg"></div></div>`;
+  document.body.appendChild(g);
+  const inp=g.querySelector('#gcode'), msg=g.querySelector('#gmsg'), btn=g.querySelector('#gbtn');
+  inp.focus();
+  inp.oninput=()=>{inp.value=inp.value.replace(/\D/g,'').slice(0,6); msg.textContent=''; msg.className='gate-msg';};
+  inp.onkeydown=e=>{if(e.key==='Enter')btn.click();};
+  btn.onclick=async()=>{
+    const code=inp.value.trim();
+    if(code.length!==6){msg.textContent='В коде должно быть 6 цифр.'; msg.className='gate-msg bad'; return;}
+    btn.disabled=true; msg.textContent='Проверяю…'; msg.className='gate-msg';
+    try{
+      const res=await api({action:'login',code});
+      if(res.ok){ user={code,name:res.name}; ls.set(KEY_USER,user); g.remove(); started=Date.now(); showWho(); flushQueue(); }
+      else { msg.textContent='Такого кода нет. Проверь цифры или спроси учителя.'; msg.className='gate-msg bad'; }
+    }catch(e){
+      msg.innerHTML='Нет связи с журналом. Можно выполнять задания, но результат не сохранится. <button class="btn quiet" id="goff" style="margin-top:8px">Продолжить без входа</button>';
+      msg.className='gate-msg bad';
+      g.querySelector('#goff').onclick=()=>{g.remove(); showWho();};
+    }
+    btn.disabled=false;
+  };
+}
+function showWho(){
+  let w=document.querySelector('header .who');
+  if(!w){w=document.createElement('div'); w.className='who'; document.querySelector('header').appendChild(w);}
+  w.innerHTML=user?`Ученик: <b></b> <button type="button">Не ты? Выйти</button>`:`Вход не выполнен — результат не сохранится. <button type="button">Войти</button>`;
+  if(user) w.querySelector('b').textContent=user.name;
+  w.querySelector('button').onclick=()=>{user=null; ls.del(KEY_USER); showGate(); showWho();};
+}
+
+/* ---------- сбор результатов ---------- */
+function describe(i){
+  const box=document.getElementById('task'+i), out=[];
+  box.querySelectorAll('.mark.wrong, input.bad, select.bad, tr.bad, .card.bad').forEach(el=>{
+    if(el.tagName==='TR'){ out.push(`слово ${+el.dataset.r+1}: «${[...el.querySelectorAll('input')].map(x=>x.value).join('').toLowerCase()}»`); return; }
+    if(el.tagName==='INPUT'){ out.push(`«${el.value.trim()||'—'}»`); return; }
+    if(el.tagName==='SELECT'){ const ctx=(el.closest('.srow,.prefix-row,.rule')||el.parentNode).textContent.replace(/\s+/g,' ').replace(/Выбрать|—/g,'').trim().slice(0,50); out.push(`${ctx}: ${el.value||'не выбрано'}`); return; }
+    const txt=el.textContent.replace(/\s+/g,' ').trim().slice(0,60);
+    if(el.classList.contains('opt')) out.push(`${txt} (${el.classList.contains('on')?'отмечено зря':'пропущено'})`);
+    else out.push(txt);
+  });
+  return out;
+}
+function collect(){
+  let sum=0; const by=[], ans=[];
+  TASKS.forEach((_,i)=>{const r=S[i].result; sum+=r.right/r.total; by.push(`${i+1}: ${r.right}/${r.total}`);
+    const errs=describe(i); if(errs.length) ans.push(`Зад. ${i+1} — ${errs.join('; ')}`);});
+  return {percent:Math.round(sum/TASKS.length*100), byTask:by.join('  '), answers:ans.length?ans.join(' | '):'без ошибок',
+          minutes:(Date.now()-started)/60000};
+}
+
+async function send(payload){
+  try{ const res=await api(payload); if(res.ok) return res; throw new Error(res.error||'fail'); }
+  catch(e){ const q=ls.get(KEY_QUEUE)||[]; if(!q.some(x=>x.id===payload.id)){q.push(payload); ls.set(KEY_QUEUE,q);} return null; }
+}
+async function flushQueue(){
+  const q=ls.get(KEY_QUEUE)||[]; if(!q.length) return;
+  const left=[];
+  for(const p of q){ try{ const r=await api(p); if(!r.ok && r.error!=='unknown_code') left.push(p); }catch(e){ left.push(p); } }
+  if(left.length) ls.set(KEY_QUEUE,left); else ls.del(KEY_QUEUE);
+}
+
+/* ---------- встраиваемся в тренажёр ---------- */
+const origCheck=check;
+check=function(i){ origCheck(i); dirty=true; };
+
+const origShow=showResults;
+showResults=async function(){
+  origShow();
+  const res=document.getElementById('results');
+  const st=document.createElement('div'); st.className='save'; res.appendChild(st);
+  const again=document.createElement('button'); again.className='btn'; again.style.marginTop='12px'; again.textContent='Новая попытка';
+  again.onclick=()=>{ TASKS.forEach((_,i)=>reset(i)); started=Date.now(); dirty=false; lastSend=null; go(0); };
+  res.appendChild(again);
+
+  if(!user){ st.className='save bad'; st.textContent='Вход не выполнен — результат не сохранён.'; return; }
+  if(!dirty && lastSend){ st.className='save ok'; st.textContent=lastSend; return; }
+  dirty=false;
+  const data=collect();
+  st.className='save wait'; st.textContent='Сохраняю результат…';
+  const payload={action:'result', id:Date.now()+'-'+Math.random().toString(36).slice(2), code:user.code, trainer:TRAINER, ...data};
+  const r=await send(payload);
+  if(r){ lastSend=`Результат сохранён: попытка № ${r.attempt}, ${data.percent}%.`; st.className='save ok'; st.textContent=lastSend; }
+  else { lastSend=null; st.className='save bad'; st.textContent='Нет связи с журналом. Результат сохранён на этом устройстве и отправится автоматически, когда появится интернет.'; }
+};
+
+user=ls.get(KEY_USER);
+if(user) showWho(); else showGate();
+renderSteps();
+flushQueue();
+window.addEventListener('online',flushQueue);
+})();
+</script>
+</body>
+</html>
