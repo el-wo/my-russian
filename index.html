@@ -59,50 +59,52 @@
     .set.soon { box-shadow: none; background: transparent; border-style: dashed; }
     .set.soon h3 { color: var(--muted); }
 
+    .empty-msg { text-align: center; color: var(--muted); padding: 2.5rem 1rem; border: 1px dashed var(--border); border-radius: 16px; line-height: 1.7; }
+    @media (max-width: 480px) { header h1 { font-size: 1.4rem; } .pos-btn { font-size: 0.9rem; padding: 8px 14px; } }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+    .view-switch { display: flex; justify-content: center; margin-bottom: 1.8rem; }
+    .view-switch div { display: inline-flex; background: var(--surface); border: 2px solid var(--border); border-radius: 99px; padding: 4px; gap: 4px; }
+    .view-btn { font-family: var(--sans); font-size: 0.9rem; font-weight: 700; border: 0; background: transparent; color: var(--muted); padding: 8px 18px; border-radius: 99px; cursor: pointer; }
+    .view-btn.active { background: var(--text); color: var(--surface); }
+    .view-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .intro { text-align: center; color: var(--muted); font-size: 0.92rem; line-height: 1.7; max-width: 560px; margin: -0.6rem auto 1.8rem; }
+
+    .ortho { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); padding: 1.4rem 1.5rem 1.3rem; margin-bottom: 16px; }
+    .ortho-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
+    .ortho h3 { font-family: var(--serif); font-size: 1.15rem; line-height: 1.4; }
+    .ortho > p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin: 6px 0 4px; }
+    .ortho .ex { font-family: var(--serif); font-style: italic; font-size: 0.86rem; color: var(--hint); margin-bottom: 12px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { font-family: var(--sans); font-size: 0.8rem; font-weight: 700; border-radius: 99px; padding: 5px 12px; text-decoration: none; border: 1.5px solid var(--border); color: var(--muted); background: transparent; }
+    .chip.ready { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+    a.chip.ready:hover { background: var(--green); color: #fff; }
+    .chip small { font-weight: 600; opacity: 0.75; }
+    .mix-btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 700; padding: 9px 18px; border-radius: 99px; text-decoration: none; white-space: nowrap; }
+    a.mix-btn { border: 2px solid var(--accent); color: var(--accent); }
+    a.mix-btn:hover { background: var(--accent-bg); }
+    span.mix-btn { border: 2px dashed var(--border); color: var(--hint); }
+    .ortho-btns { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+    a.mix-btn.test { border-style: dashed; }
     .pos-btn.test { border-style: dashed; border-color: var(--accent); color: var(--accent); }
     .pos-btn.test.active { border-style: solid; color: #fff; }
     .tag-test { color: var(--accent); background: var(--accent-bg); border-radius: 99px; padding: 3px 12px; }
     .note { background: var(--accent-bg); color: var(--text); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; font-size: 0.92rem; line-height: 1.6; }
-    .view-switch { display: flex; justify-content: center; margin-bottom: 1.8rem; }
-    .view-switch div { display: inline-flex; background: var(--surface); border: 2px solid var(--border); border-radius: 99px; padding: 4px; gap: 4px; flex-wrap: wrap; justify-content: center; }
-    .view-btn { font-family: var(--sans); font-size: 0.9rem; font-weight: 700; border: 0; background: transparent; color: var(--muted); padding: 8px 18px; border-radius: 99px; cursor: pointer; }
-    .view-btn.active { background: var(--text); color: var(--surface); }
-    .view-btn:focus-visible, .chip:focus-visible, .mix-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-    .intro { text-align: center; color: var(--muted); font-size: 0.92rem; line-height: 1.7; max-width: 580px; margin: -0.6rem auto 1.8rem; }
-    .ortho { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); padding: 1.4rem 1.5rem 1.3rem; margin-bottom: 16px; }
-    .ortho-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; }
-    .ortho h3 { font-family: var(--serif); font-size: 1.15rem; line-height: 1.4; }
-    .ortho-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.6; margin: 6px 0 4px; }
-    .ortho .ex { font-family: var(--serif); font-style: italic; font-size: 0.86rem; color: var(--hint); margin-bottom: 12px; }
-    .ortho-btns { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
     .chips-label { font-size: 0.78rem; color: var(--hint); font-weight: 600; margin-bottom: 6px; }
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-    .chip { font-family: var(--sans); font-size: 0.8rem; font-weight: 700; border-radius: 99px; padding: 5px 12px; text-decoration: none; border: 1.5px solid var(--border); color: var(--muted); background: transparent; cursor: pointer; }
-    .chip.ready { border-color: var(--green); color: var(--green); background: var(--green-bg); }
-    a.chip.ready:hover { background: var(--green); color: #fff; }
-    button.chip:hover { border-color: var(--accent); color: var(--accent); }
-    .ortho-foot { font-size: 0.8rem; color: var(--hint); margin-top: 10px; font-weight: 600; }
-    .mix-btn { font-family: var(--sans); font-size: 0.85rem; font-weight: 700; padding: 8px 18px; border-radius: 99px; text-decoration: none; white-space: nowrap; }
-    a.mix-btn { border: 2px solid var(--accent); color: var(--accent); }
-    a.mix-btn:hover { background: var(--accent-bg); }
-    a.mix-btn.test { border-style: dashed; }
-    span.mix-btn { border: 2px dashed var(--border); color: var(--hint); }
-    .empty-msg { text-align: center; color: var(--muted); padding: 2.5rem 1rem; border: 1px dashed var(--border); border-radius: 16px; line-height: 1.7; }
-    @media (max-width: 480px) { header h1 { font-size: 1.4rem; } .pos-btn { font-size: 0.9rem; padding: 8px 14px; } }
-    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
   </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>Орфография по частям речи</h1>
-    <p>Выбери часть речи или орфограмму, а затем тренировку</p>
+    <p>Тренировки по частям речи и по сквозным орфограммам</p>
   </header>
 
-  <nav class="view-switch" aria-label="Способ просмотра"><div>
-    <button class="view-btn" id="vb-pos" onclick="setView('pos')">По частям речи</button>
+  <div class="view-switch"><div role="tablist">
+    <button class="view-btn" id="vb-parts" onclick="setView('parts')">По частям речи</button>
     <button class="view-btn" id="vb-ortho" onclick="setView('ortho')">Орфограмма во всех частях речи</button>
-  </div></nav>
+  </div></div>
+
   <nav class="pos-grid" id="pos"></nav>
   <main id="content"></main>
 </div>
@@ -111,55 +113,55 @@
 /*
   КАК ДОБАВИТЬ НОВЫЙ СЕТ:
   1. Положите HTML-файл тренировки в ту же папку, что и эта страница.
-  2. Проверочные работы добавляются в раздел с id: "tests" (в самом конце списка).
-     Найдите нужную часть речи ниже и добавьте (или отредактируйте) объект в её списке sets:
+  2. Найдите нужную часть речи ниже и добавьте (или отредактируйте) объект в её списке sets:
      { title: "...", desc: "...", ex: "...", file: "имя_файла.html" }
   3. Если file не указан — карточка показывается как «В разработке».
+  4. Проверочные работы добавляются в раздел с id: "tests" (в конце списка).
 */
 const PARTS = [
   { id: "sush",  name: "Существительное", sets: [] },
   { id: "pril",  name: "Прилагательное",  sets: [
-    { title: "Н и НН в прилагательных, причастиях и наречиях",
+    { title: "Н и НН в прилагательных, причастиях и наречиях", ortho: "nn",
       desc: "Карточки: от существительного или от глагола, приставки, зависимые слова, вид глагола (купленный — варёный), краткая форма, слова-исключения.",
       ex: "кожаный, стеклянный, жареный, купленный, раненый",
-      file: "flashcards_n_nn.html", ortho: "nn" }
+      file: "flashcards_n_nn.html" }
   ]},
   { id: "chisl", name: "Числительное",    sets: [] },
   { id: "mest",  name: "Местоимение",     sets: [] },
   { id: "glag",  name: "Глагол",          sets: [] },
   { id: "prich", name: "Причастие",       sets: [
-    { title: "Н и НН в прилагательных, причастиях и наречиях",
+    { title: "Н и НН в прилагательных, причастиях и наречиях", ortho: "nn",
       desc: "Карточки: от существительного или от глагола, приставки, зависимые слова, вид глагола (купленный — варёный), краткая форма, слова-исключения.",
       ex: "кожаный, стеклянный, жареный, купленный, раненый",
-      file: "flashcards_n_nn.html", ortho: "nn" }
+      file: "flashcards_n_nn.html" }
   ]},
   { id: "deepr", name: "Деепричастие",    sets: [] },
   { id: "narech", name: "Наречие", sets: [
-    { title: "Слитно или раздельно: слова для запоминания",
+    { title: "Слитно или раздельно: слова для запоминания", ortho: "slit",
       desc: "Исключения, фразеологизмы и наречные сочетания, написание которых нужно запомнить.",
       ex: "на боковую, доверху, ни при чём, впопыхах",
-      file: "flashcards_narechiya.html", ortho: "slit" },
-    { title: "Наречия через дефис",
+      file: "flashcards_narechiya.html" },
+    { title: "Наречия через дефис", ortho: "slit",
       desc: "Приставка по- + -ому/-ему/-ски, во-/в- с порядковыми, кое-, -то, -либо, -нибудь, повторы.",
-      ex: "по-новому, в-третьих, кое-где, еле-еле", ortho: "slit" },
-    { title: "Н и НН в наречиях",
+      ex: "по-новому, в-третьих, кое-где, еле-еле" },
+    { title: "Н и НН в наречиях", ortho: "nn",
       desc: "Сколько Н в наречии на -о, столько же, сколько в прилагательном или причастии.",
-      ex: "туманно, ветрено, взволнованно", ortho: "nn" },
+      ex: "туманно, ветрено, взволнованно" },
     { title: "О и А на конце наречий",
       desc: "Приставки из-, до-, с- → -а; в-, на-, за- → -о.",
-      ex: "досуха, издалека, вправо, заново", ortho: "suff" },
-    { title: "О и Е после шипящих на конце",
+      ex: "досуха, издалека, вправо, заново" },
+    { title: "О и Е после шипящих на конце", ortho: "oyo",
       desc: "Под ударением -о, без ударения -е. Исключение: ещё.",
-      ex: "горячо, певуче, свежо", ortho: "oe" },
-    { title: "Ь после шипящих на конце",
+      ex: "горячо, певуче, свежо" },
+    { title: "Ь после шипящих на конце", ortho: "soft",
       desc: "После шипящих на конце наречий пишется Ь, кроме уж, замуж, невтерпёж.",
-      ex: "сплошь, настежь, вскачь", ortho: "soft" },
-    { title: "НЕ с наречиями",
+      ex: "сплошь, настежь, вскачь" },
+    { title: "НЕ с наречиями", ortho: "ne",
       desc: "Слитно и раздельно: синонимы без не, противопоставление, слова «далеко не», «вовсе не».",
-      ex: "неглубоко, не глубоко, а мелко", ortho: "ne" },
-    { title: "НЕ и НИ в отрицательных наречиях",
+      ex: "неглубоко, не глубоко, а мелко" },
+    { title: "НЕ и НИ в отрицательных наречиях", ortho: "neni",
       desc: "Под ударением НЕ, без ударения НИ.",
-      ex: "негде — нигде, некогда — никогда", ortho: "neni" }
+      ex: "негде — нигде, некогда — никогда" }
   ]},
   { id: "sluzh", name: "Служебные части речи", sets: [] },
   { id: "tests", name: "Проверочные работы", kind: "test",
@@ -180,8 +182,53 @@ const PARTS = [
   ]}
 ];
 
+/*
+  ОБОБЩАЮЩИЕ ОРФОГРАММЫ
+  - parts: части речи, где встречается орфограмма (id из списка PARTS выше);
+  - file: смешанная тренировка по всем частям речи (если не указан — «В разработке»);
+  - test: проверочная работа по этой орфограмме (необязательно);
+  - чтобы сет части речи появился здесь, добавьте ему поле ortho с id орфограммы.
+*/
+const ORTHO = [
+  { id: "ne", title: "НЕ с разными частями речи",
+    desc: "Слитно и раздельно: слова без НЕ не употребляются, синонимы, противопоставление, краткие и полные причастия, деепричастия и глаголы.",
+    ex: "ненастье, неглубокий, не пришёл, нехотя, не решённая мною задача",
+    parts: ["sush","pril","narech","glag","prich","deepr","mest"], test: "test_ne_chasti_rechi.html" },
+  { id: "nn", title: "Н и НН в разных частях речи",
+    desc: "Суффиксы прилагательных, полные и краткие причастия, отглагольные прилагательные, наречия и существительные.",
+    ex: "серебряный, жареный — жаренный на масле, туманно, гостиная",
+    parts: ["pril","prich","narech","sush"], file: "flashcards_n_nn.html" },
+  { id: "oyo", title: "О — Ё (Е) после шипящих и Ц",
+    desc: "В корнях, суффиксах и окончаниях существительных, прилагательных, наречий; в глаголах и отглагольных формах.",
+    ex: "шёпот, крючок, свежо, ожёг — ожог, парчовый",
+    parts: ["sush","pril","narech","glag","prich"], test: "test_narechiya_pravopisanie.html" },
+  { id: "soft", title: "Ь после шипящих",
+    desc: "Существительные 3-го склонения, глаголы (-шь, -ешься, повелительное наклонение), наречия, частицы.",
+    ex: "ночь — мяч, пишешь, режь, настежь, уж, лишь",
+    parts: ["sush","glag","narech","sluzh"], test: "test_narechiya_pravopisanie.html" },
+  { id: "slit", title: "Слитно, раздельно, через дефис",
+    desc: "Сложные существительные и прилагательные, пол-, наречия, неопределённые местоимения, производные предлоги, союзы и частицы.",
+    ex: "пол-лимона, светло-зелёный, по-новому, кое-кто, в течение, тоже — то же",
+    parts: ["sush","pril","narech","mest","sluzh"], test: "test_narechiya_defis.html" },
+  { id: "neni", title: "НЕ и НИ",
+    desc: "Отрицательные местоимения и наречия, частицы в устойчивых сочетаниях и придаточных.",
+    ex: "некого — никого, негде — нигде, кто бы ни пришёл, не кто иной, как",
+    parts: ["mest","narech","sluzh"] },
+  { id: "suff", title: "Гласные в суффиксах",
+    desc: "-ек/-ик, -ец/-иц у существительных, -ев/-ив у прилагательных, -ова/-ева и -ыва/-ива у глаголов, суффиксы причастий.",
+    ex: "замочек — ключик, боевой — красивый, беседовать — рассказывать, клеящий",
+    parts: ["sush","pril","glag","prich"] },
+  { id: "end", title: "Безударные окончания",
+    desc: "Падежные окончания существительных и прилагательных, личные окончания глаголов и суффиксы причастий.",
+    ex: "в здании — на станции, о синем море, колют — колющий",
+    parts: ["sush","pril","glag","prich"] }
+];
+
+let view = lsGet("orfo-view") || "parts";
 let current = localStorageGet() || "narech";
 
+function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
 function localStorageGet() {
   try { return localStorage.getItem("orfo-pos"); } catch (e) { return null; }
 }
@@ -224,90 +271,52 @@ function renderContent() {
     ${body}`;
 }
 
+function select(id) { current = id; localStorageSet(id); view = "parts"; lsSet("orfo-view", view); renderAll(); }
 
-/*
-  ОРФОГРАММЫ (режим «Орфограмма во всех частях речи»).
-  parts — части речи, где встречается орфограмма. Кнопка части речи становится зелёной,
-  когда у этой части речи есть готовый сет с тем же ortho (например, ortho: "nn").
-  file — смешанная тренировка по орфограмме (все части речи вперемешку).
-  test — проверочная работа по этой орфограмме.
-*/
-const ORTHO = [
-  { id: "ne", title: "НЕ с разными частями речи",
-    desc: "Слитно или раздельно: слово без НЕ не употребляется, синоним без НЕ, противопоставление, зависимые слова, «далеко не», «вовсе не».",
-    ex: "ненастье, не пришёл, неглубоко, не решённая мною задача",
-    parts: ["sush", "pril", "glag", "prich", "deepr", "narech"], test: "test_ne_chasti_rechi.html" },
-  { id: "nn", title: "Н и НН",
-    desc: "От существительного или от глагола? Суффиксы, приставки, зависимые слова, вид глагола, краткая форма, наречия.",
-    ex: "кожаный, стеклянный, жареный, купленный, туманно",
-    parts: ["pril", "prich", "narech"], file: "flashcards_n_nn.html" },
-  { id: "oe", title: "О — Ё (Е) после шипящих и Ц",
-    desc: "Под ударением в корне, суффиксе и окончании; на конце наречий.",
-    ex: "шёлк, камышовый, плечом, горячо, певуче",
-    parts: ["sush", "pril", "glag", "narech"], test: "test_narechiya_pravopisanie.html" },
-  { id: "soft", title: "Ь после шипящих",
-    desc: "Существительные 3-го склонения, глаголы, наречия, частицы; где Ь не пишется.",
-    ex: "дочь, беречь, настежь, лишь — но: мяч, уж, замуж",
-    parts: ["sush", "glag", "narech", "sluzh"], test: "test_narechiya_pravopisanie.html" },
-  { id: "slit", title: "Слитно, раздельно, через дефис",
-    desc: "Сложные слова, числительные, неопределённые местоимения, наречия.",
-    ex: "полдома, пол-арбуза, кое-что, по-новому, на боковую",
-    parts: ["sush", "pril", "chisl", "mest", "narech"], test: "test_narechiya_defis.html" },
-  { id: "neni", title: "НЕ и НИ",
-    desc: "Отрицательные местоимения и наречия, частицы НЕ и НИ.",
-    ex: "некого — никого, негде — нигде, ни при чём",
-    parts: ["mest", "narech", "sluzh"] },
-  { id: "suff", title: "Гласные в суффиксах",
-    desc: "Суффиксы существительных, прилагательных, глаголов, причастий; О и А на конце наречий.",
-    ex: "ключик — замочек, -ова-/-ива-, досуха, заново",
-    parts: ["sush", "pril", "glag", "prich", "narech"] },
-  { id: "end", title: "Безударные окончания",
-    desc: "Падежные окончания существительных и прилагательных, личные окончания глаголов и суффиксы причастий.",
-    ex: "в тетради, о синем небе, борются, колеблющийся",
-    parts: ["sush", "pril", "glag", "prich"] }
-];
-
-let view = (function(){ try { return localStorage.getItem("orfo-view"); } catch (e) { return null; } })() || "pos";
-function setView(v) { view = v; try { localStorage.setItem("orfo-view", v); } catch (e) {} render(); }
+function setView(v) { view = v; lsSet("orfo-view", v); renderAll(); }
 
 function renderOrtho() {
-  document.getElementById("pos").style.display = "none";
-  document.getElementById("content").innerHTML = `
-    <p class="intro">Здесь орфограммы собраны целиком. Зелёная кнопка — готовая тренировка по этой части речи, серая — переход в раздел части речи.</p>` +
-    ORTHO.map(o => {
-      const chips = o.parts.map(pid => {
-        const p = PARTS.find(x => x.id === pid);
-        const set = p.sets.find(s => s.ortho === o.id && s.file);
-        return set
-          ? `<a class="chip ready" href="${set.file}">${p.name} ✓</a>`
-          : `<button class="chip" onclick="goPart('${pid}')">${p.name}</button>`;
-      });
-      const ready = o.parts.filter(pid => PARTS.find(x => x.id === pid).sets.some(s => s.ortho === o.id && s.file)).length;
-      const mix = o.file ? `<a class="mix-btn" href="${o.file}">Смешанная тренировка →</a>` : `<span class="mix-btn">Смешанная тренировка — скоро</span>`;
-      const test = o.test ? `<a class="mix-btn test" href="${o.test}">Проверочная работа →</a>` : "";
-      return `<div class="ortho">
-        <div class="ortho-top"><h3>${o.title}</h3><div class="ortho-btns">${mix}${test}</div></div>
-        <p class="ortho-desc">${o.desc}</p><div class="ex">${o.ex}</div>
-        <div class="chips-label">Части речи</div><div class="chips">${chips.join("")}</div>
-        <div class="ortho-foot">Готово по частям речи: ${ready} из ${o.parts.length}</div>
-      </div>`;
+  const partName = id => (PARTS.find(p => p.id === id) || {}).name || id;
+  const html = ORTHO.map(o => {
+    const chips = o.parts.map(pid => {
+      const part = PARTS.find(p => p.id === pid);
+      const set = part && part.sets.find(s => s.ortho === o.id && s.file);
+      return set
+        ? `<a class="chip ready" href="${set.file}" title="${set.title}">${partName(pid)}</a>`
+        : `<button class="chip" onclick="select('${pid}')" title="Открыть раздел «${partName(pid)}»">${partName(pid)}</button>`;
     }).join("");
+    const readyN = o.parts.filter(pid => {
+      const part = PARTS.find(p => p.id === pid);
+      return part && part.sets.some(s => s.ortho === o.id && s.file);
+    }).length;
+    const mix = o.file
+      ? `<a class="mix-btn" href="${o.file}">Смешанная тренировка →</a>`
+      : `<span class="mix-btn">Смешанная — в разработке</span>`;
+    return `<section class="ortho">
+      <div class="ortho-top"><h3>${o.title}</h3><div class="ortho-btns">${mix}${o.test ? `<a class="mix-btn test" href="${o.test}">Проверочная работа →</a>` : ""}</div></div>
+      <p>${o.desc}</p>
+      <div class="ex">${o.ex}</div>
+      <div class="chips-label">Готово по частям речи: ${readyN} из ${o.parts.length}</div>
+      <div class="chips">${chips}</div>
+    </section>`;
+  }).join("");
+  document.getElementById("content").innerHTML = html;
 }
-function goPart(pid) { current = pid; localStorageSet(pid); setView("pos"); }
 
-function render() {
-  document.getElementById("vb-pos").classList.toggle("active", view === "pos");
+function renderAll() {
+  document.getElementById("vb-parts").classList.toggle("active", view === "parts");
   document.getElementById("vb-ortho").classList.toggle("active", view === "ortho");
-  document.getElementById("vb-pos").setAttribute("aria-pressed", view === "pos");
-  document.getElementById("vb-ortho").setAttribute("aria-pressed", view === "ortho");
-  if (view === "ortho") { renderOrtho(); return; }
-  document.getElementById("pos").style.display = "";
-  renderNav(); renderContent();
+  const nav = document.getElementById("pos");
+  if (view === "parts") { nav.style.display = ""; renderNav(); renderContent(); }
+  else {
+    nav.style.display = "none";
+    renderOrtho();
+    document.getElementById("content").insertAdjacentHTML("afterbegin",
+      `<p class="intro">Одна орфограмма — во всех частях речи. Зелёная часть речи открывает готовую тренировку, серая — раздел этой части речи. Смешанная тренировка собирает все случаи вместе.</p>`);
+  }
 }
 
-function select(id) { current = id; localStorageSet(id); renderNav(); renderContent(); }
-
-render();
+renderAll();
 </script>
 </body>
 </html>
