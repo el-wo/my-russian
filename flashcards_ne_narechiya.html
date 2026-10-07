@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Карточки: НЕ с наречиями</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      background: var(--bg); font-family: var(--sans); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.35rem; }
+    .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.5rem; }
+    .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+    .card-wrap { width: 100%; max-width: 560px; }
+    .card, .finish-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.5rem 2rem 2rem; text-align: center; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .top-msg { font-size: 1.1rem; font-weight: 700; min-height: 30px; margin-bottom: 0.6rem; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.5px; }
+    .top-msg.show { opacity: 1; }
+    .top-msg.good { color: var(--green); }
+    .top-msg.remind { color: var(--muted); }
+    .mode-badge {
+      display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--red);
+      background: var(--red-bg); border: 1px solid #f0c4be; border-radius: 99px;
+      padding: 3px 14px; margin-bottom: 0.8rem;
+    }
+    .counter { font-size: 0.78rem; color: var(--hint); margin-bottom: 1.2rem; font-weight: 600; letter-spacing: 1px; }
+    .word-display {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 400; margin-bottom: 1.8rem;
+      line-height: 1.5; word-break: break-word;
+    }
+    .q { font-weight: 700; color: var(--red); }
+    .q.correct { color: var(--green); }
+    .q.reveal { color: var(--red); }
+    .choices { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.6rem; }
+    .choice-btn {
+      font-family: var(--serif); font-size: 1.2rem; font-weight: 700;
+      min-width: 150px; padding: 14px 20px; border-radius: 14px;
+      border: 2px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .choice-btn small { font-family: var(--sans); font-size: 0.72rem; font-weight: 600; color: var(--hint); }
+    .choice-btn:hover:not(:disabled) { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); box-shadow: 0 2px 12px rgba(91,79,207,0.13); }
+    .choice-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .choice-btn:active:not(:disabled) { transform: scale(0.96); }
+    .choice-btn.wrong-flash { background: var(--red-bg); border-color: var(--red); color: var(--red); animation: shake 0.35s; }
+    .choice-btn.right { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+    .explanation { font-size: 0.92rem; color: var(--muted); line-height: 1.8; max-width: 440px; opacity: 0; transition: opacity 0.4s; min-height: 60px; }
+    .explanation.show { opacity: 1; }
+    .explanation b { color: var(--text); font-weight: 700; }
+    .explanation i { color: var(--hint); }
+    .nav-row { display: flex; justify-content: center; margin-top: 1.4rem; }
+    .nav-btn, .btn-restart, .btn-errors, .btn-start {
+      padding: 11px 26px; border-radius: 99px; border: 2px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .nav-btn:hover, .btn-restart:hover, .btn-start:hover { background: var(--bg); border-color: var(--muted); }
+    .btn-start.primary { border-color: var(--accent); color: var(--accent); }
+    .btn-start.primary:hover { background: var(--accent-bg); }
+    .btn-errors { border-color: var(--red); color: var(--red); background: transparent; }
+    .btn-errors:hover { background: var(--red-bg); }
+    .finish-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .finish-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .finish-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.6rem; line-height: 1.6; }
+    .mistakes-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.8rem; }
+    .mistake-item { font-family: var(--serif); font-size: 1.02rem; color: var(--text); margin: 7px 0; }
+    .mistake-item span { color: var(--red); font-weight: 700; }
+    .all-correct { font-size: 0.95rem; color: var(--green); font-weight: 700; margin-bottom: 0.6rem; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; }
+    .kbd-hint { font-size: 0.75rem; color: var(--hint); margin-top: 1rem; }
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.2rem; }
+      .word-display { font-size: 1.3rem; }
+      .choice-btn { min-width: 0; width: 100%; font-size: 1.1rem; }
+      .card, .finish-card { padding: 2rem 1.2rem 1.5rem; }
+      .kbd-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+    .home-link { position: absolute; top: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 700; color: var(--muted); text-decoration: none; padding: 6px 14px; border: 2px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+    body { position: relative; }
+    @media (max-width: 480px) { .home-link { position: static; align-self: flex-start; margin-bottom: 1rem; } }
+  </style>
+</head>
+<body>
+
+<a class="home-link" href="index.html">← На главную</a>
+
+<header>
+  <h1>НЕ с наречиями</h1>
+  <p>Слитно или раздельно?</p>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="prog"></div></div></div>
+<div class="card-wrap"><div id="main"></div></div>
+
+<script>
+// [контекст с #, вопрос, правильно, неправильно, тип (s — слитно, r — раздельно, d — через дефис), пояснение]
+const RAW = [
+  ["выглядеть #", "(не)лепо", "нелепо", "не лепо", "s", "Без НЕ не употребляется (нет слова «лепо») → слитно."],
+  ["# прийти вовремя", "(не)обходимо", "необходимо", "не обходимо", "s", "Без НЕ не употребляется (нет слова «обходимо») → слитно."],
+  ["он, #, прав", "(не)сомненно", "несомненно", "не сомненно", "s", "Без НЕ не употребляется (нет слова «сомненно») → слитно. Не путать с причастием!"],
+  ["подожди #", "(не)множечко", "немножечко", "не множечко", "s", "Без НЕ не употребляется (нет слова «множечко») → слитно."],
+  ["посмотрел #", "(не)доумённо", "недоумённо", "не доумённо", "s", "Без НЕ не употребляется (нет слова «доумённо») → слитно."],
+  ["воскликнул #", "(не)годующе", "негодующе", "не годующе", "s", "Без НЕ не употребляется (нет слова «годующе») → слитно."],
+  ["одет #", "(не)брежно", "небрежно", "не брежно", "s", "Без НЕ не употребляется (нет слова «брежно») → слитно."],
+  ["дождь лил #", "(не)престанно", "непрестанно", "не престанно", "s", "Без НЕ не употребляется (нет слова «престанно») → слитно."],
+  ["двигался #", "(не)уклюже", "неуклюже", "не уклюже", "s", "Без НЕ не употребляется (нет слова «уклюже») → слитно."],
+  ["# разбил чашку", "(не)чаянно", "нечаянно", "не чаянно", "s", "Без НЕ не употребляется (нет слова «чаянно») → слитно."],
+  ["одеваться #", "(не)ряшливо", "неряшливо", "не ряшливо", "s", "Без НЕ не употребляется (нет слова «ряшливо») → слитно."],
+  ["мне # отдыхать", "(не)когда", "некогда", "не когда", "s", "Отрицательное наречие: НЕ под ударением → слитно (<i>некогда, негде, некуда, незачем</i>)."],
+  ["в зале было # сесть", "(не)где", "негде", "не где", "s", "Отрицательное наречие: НЕ под ударением → слитно (<i>некогда, негде, некуда, незачем</i>)."],
+  ["отступать было #", "(не)куда", "некуда", "не куда", "s", "Отрицательное наречие: НЕ под ударением → слитно (<i>некогда, негде, некуда, незачем</i>)."],
+  ["# было спорить", "(не)зачем", "незачем", "не зачем", "s", "Отрицательное наречие: НЕ под ударением → слитно (<i>некогда, негде, некуда, незачем</i>)."],
+  ["школа находится #", "(не)далеко", "недалеко", "не далеко", "s", "Можно заменить синонимом без НЕ: <i>недалеко</i> = <i>близко</i> → слитно."],
+  ["мне было #", "(не)легко", "нелегко", "не легко", "s", "Можно заменить синонимом без НЕ: <i>нелегко</i> = <i>трудно</i> → слитно."],
+  ["осталось совсем #", "(не)много", "немного", "не много", "s", "Можно заменить синонимом без НЕ: <i>немного</i> = <i>мало</i> → слитно."],
+  ["лампа висит #", "(не)высоко", "невысоко", "не высоко", "s", "Можно заменить синонимом без НЕ: <i>невысоко</i> = <i>низко</i> → слитно."],
+  ["говорить #", "(не)громко", "негромко", "не громко", "s", "Можно заменить синонимом без НЕ: <i>негромко</i> = <i>тихо</i> → слитно."],
+  ["до моря #", "(не)близко", "неблизко", "не близко", "s", "Можно заменить синонимом без НЕ: <i>неблизко</i> = <i>далеко</i> → слитно."],
+  ["на празднике было #", "(не)весело", "невесело", "не весело", "s", "Можно заменить синонимом без НЕ: <i>невесело</i> = <i>грустно</i> → слитно."],
+  ["лектор рассказывал #", "(не)интересно", "неинтересно", "не интересно", "s", "Можно заменить синонимом без НЕ: <i>неинтересно</i> = <i>скучно</i> → слитно."],
+  ["ответил #", "(не)смело", "несмело", "не смело", "s", "Можно заменить синонимом без НЕ: <i>несмело</i> = <i>робко</i> → слитно."],
+  ["билеты стоят #", "(не)дёшево", "недёшево", "не дёшево", "s", "Можно заменить синонимом без НЕ: <i>недёшево</i> = <i>дорого</i> → слитно."],
+  ["семья жила #", "(не)богато", "небогато", "не богато", "s", "Можно заменить синонимом без НЕ: <i>небогато</i> = <i>бедно</i> → слитно."],
+  ["поступил очень #", "(не)осмотрительно", "неосмотрительно", "не осмотрительно", "s", "Есть наречие меры и степени (<i>очень</i>) → слитно."],
+  ["ответил крайне #", "(не)ласково", "неласково", "не ласково", "s", "Есть наречие меры и степени (<i>крайне</i>) → слитно."],
+  ["звучит совершенно #", "(не)искренне", "неискренне", "не искренне", "s", "Есть наречие меры и степени (<i>совершенно</i>) → слитно."],
+  ["всё вышло весьма #", "(не)удачно", "неудачно", "не удачно", "s", "Есть наречие меры и степени (<i>весьма</i>) → слитно."],
+  ["вёл себя слишком #", "(не)вежливо", "невежливо", "не вежливо", "s", "Есть наречие меры и степени (<i>слишком</i>) → слитно."],
+  ["выступил чрезвычайно #", "(не)уверенно", "неуверенно", "не уверенно", "s", "Есть наречие меры и степени (<i>чрезвычайно</i>) → слитно."],
+  ["написано #, но правильно", "(не)аккуратно", "неаккуратно", "не аккуратно", "s", "Союз НО противопоставляет разные признаки, а не отрицает → слитно."],
+  ["высказывался #, но эмоционально", "(не)громко", "негромко", "не громко", "s", "Союз НО противопоставляет разные признаки, а не отрицает → слитно."],
+  ["на улице было #, а холодно", "(не)жарко", "не жарко", "нежарко", "r", "Противопоставление с союзом А → раздельно."],
+  ["было #, а приятно", "(не)больно", "не больно", "небольно", "r", "Противопоставление с союзом А → раздельно."],
+  ["говорил #, а шёпотом", "(не)громко", "не громко", "негромко", "r", "Противопоставление с союзом А → раздельно. Сравни: <i>говорил негромко</i>."],
+  ["школа находится #, а близко", "(не)далеко", "не далеко", "недалеко", "r", "Противопоставление с союзом А → раздельно. Сравни: <i>школа недалеко</i>."],
+  ["поезд шёл #, а медленно", "(не)быстро", "не быстро", "небыстро", "r", "Противопоставление с союзом А → раздельно."],
+  ["до станции далеко #", "(не)близко", "не близко", "неблизко", "r", "Есть усиление отрицания (<i>далеко не</i>) → раздельно."],
+  ["машина ехала ничуть #", "(не)быстро", "не быстро", "небыстро", "r", "Есть усиление отрицания (<i>ничуть</i>) → раздельно."],
+  ["в классе было вовсе #", "(не)тихо", "не тихо", "нетихо", "r", "Есть усиление отрицания (<i>вовсе не</i>) → раздельно."],
+  ["нам было отнюдь #", "(не)весело", "не весело", "невесело", "r", "Есть усиление отрицания (<i>отнюдь не</i>) → раздельно."],
+  ["мне нисколько #", "(не)страшно", "не страшно", "нестрашно", "r", "Есть усиление отрицания (<i>нисколько</i>) → раздельно."],
+  ["он справился никак #", "(не)лучше", "не лучше", "нелучше", "r", "Есть усиление отрицания (<i>никак</i>) → раздельно."],
+  ["бежал # других", "(не)медленнее", "не медленнее", "немедленнее", "r", "Сравнительная степень → раздельно."],
+  ["работает # прежнего", "(не)быстрее", "не быстрее", "небыстрее", "r", "Сравнительная степень → раздельно."],
+  ["стало # прежнего", "(не)хуже", "не хуже", "нехуже", "r", "Сравнительная степень → раздельно."],
+  ["магазин находится #", "(не)вблизи", "не вблизи", "невблизи", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["я приеду #", "(не)сегодня", "не сегодня", "несегодня", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["это случилось #", "(не)вчера", "не вчера", "невчера", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["задание # сложное", "(не)слишком", "не слишком", "неслишком", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["мне # понравилось", "(не)очень", "не очень", "неочень", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["он ответил #", "(не)сразу", "не сразу", "несразу", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["работа выполнена #", "(не)полностью", "не полностью", "неполностью", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["так бывает #", "(не)всегда", "не всегда", "невсегда", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["мы свернули #", "(не)туда", "не туда", "нетуда", "r", "Наречие образовано не от прилагательного с суффиксом -о/-е → раздельно."],
+  ["одет #", "(не)по-зимнему", "не по-зимнему", "непо-зимнему", "r", "Наречие с дефисом → раздельно."],
+  ["говорит #", "(не)по-русски", "не по-русски", "непо-русски", "r", "Наречие с дефисом → раздельно."],
+  ["рассуждал #", "(не)по-детски", "не по-детски", "непо-детски", "r", "Наречие с дефисом → раздельно."],
+  ["поступил #", "(не)по-дружески", "не по-дружески", "непо-дружески", "r", "Наречие с дефисом → раздельно."]
+];
+
+const TYPE = { s: "слитно", r: "раздельно", d: "через дефис" };
+const SOURCE = RAW.map(([ctx, q, correct, wrong, t, expl]) => ({ ctx, q, correct, wrong, t, expl }));
+
+function typeOf(str) {
+  if (str.includes("-")) return "через дефис";
+  return null;
+}
+function labelFor(w, variant) {
+  if (variant === w.correct) return TYPE[w.t];
+  return w.t === 's' ? 'раздельно' : 'слитно';
+}
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+let deck = [], idx = 0, mistakes = [], answered = false, hadMistake = false, isErrorMode = false, choices = [], deckSize = 0;
+
+function sentence(w, mode) {
+  let inner;
+  if (mode === 'blank') inner = `<span class="q">${w.q}</span>`;
+  else inner = `<span class="q ${mode}">${w.correct}</span>`;
+  let s = w.ctx.replace('#', inner);
+  return s.charAt(0) === '<' ? s : s;
+}
+
+function startScreen() {
+  document.getElementById('prog').style.width = '0%';
+  document.getElementById('main').innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">✍️</div>
+      <div class="finish-title" style="color:var(--text)">Выбери тренировку</div>
+      <div class="finish-sub">Всего в наборе ${SOURCE.length} карточек.<br>Выбери, как пишется НЕ с выделенным наречием.</div>
+      <div class="btn-row" style="margin-top:0.4rem">
+        <button class="btn-start primary" onclick="begin(20)">20 случайных</button>
+                <button class="btn-start" onclick="begin(0)">Все ${SOURCE.length}</button>
+      </div>
+    </div>`;
+}
+
+function begin(n) {
+  deckSize = n;
+  const all = shuffle(SOURCE);
+  deck = n ? all.slice(0, n) : all;
+  idx = 0; mistakes = []; isErrorMode = false;
+  render();
+}
+
+function render() {
+  if (idx >= deck.length) { showFinish(); return; }
+  const w = deck[idx];
+  hadMistake = false; answered = false;
+  document.getElementById('prog').style.width = (idx / deck.length * 100) + '%';
+  choices = Math.random() > 0.5 ? [w.correct, w.wrong] : [w.wrong, w.correct];
+  const badge = isErrorMode ? '<div class="mode-badge">Работа над ошибками</div>' : '';
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <div class="top-msg" id="topmsg"></div>
+      ${badge}
+      <div class="counter">${idx + 1} / ${deck.length}</div>
+      <div class="word-display" id="wdisp">${sentence(w, 'blank')}</div>
+      <div class="choices">
+        ${choices.map((ch, i) => `<button class="choice-btn" data-i="${i}" onclick="choose(${i})">${ch}<small>${labelFor(w, ch)}</small></button>`).join('')}
+      </div>
+      <div class="explanation" id="expl"><b>${w.correct}</b> — ${TYPE[w.t]}. ${w.expl}</div>
+    </div>
+    <div class="nav-row" id="nav" style="display:none">
+      <button class="nav-btn" id="nextBtn" onclick="next()">Следующее →</button>
+    </div>
+    <div class="kbd-hint" style="text-align:center">Клавиши: 1 / 2 — выбор, Enter — дальше</div>`;
+}
+
+function choose(i) {
+  if (answered) return;
+  const w = deck[idx];
+  const ch = choices[i];
+  const btns = document.querySelectorAll('.choice-btn');
+  const btn = btns[i];
+  if (ch === w.correct) {
+    answered = true;
+    btns.forEach(b => b.disabled = true);
+    btn.classList.add('right');
+    const topMsg = document.getElementById('topmsg');
+    document.getElementById('wdisp').innerHTML = sentence(w, hadMistake ? 'reveal' : 'correct');
+    document.getElementById('expl').classList.add('show');
+    document.getElementById('nav').style.display = 'flex';
+    document.getElementById('nextBtn').focus();
+    if (hadMistake) {
+      topMsg.textContent = 'Запомни!'; topMsg.className = 'top-msg remind show';
+      if (!mistakes.includes(w)) mistakes.push(w);
+    } else {
+      topMsg.textContent = 'МОЛОДЕЦ!'; topMsg.className = 'top-msg good show';
+    }
+  } else {
+    hadMistake = true;
+    btn.classList.add('wrong-flash'); btn.disabled = true;
+    setTimeout(() => { btn.classList.remove('wrong-flash'); btn.disabled = false; }, 500);
+  }
+}
+
+function next() { idx++; render(); }
+
+document.addEventListener('keydown', e => {
+  if (!deck.length || idx >= deck.length) return;
+  if (!answered && (e.key === '1' || e.key === '2')) choose(Number(e.key) - 1);
+  else if (answered && e.key === 'Enter') { e.preventDefault(); next(); }
+});
+
+function showFinish() {
+  document.getElementById('prog').style.width = '100%';
+  const total = deck.length, correct = total - mistakes.length;
+  const mistakesHTML = mistakes.length
+    ? `<div class="mistakes-title">Сочетания с ошибками</div>` +
+      mistakes.map(w => `<div class="mistake-item">${w.ctx.replace('#', `<span>${w.correct}</span>`)}</div>`).join('')
+    : `<div class="all-correct">Всё написано без ошибок! 🎉</div>`;
+  const errBtn = mistakes.length ? `<button class="btn-errors" onclick="startErrorMode()">Работа над ошибками</button>` : '';
+  document.getElementById('main').innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">${mistakes.length === 0 ? '🏆' : '📝'}</div>
+      <div class="finish-title">${isErrorMode ? 'Работа над ошибками завершена!' : 'Тренировка завершена!'}</div>
+      <div class="finish-sub">Верно с первого раза: ${correct} из ${total}</div>
+      ${mistakesHTML}
+      <div class="btn-row">
+        <button class="btn-restart" onclick="startScreen()">Начать заново</button>
+        <a class="btn-restart" href="index.html" style="text-decoration:none">На главную</a>
+        ${errBtn}
+      </div>
+    </div>`;
+}
+
+function startErrorMode() {
+  const errs = [...mistakes];
+  mistakes = []; deck = shuffle(errs); idx = 0; isErrorMode = true;
+  render();
+}
+
+startScreen();
+</script>
+</body>
+</html>
