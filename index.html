@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Орфография: тренировки по частям речи</title>
+  <title>Русский язык: тренировки</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
@@ -69,6 +69,14 @@
     @media (max-width: 480px) { header h1 { font-size: 1.4rem; } .pos-btn { font-size: 0.9rem; padding: 8px 14px; } }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 
+    .sec-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 620px; margin: 0 auto 1.6rem; }
+    .sec-btn { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; padding: 14px 16px; border-radius: 16px; border: 2px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 3px; transition: border-color .15s, background .15s; }
+    .sec-btn small { font-family: var(--sans); font-size: 0.78rem; font-weight: 600; color: var(--muted); }
+    .sec-btn:hover { border-color: var(--accent); }
+    .sec-btn.active { background: var(--text); border-color: var(--text); color: var(--surface); }
+    .sec-btn.active small { color: var(--border); }
+    .sec-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    @media (max-width: 480px) { .sec-switch { grid-template-columns: 1fr; } }
     .view-switch { display: flex; justify-content: center; margin-bottom: 1.8rem; }
     .view-switch div { display: inline-flex; background: var(--surface); border: 2px solid var(--border); border-radius: 99px; padding: 4px; gap: 4px; }
     .view-btn { font-family: var(--sans); font-size: 0.9rem; font-weight: 700; border: 0; background: transparent; color: var(--muted); padding: 8px 18px; border-radius: 99px; cursor: pointer; }
@@ -96,11 +104,16 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>Орфография по частям речи</h1>
-    <p>Тренировки по частям речи и по сквозным орфограммам</p>
+    <h1>Русский язык: тренировки</h1>
+    <p>Орфография и пунктуация</p>
   </header>
 
-  <div class="view-switch"><div role="tablist">
+  <div class="sec-switch" role="tablist">
+    <button class="sec-btn" id="sb-orfo" onclick="setSection('orfo')">Орфография<small>по частям речи</small></button>
+    <button class="sec-btn" id="sb-punct" onclick="setSection('punct')">Пунктуация<small>в простом и сложном предложении</small></button>
+  </div>
+
+  <div class="view-switch" id="viewSwitch"><div role="tablist">
     <button class="view-btn" id="vb-parts" onclick="setView('parts')">По частям речи</button>
     <button class="view-btn" id="vb-ortho" onclick="setView('ortho')">Орфограмма во всех частях речи</button>
   </div></div>
@@ -199,6 +212,61 @@ const ORTHO = [
     parts: ["sush","pril","glag","prich"] }
 ];
 
+/*
+  ПУНКТУАЦИЯ
+  Сеты добавляются так же, как в орфографии: поле file — тренажёр, algo — схема-алгоритм.
+*/
+const PUNCT = [
+  { id: "prost", name: "Простое предложение", sets: [
+    { title: "Тире между подлежащим и сказуемым",
+      desc: "Существительное + существительное, числительное, инфинитив, «это», «вот»; когда тире не ставится.",
+      ex: "Москва — столица России. Учиться — всегда пригодится." },
+    { title: "Однородные члены предложения",
+      desc: "Запятая при бессоюзной связи, с повторяющимися, противительными и двойными союзами; однородные и неоднородные определения.",
+      ex: "и смеялись, и плакали; не только…, но и…" },
+    { title: "Обобщающие слова при однородных членах",
+      desc: "Двоеточие перед однородными членами, тире после них, двоеточие и тире внутри предложения.",
+      ex: "Везде: в лесу, в поле — пахло весной." },
+    { title: "Обособленные определения и приложения",
+      desc: "Причастный оборот до и после определяемого слова, при местоимении, с обстоятельственным значением; приложения.",
+      ex: "Река, покрытая льдом, … Он, усталый, …" },
+    { title: "Обособленные обстоятельства",
+      desc: "Деепричастные обороты и одиночные деепричастия, фразеологизмы, обороты с предлогами «несмотря на», «благодаря».",
+      ex: "Прочитав письмо, он … работать спустя рукава" },
+    { title: "Уточняющие члены предложения",
+      desc: "Уточнение места и времени, пояснительные слова «то есть», «а именно», присоединительные конструкции.",
+      ex: "Внизу, под горой, … , то есть …" },
+    { title: "Вводные слова и обращения",
+      desc: "Вводные слова и предложения, вставные конструкции; слова, которые не являются вводными; обращения.",
+      ex: "К счастью, … Однако он — Он однако пришёл" },
+    { title: "Сравнительные обороты",
+      desc: "Когда обособляются обороты с «как», «словно», «будто», а когда нет: фразеологизмы, часть сказуемого, «в качестве».",
+      ex: "Глаза, как звёзды, … белый как снег" }
+  ]},
+  { id: "slozh", name: "Сложное предложение", sets: [
+    { title: "Сложносочинённое предложение",
+      desc: "Запятая перед союзами и, а, но, или; когда запятая не нужна: общий второстепенный член, общее придаточное.",
+      ex: "Светало, и туман рассеялся. Утром туман рассеялся и выглянуло солнце." },
+    { title: "Сложноподчинённое предложение",
+      desc: "Выделение придаточного запятыми; союзные слова; придаточное внутри главного.",
+      ex: "Дом, где я родился, … Я знаю, что он придёт." },
+    { title: "СПП с несколькими придаточными",
+      desc: "Однородное, последовательное и параллельное подчинение; запятая между однородными придаточными с союзом «и».",
+      ex: "Я знаю, что он придёт и что всё будет хорошо." },
+    { title: "Запятая на стыке союзов",
+      desc: "Когда ставится запятая между двумя союзами, а когда нет (если дальше идёт «то», «так», «но»).",
+      ex: "Он сказал, что, если пойдёт дождь, … — что если …, то …" },
+    { title: "Бессоюзное сложное предложение",
+      desc: "Запятая, точка с запятой, двоеточие и тире: перечисление, причина, пояснение, противопоставление, следствие.",
+      ex: "Я знаю: он придёт. Лес рубят — щепки летят." },
+    { title: "Сложные предложения с разными видами связи",
+      desc: "Сочинение, подчинение и бессоюзная связь в одном предложении.",
+      ex: "Когда стемнело, мы вернулись, и дома нас ждал ужин." }
+  ]}
+];
+
+let section = lsGet("ru-section") || "orfo";
+let pgroup = lsGet("punct-group") || "prost";
 let view = lsGet("orfo-view") || "parts";
 let current = localStorageGet() || "narech";
 
@@ -221,7 +289,10 @@ function renderNav() {
 }
 
 function renderContent() {
-  const p = PARTS.find(x => x.id === current) || PARTS[0];
+  renderGroup(PARTS.find(x => x.id === current) || PARTS[0]);
+}
+
+function renderGroup(p) {
   const ready = readyCount(p);
   let body;
   if (!p.sets.length) {
@@ -250,7 +321,20 @@ function renderContent() {
     ${body}`;
 }
 
-function select(id) { current = id; localStorageSet(id); view = "parts"; lsSet("orfo-view", view); renderAll(); }
+function setSection(sct) { section = sct; lsSet("ru-section", sct); renderAll(); }
+function selectPunct(id) { pgroup = id; lsSet("punct-group", id); renderAll(); }
+
+function renderPunct() {
+  document.getElementById("pos").innerHTML = PUNCT.map(g => {
+    const n = readyCount(g);
+    const cls = ["pos-btn", g.id === pgroup ? "active" : "", n ? "" : "empty"].join(" ");
+    return `<button class="${cls}" onclick="selectPunct('${g.id}')" aria-pressed="${g.id === pgroup}">
+      ${g.name}${n ? `<span class="n">${n}</span>` : ""}</button>`;
+  }).join("");
+  renderGroup(PUNCT.find(g => g.id === pgroup) || PUNCT[0]);
+}
+
+function select(id) { section = "orfo"; lsSet("ru-section", "orfo"); current = id; localStorageSet(id); view = "parts"; lsSet("orfo-view", view); renderAll(); }
 
 function setView(v) { view = v; lsSet("orfo-view", v); renderAll(); }
 
@@ -283,6 +367,16 @@ function renderOrtho() {
 }
 
 function renderAll() {
+  document.getElementById("sb-orfo").classList.toggle("active", section === "orfo");
+  document.getElementById("sb-punct").classList.toggle("active", section === "punct");
+  const vs = document.getElementById("viewSwitch");
+  if (section === "punct") {
+    vs.style.display = "none";
+    document.getElementById("pos").style.display = "";
+    renderPunct();
+    return;
+  }
+  vs.style.display = "";
   document.getElementById("vb-parts").classList.toggle("active", view === "parts");
   document.getElementById("vb-ortho").classList.toggle("active", view === "ortho");
   const nav = document.getElementById("pos");
