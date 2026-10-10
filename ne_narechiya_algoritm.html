@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>НЕ с наречиями — схема-алгоритм</title>
+<style>
+  :root {
+    --paper: #ffffff;
+    --desk: #eeedf6;
+    --ink: #2d2a7a;
+    --ink-soft: #6562a3;
+    --rule: #c9c7e6;
+    --violet: #cfa3f3;
+    --violet-wash: #f3e9fc;
+    --lime: #dcf58f;
+    --lime-wash: #f5fbdc;
+    --err: #a3231a;
+    --err-wash: #fdecea;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: Georgia, "Times New Roman", "PT Serif", serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.38;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  i { font-family: var(--serif); font-style: italic; color: var(--ink); }
+  s { text-decoration-thickness: 1.5px; }
+
+  /* ---------- лист А4, альбомная ориентация: 297 × 210 мм ---------- */
+  .sheet {
+    width: 1122px;
+    height: 793px;
+    padding: 24px 30px 22px;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    transform-origin: top left;
+  }
+
+  /* ---------- шапка ---------- */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .modes {
+    flex: none;
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--desk);
+  }
+  .modes button {
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .modes button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+  .head-right { flex: none; display: flex; align-items: center; gap: 10px; }
+  .home-link { padding: 6px 14px; border-radius: 999px; border: 2px solid var(--rule); color: var(--ink-soft); font-weight: 600; font-size: 13.5px; text-decoration: none; }
+  .home-link:hover { border-color: var(--ink); color: var(--ink); }
+  body.stacked .head-right { margin-top: 12px; flex-wrap: wrap; }
+  body.stacked .head-right .modes { margin-top: 0; }
+  @media print { .home-link { display: none !important; } }
+
+  /* ---------- полоса: как читать схему / пример / ответ ---------- */
+  .band {
+    flex: none;
+    height: 78px;
+    margin-top: 10px;
+    padding: 6px 18px;
+    display: flex;
+    align-items: center;
+    border-radius: 14px;
+    background: var(--ink);
+    color: #fff;
+  }
+  .band-static { margin: 0; font-size: 16.5px; }
+  .band-static b { font-weight: 700; }
+  .band-live { flex: 1; min-width: 0; display: flex; align-items: center; gap: 20px; }
+  body[data-mode="all"] .band-live { display: none; }
+  body:not([data-mode="all"]) .band-static { display: none; }
+  .band-text { flex: 1; min-width: 0; }
+  .band-main { margin: 0; font-family: var(--serif); font-size: 21px; line-height: 1.3; }
+  .band-main.plain { font-family: var(--sans); font-size: 16.5px; }
+  .band-note { margin: 3px 0 0; font-size: 13.5px; color: #e4e2fa; }
+  .band-note b { color: #fff; }
+  .band-note.bad { color: #ffd9d4; }
+  .band-side { flex: none; text-align: right; }
+  .band-meta { margin: 0 0 6px; font-size: 12.5px; color: #c9c7f0; }
+  .band-btn {
+    padding: 7px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .band-btn:focus-visible { outline-color: var(--lime); }
+  .tw {
+    font-weight: 700;
+    padding: 0 3px 1px;
+    border-radius: 6px;
+    border-bottom: 2px dashed #c9c7f0;
+  }
+  .tw.together, .tw.apart { border-bottom: 0; color: var(--ink); }
+  .tw.together { background: var(--violet); }
+  .tw.apart { background: var(--lime); }
+
+  /* ---------- схема: вопросы слева направо, ответы внизу ---------- */
+  .ladder {
+    flex: 1;
+    min-height: 0;
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1fr 32px 1fr 32px 1.25fr 32px 1.6fr 32px 0.95fr;
+  }
+  .stage { min-width: 0; display: flex; flex-direction: column; }
+
+  .q {
+    position: relative;
+    flex: none;
+    margin-top: 14px;
+    padding: 21px 12px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: var(--paper);
+  }
+  .num {
+    position: absolute;
+    top: -15px;
+    left: 11px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 28px;
+    text-align: center;
+  }
+  .q h2 { margin: 0; font-size: 16px; line-height: 1.22; font-weight: 700; }
+  .q p { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .q p b { color: var(--ink); }
+
+  .signals { margin: 8px 0 0; padding: 0; list-style: none; font-size: 13px; }
+  .signals li { padding: 5px 0; border-top: 1px solid var(--rule); }
+  .signals li:last-child { padding-bottom: 0; }
+  .signals b { display: block; }
+  .signals span { color: var(--ink-soft); }
+
+  /* кнопки ответа — только у текущего вопроса */
+  .ask { display: none; gap: 8px; margin-top: 10px; }
+  .q.cur .ask { display: flex; }
+  .ask button {
+    flex: 1;
+    max-width: 78px;
+    padding: 6px 0;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .ask button:hover:not(:disabled) { background: var(--ink); color: #fff; }
+  .ask button:disabled {
+    border-color: var(--err);
+    color: var(--err);
+    background: var(--err-wash);
+    text-decoration: line-through;
+    cursor: default;
+  }
+
+  /* стрелка вниз — к ответу */
+  .exit {
+    position: relative;
+    flex: 1;
+    min-height: 32px;
+    margin: 0 0 4px 25px;
+    padding: 5px 0 0 9px;
+    border-left: 2px solid var(--ink);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .exit::after {
+    content: "";
+    position: absolute;
+    left: -6px; bottom: -1px;
+    border-top: 9px solid var(--ink);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+
+  /* исключения на пути к ответу (шаг 3) */
+  .except {
+    margin: 6px 0 0;
+    padding: 6px 9px 7px;
+    border-radius: 10px;
+    background: var(--violet-wash);
+    font-weight: 400;
+    font-size: 12.5px;
+    line-height: 1.35;
+  }
+  .except b { font-weight: 700; }
+  .except i { font-size: 13px; }
+  .verdict .note.dup { display: none; }
+
+  /* стрелка вправо — к следующему вопросу */
+  .next {
+    position: relative;
+    align-self: start;
+    margin-top: 34px;
+    padding-bottom: 6px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .next::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 8px; bottom: 0;
+    height: 2px;
+    background: var(--ink);
+  }
+  .next::after {
+    content: "";
+    position: absolute;
+    right: 1px; bottom: -4px;
+    border-left: 9px solid var(--ink);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+
+  /* ответы */
+  .verdict {
+    flex: 0 0 140px;
+    padding: 10px 12px 10px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    font-size: 13.5px;
+  }
+  .verdict.together { background: var(--violet-wash); }
+  .verdict.apart { background: var(--lime-wash); }
+  .verdict.hit { border-color: var(--ink); }
+  .mark {
+    display: inline-block;
+    padding: 0 12px 2px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    border-radius: 13px 8px 15px 7px / 9px 15px 8px 13px;
+    transform: rotate(-1deg);
+  }
+  .together .mark { background: var(--violet); }
+  .apart .mark { background: var(--lime); }
+  .verdict p { margin: 7px 0 0; }
+  .verdict i { font-size: 14px; }
+  .verdict .note {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px dashed var(--ink-soft);
+    color: var(--ink-soft);
+  }
+  .verdict .note b { color: var(--ink); }
+  .stage.last .verdict { flex: 1; margin-top: 14px; }
+
+  /* слово-исключение на шаге 3: ответ в списке «Но слитно» */
+  .stage.exc .mark { opacity: .35; text-decoration: line-through; }
+  .stage.exc .verdict > p:not(.note) { opacity: .35; }
+  .stage.exc .except { background: var(--violet); box-shadow: 0 0 0 2px var(--ink); opacity: 1; }
+  .stage.exc .note {
+    margin: 8px -6px -4px;
+    padding: 6px;
+    border: 0;
+    border-radius: 9px;
+    background: var(--violet);
+    color: var(--ink);
+  }
+
+  /* ---------- ловушки ---------- */
+  .traps {
+    flex: none;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 2px solid var(--ink);
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr;
+    column-gap: 26px;
+  }
+  .traps h2 { margin: 0; font-family: var(--serif); font-size: 19px; line-height: 1.15; }
+  .trap h3 { margin: 0 0 2px; font-size: 13.5px; }
+  .trap p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .trap i { font-size: 13.5px; }
+  .hl-v { background: var(--violet-wash); padding: 0 3px; border-radius: 4px; }
+  .hl-l { background: var(--lime-wash); padding: 0 3px; border-radius: 4px; }
+
+  /* ---------- экран: приглушение непройденных частей ---------- */
+  @media screen {
+    .q, .exit, .next, .verdict { transition: opacity .2s; }
+    .dim { opacity: .3; }
+    .exit.dim { opacity: 1; border-left-color: rgba(45, 42, 122, .3); color: rgba(45, 42, 122, .3); }
+    .exit.dim::after { opacity: .3; }
+    .exit.dim .except { opacity: .3; }
+    body.stacked .exit.dim { opacity: .3; color: var(--ink); }
+    body.stacked .exit.dim::after { opacity: 1; }
+    .q.cur { box-shadow: 0 0 0 5px var(--violet-wash); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .q, .exit, .next, .verdict { transition: none; }
+  }
+
+  /* ---------- узкий экран (телефон): та же схема столбиком ---------- */
+  @media screen {
+    body.stacked { display: block; background: var(--paper); font-size: 15px; }
+    body.stacked .sheet { width: auto; height: auto; display: block; padding: 20px 16px 28px; transform: none; }
+    body.stacked header { display: block; }
+    body.stacked h1 { font-size: 27px; }
+    body.stacked .modes { margin-top: 12px; }
+    body.stacked .band {
+      position: sticky; top: 8px; z-index: 5;
+      height: auto; min-height: 60px; padding: 12px 14px;
+    }
+    body.stacked .band-static, body.stacked .band-main.plain { font-size: 15.5px; }
+    body.stacked .band-main { font-size: 19px; }
+    body.stacked .band-live { flex-direction: column; align-items: stretch; gap: 10px; }
+    body.stacked .band-side { text-align: left; }
+    body.stacked .band-meta { display: inline; margin-right: 10px; }
+    body.stacked .ladder { display: block; margin-top: 22px; }
+    body.stacked .stage {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      row-gap: 10px;
+      align-items: center;
+      scroll-margin-top: 170px;
+    }
+    body.stacked .q { grid-column: 1 / -1; padding: 22px 14px 14px; }
+    body.stacked .q h2 { font-size: 18px; }
+    body.stacked .q p, body.stacked .signals, body.stacked .verdict, body.stacked .trap p { font-size: 14.5px; }
+    body.stacked .verdict i, body.stacked .trap i { font-size: 15px; }
+    body.stacked .ask button { max-width: 96px; padding: 9px 0; font-size: 16px; }
+    body.stacked .verdict { flex: none; }
+    body.stacked .except { display: none; }
+    body.stacked .verdict .note.dup { display: block; }
+    body.stacked .stage.last { display: block; }
+    body.stacked .stage.last .verdict { margin-top: 0; }
+    /* к ответу — вправо */
+    body.stacked .exit {
+      min-height: 0;
+      margin: 0 0 0 8px;
+      padding: 0 0 6px;
+      border-left: 0;
+      text-align: center;
+      font-size: 14.5px;
+    }
+    body.stacked .exit::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 8px; bottom: 0;
+      height: 2px;
+      background: var(--ink);
+    }
+    body.stacked .exit::after {
+      left: auto; right: 1px; bottom: -4px;
+      border-left: 9px solid var(--ink);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-right: 0;
+    }
+    /* к следующему вопросу — вниз */
+    body.stacked .next {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      margin: 0 0 14px 26px;
+      padding: 0 0 0 10px;
+      border-left: 2px solid var(--ink);
+      font-size: 14.5px;
+    }
+    body.stacked .next::before { content: none; }
+    body.stacked .next::after {
+      left: -6px; right: auto; bottom: -1px;
+      border-top: 9px solid var(--ink);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 0;
+    }
+    body.stacked .traps { display: block; margin-top: 30px; padding-top: 18px; }
+    body.stacked .traps h2 { margin-bottom: 12px; font-size: 22px; }
+    body.stacked .trap { margin-bottom: 14px; }
+    body.stacked .trap h3 { font-size: 15.5px; }
+  }
+
+  /* ---------- печать: ровно один лист А4, альбомная ориентация ---------- */
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { display: block; min-height: 0; background: #fff; }
+    .wrap { width: auto !important; height: auto !important; }
+    .sheet { transform: none !important; }
+    .modes, .ask, .band-live { display: none !important; }
+    .band-static { display: block !important; }
+    .band { height: 46px; background: var(--desk); color: var(--ink); }
+    .stage.exc .mark, .stage.exc .verdict > p:not(.note) { opacity: 1; text-decoration: none; }
+    .stage.exc .except { background: var(--violet-wash); box-shadow: none; }
+  }
+</style>
+</head>
+<body data-mode="walk">
+<div class="wrap" id="wrap">
+<main class="sheet" id="sheet">
+
+  <header>
+    <h1>НЕ с наречиями: слитно или раздельно?</h1>
+    <div class="head-right">
+    <a class="home-link" href="index.html">← Главная</a>
+    <div class="modes" role="group" aria-label="Режим">
+      <button type="button" data-mode="walk" aria-pressed="true">По шагам</button>
+      <button type="button" data-mode="train" aria-pressed="false">Тренировка</button>
+      <button type="button" data-mode="all" aria-pressed="false">Вся схема</button>
+    </div>
+    </div>
+  </header>
+
+  <div class="band">
+    <p class="band-static">Иди по вопросам слева направо. <b>Стрелка вправо — следующий вопрос, стрелка вниз — готовый ответ.</b></p>
+    <div class="band-live" aria-live="polite">
+      <div class="band-text">
+        <p class="band-main" id="bMain"></p>
+        <p class="band-note" id="bNote"></p>
+      </div>
+      <div class="band-side">
+        <p class="band-meta" id="bMeta"></p>
+        <button type="button" class="band-btn" id="bBtn"></button>
+      </div>
+    </div>
+  </div>
+
+  <section class="ladder" id="ladder" aria-label="Алгоритм">
+
+    <div class="stage" data-step="1">
+      <div class="q">
+        <span class="num">1</span>
+        <h2>Без НЕ слово употребляется?</h2>
+        <p>Убери НЕ и послушай.<br><b>Да:</b> <i>громко, всегда.</i><br><b>Нет:</b> <i><s>лепо</s>, <s>уклюже</s>.</i></p>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">нет</div>
+      <div class="verdict together">
+        <span class="mark">слитно</span>
+        <p><i>нелепо, неуклюже, небрежно, нечаянно, невзначай</i></p>
+      </div>
+    </div>
+    <div class="next" data-step="1">да</div>
+
+    <div class="stage" data-step="2">
+      <div class="q">
+        <span class="num">2</span>
+        <h2>Это отрицательное наречие?</h2>
+        <p>Ударное НЕ + вопросительное слово.<br><b>Да:</b> <i>не́где, не́когда, не́зачем.</i></p>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">да</div>
+      <div class="verdict together">
+        <span class="mark">слитно</span>
+        <p><i>негде, некуда, неоткуда, некогда, незачем</i></p>
+      </div>
+    </div>
+    <div class="next" data-step="2">нет</div>
+
+    <div class="stage" data-step="3">
+      <div class="q">
+        <span class="num">3</span>
+        <h2>Наречие образовано от прилагательного?</h2>
+        <p><b>Да</b> — это наречия на -о / -е: <i>быстрый → быстро, искренний → искренне.</i><br><b>Нет</b> — все остальные: <i>здесь, всегда, вполне, вместе, по-дружески.</i></p>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">нет
+        <p class="except"><b>Но слитно:</b> <i>невдалеке, недаром, неспроста, нехотя, невпопад</i></p>
+      </div>
+      <div class="verdict apart">
+        <span class="mark">раздельно</span>
+        <p><i>не здесь, не всегда, не сразу, не очень, не совсем, не по-русски</i></p>
+        <p class="note dup"><b>Но слитно:</b> <i>невдалеке, недаром, неспроста, нехотя, невпопад</i></p>
+      </div>
+    </div>
+    <div class="next" data-step="3">да</div>
+
+    <div class="stage" data-step="4">
+      <div class="q">
+        <span class="num">4</span>
+        <h2>Есть сигнал раздельного написания?</h2>
+        <ul class="signals">
+          <li><b>Союз А</b>
+            <span>противопоставление: <i>не далеко, а близко</i></span></li>
+          <li><b>Усиление отрицания</b>
+            <span>далеко не, вовсе не, отнюдь не, ничуть не, нисколько не: <i>вовсе не трудно</i></span></li>
+          <li><b>Сравнительная степень</b>
+            <span><i>не лучше, не хуже, не раньше</i></span></li>
+        </ul>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">да</div>
+      <div class="verdict apart">
+        <span class="mark">раздельно</span>
+        <p>Достаточно одного сигнала из трёх.</p>
+      </div>
+    </div>
+    <div class="next" data-step="4">нет</div>
+
+    <div class="stage last" data-step="5">
+      <div class="verdict together">
+        <span class="mark">слитно</span>
+        <p><i>недалеко, невысоко, неплохо, негромко</i></p>
+        <p class="note"><b>Проверка:</b> есть синоним без НЕ — <i>недалеко = близко, неплохо = хорошо.</i></p>
+        <p class="note">Слова <i>очень, весьма, крайне, почти</i> слитному написанию не мешают: <i>очень неплохо.</i></p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="traps" aria-label="Ловушки">
+    <h2>Три<br>ловушки</h2>
+    <div class="trap">
+      <h3>Союз НО — это ещё не сигнал</h3>
+      <p>Противопоставление — только с союзом А.</p>
+      <p><i><span class="hl-v">негромко</span>, но внятно</i> &nbsp; <i><span class="hl-l">не громко</span>, а тихо</i></p>
+    </div>
+    <div class="trap">
+      <h3>Два значения слова «совсем»</h3>
+      <p>«Очень» — слитно, «вовсе не» — раздельно.</p>
+      <p><i>совсем <span class="hl-v">невесело</span></i> (грустно) &nbsp; <i>совсем <span class="hl-l">не весело</span></i></p>
+    </div>
+    <div class="trap">
+      <h3>Недаром и не даром</h3>
+      <p>Написание зависит от смысла.</p>
+      <p><i><span class="hl-v">недаром</span> старался</i> (не зря) &nbsp; <i>достался <span class="hl-l">не даром</span></i></p>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- примеры для тренировки ----------
+     b — текст до слова, w — слово без НЕ, a — текст после слова,
+     t — шаг, на котором получается ответ (5 — дошли до конца),
+     adj — прилагательное, от которого образовано наречие,
+     sig — какой сигнал есть (шаг 4), nosig — почему сигнала нет,
+     exc — слово-исключение из списка «Но слитно»,
+     s3 / from — свои подсказки к шагу 3, why — своё объяснение ответа. */
+  var ITEMS = [
+    { b: "Она ", w: "годующе", a: " посмотрела на брата.", t: 1 },
+    { b: "Тетрадь была исписана ", w: "ряшливо", a: ".", t: 1 },
+    { b: "Мне ", w: "куда", a: " спешить.", t: 2 },
+    { b: "Спорить об этом ", w: "зачем", a: ".", t: 2 },
+    { b: "Он приходит ", w: "всегда", a: " вовремя.", t: 3 },
+    { b: "Он поступил ", w: "по-товарищески", a: ".", t: 3,
+      s3: "«По-товарищески» — наречие с дефисом, оно не на -о / -е. Здесь ответ «нет».",
+      why: "это наречие с дефисом, а не на -о / -е." },
+    { b: "Я ", w: "совсем", a: " понял вопрос.", t: 3 },
+    { b: "Дом стоял ", w: "вдалеке", a: " от реки.", t: 3, exc: true },
+    { b: "Учитель говорил ", w: "строго", a: ", а мягко.", t: 4, adj: "строгий",
+      sig: "Есть противопоставление с союзом А: не строго, а мягко." },
+    { b: "Он спел далеко ", w: "идеально", a: ".", t: 4, adj: "идеальный",
+      sig: "«Далеко не» усиливает отрицание." },
+    { b: "Сегодня он бежал ", w: "быстрее", a: ", чем вчера.", t: 4,
+      from: "«Быстрее» — форма наречия «быстро», а оно образовано от прилагательного «быстрый».",
+      sig: "«Быстрее» — сравнительная степень." },
+    { b: "Он ответил ", w: "громко", a: ", но внятно.", t: 5, adj: "громкий",
+      nosig: "Союз НО — не сигнал. Противопоставление бывает только с союзом А." },
+    { b: "Ребята справились с заданием очень ", w: "плохо", a: ".", t: 5, adj: "плохой",
+      nosig: "«Очень» указывает на степень, а не усиливает отрицание. Это не сигнал." },
+    { b: "Гость вёл себя ", w: "вежливо", a: " и всех перебивал.", t: 5, adj: "вежливый" },
+    { b: "Поезд шёл ", w: "торопливо", a: ".", t: 5, adj: "торопливый" }
+  ];
+
+  /* какой ответ на шаге ведёт вниз, к готовому ответу */
+  var EXIT = { 1: "no", 2: "yes", 3: "no", 4: "yes" };
+
+  var WALK_RESULT = {
+    1: ["together", "Слитно", "Без НЕ слово не употребляется."],
+    2: ["together", "Слитно", "Это отрицательное наречие."],
+    3: ["apart", "Раздельно", "Наречие образовано не от прилагательного. Проверь только, нет ли слова среди исключений «Но слитно»."],
+    4: ["apart", "Раздельно", "Есть сигнал раздельного написания."],
+    5: ["together", "Слитно", "Наречие от прилагательного, сигналов раздельного написания нет."]
+  };
+
+  var W = 1122, H = 793;
+  var body = document.body;
+  var wrap = document.getElementById("wrap");
+  var sheet = document.getElementById("sheet");
+  var stages = Array.prototype.slice.call(document.querySelectorAll(".stage"));
+  var nexts = Array.prototype.slice.call(document.querySelectorAll(".next"));
+  var bMain = document.getElementById("bMain");
+  var bNote = document.getElementById("bNote");
+  var bMeta = document.getElementById("bMeta");
+  var bBtn = document.getElementById("bBtn");
+  var modeBtns = Array.prototype.slice.call(document.querySelectorAll(".modes button"));
+
+  var st = { mode: "walk", step: 1, done: false, verdict: 0, order: [], pos: 0, errors: 0, fb: "", log: [], summary: false };
+
+  /* ---------- лист целиком в окне, без прокрутки ---------- */
+  function fit() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    if (vw < 900) {
+      body.classList.add("stacked");
+      sheet.style.transform = "";
+      wrap.style.width = wrap.style.height = "";
+      return;
+    }
+    body.classList.remove("stacked");
+    var s = Math.max(0.7, Math.min(vw / W, vh / H));
+    sheet.style.transform = "scale(" + s + ")";
+    wrap.style.width = Math.floor(W * s) + "px";
+    wrap.style.height = Math.floor(H * s) + "px";
+  }
+  window.addEventListener("resize", fit);
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function item() { return ITEMS[st.order[st.pos]]; }
+  function isTogether(it) { return it.exc || it.t === 1 || it.t === 2 || it.t === 5; }
+  function form(it) { return (isTogether(it) ? "не" : "не ") + it.w; }
+
+  /* почему ответ ученика на этом шаге неверен.
+     toExit = ученик решил, что ответ уже готов (пошёл вниз), а надо идти дальше */
+  function hint(it, step, toExit) {
+    var Wd = "«" + cap(it.w) + "»";
+    if (step === 1) {
+      return toExit
+        ? "Слово «" + it.w + "» существует, значит, без НЕ употребляется."
+        : "Слова «" + it.w + "» нет: без НЕ оно не употребляется.";
+    }
+    if (step === 2) {
+      return toExit
+        ? "Отрицательное наречие — это ударное НЕ + вопросительное слово (где, куда, когда, зачем). Здесь такого нет."
+        : "«Не" + it.w + "» — это ударное НЕ + вопросительное слово «" + it.w + "».";
+    }
+    if (step === 3) {
+      return toExit
+        ? (it.from || Wd + " образовано от прилагательного «" + it.adj + "».")
+        : (it.s3 || Wd + " не образовано от прилагательного суффиксом -о / -е.");
+    }
+    return toExit
+      ? (it.nosig || "В предложении нет ни союза А, ни усиления отрицания, ни сравнительной степени.")
+      : it.sig;
+  }
+
+  function reason(it) {
+    if (it.why) return it.why;
+    if (it.exc) return "это исключение из списка «Но слитно».";
+    if (it.t === 1) return "без НЕ слово не употребляется.";
+    if (it.t === 2) return "это отрицательное наречие.";
+    if (it.t === 3) return "наречие образовано не от прилагательного.";
+    if (it.t === 4) return it.sig.charAt(0).toLowerCase() + it.sig.slice(1);
+    return "наречие от прилагательного, сигналов раздельного написания нет.";
+  }
+
+  /* ---------- отрисовка ---------- */
+  function statusOf(n) {
+    if (st.mode === "all" || st.summary) return "plain";
+    if (st.done) return n < st.verdict ? "passed" : (n === st.verdict ? "exit" : "future");
+    return n < st.step ? "passed" : (n === st.step ? "current" : "future");
+  }
+
+  function paintStages() {
+    stages.forEach(function (el) {
+      var n = +el.getAttribute("data-step");
+      var s = statusOf(n);
+      var q = el.querySelector(".q"), ex = el.querySelector(".exit"), v = el.querySelector(".verdict");
+      if (q) {
+        q.classList.toggle("dim", s === "future");
+        q.classList.toggle("cur", s === "current");
+        if (s !== "current") {
+          Array.prototype.forEach.call(q.querySelectorAll(".ask button"), function (b) { b.disabled = false; });
+        }
+      }
+      if (ex) ex.classList.toggle("dim", s === "future" || s === "current" || s === "passed");
+      v.classList.toggle("dim", s === "future" || s === "current" || s === "passed");
+      v.classList.toggle("hit", s === "exit");
+      el.classList.toggle("exc", s === "exit" && st.mode === "train" && !!item().exc);
+    });
+    nexts.forEach(function (el) {
+      var s = statusOf(+el.getAttribute("data-step"));
+      el.classList.toggle("dim", s === "future" || s === "current" || s === "exit");
+    });
+  }
+
+  function setBand(mainHtml, plain, noteHtml, bad, meta, btn) {
+    bMain.innerHTML = mainHtml;
+    bMain.classList.toggle("plain", !!plain);
+    bNote.innerHTML = noteHtml || "";
+    bNote.hidden = !noteHtml;
+    bNote.classList.toggle("bad", !!bad);
+    bMeta.textContent = meta || "";
+    bMeta.hidden = !meta;
+    bBtn.textContent = btn || "";
+    bBtn.hidden = !btn;
+  }
+
+  function paintBand() {
+    if (st.mode === "all") return;
+
+    if (st.mode === "walk") {
+      if (!st.done) {
+        setBand("Задумай своё наречие с НЕ и отвечай на вопросы: «Да» или «Нет».", true, "", false, "", st.step > 1 ? "Начать заново" : "");
+      } else {
+        var r = WALK_RESULT[st.verdict];
+        setBand('<span class="tw ' + r[0] + '">' + r[1] + "</span>", false, esc(r[2]), false, "", "Начать заново");
+      }
+      return;
+    }
+
+    if (st.summary) {
+      var clean = st.log.filter(function (x) { return x.errors === 0; }).length;
+      var bad = st.log.filter(function (x) { return x.errors > 0; });
+      var note = bad.length
+        ? "<b>Стоит повторить:</b> " + bad.map(function (x) { return esc(form(x.item)); }).join(", ") + "."
+        : "Ни одной ошибки — алгоритм освоен.";
+      setBand("Без ошибок: " + clean + " из " + st.log.length, true, note, false, "Итог", "Пройти ещё раз");
+      return;
+    }
+
+    var it = item();
+    var meta = "Пример " + (st.pos + 1) + " из " + st.order.length;
+    if (!st.done) {
+      setBand(esc(it.b) + '<span class="tw">(не)' + esc(it.w) + "</span>" + esc(it.a), false,
+        st.fb ? "<b>Не так.</b> " + esc(st.fb) : "", true, meta, "");
+    } else {
+      var tg = isTogether(it);
+      var tries = st.errors === 0 ? "Верно с первой попытки." : "Ошибок по пути: " + st.errors + ".";
+      setBand(esc(it.b) + '<span class="tw ' + (tg ? "together" : "apart") + '">' + esc(form(it)) + "</span>" + esc(it.a), false,
+        "<b>" + (tg ? "Слитно" : "Раздельно") + ":</b> " + esc(reason(it)) + " " + tries, false, meta,
+        st.pos + 1 < st.order.length ? "Следующий пример" : "Показать итог");
+    }
+  }
+
+  function paint(move) {
+    paintStages();
+    paintBand();
+    if (!move || st.mode === "all" || st.summary) return;
+    if (st.done) {
+      if (!bBtn.hidden) bBtn.focus({ preventScroll: true });
+      return;
+    }
+    var cur = stages[st.step - 1];
+    if (!cur) return;
+    var first = cur.querySelector(".ask button");
+    if (first) first.focus({ preventScroll: true });
+    if (body.classList.contains("stacked")) {
+      var smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      cur.scrollIntoView({ block: "nearest", behavior: smooth ? "smooth" : "auto" });
+    }
+  }
+
+  /* ---------- ход ---------- */
+  function resetPath() { st.step = 1; st.done = false; st.verdict = 0; st.errors = 0; st.fb = ""; }
+
+  function finish(v) {
+    st.done = true;
+    st.verdict = v;
+    st.fb = "";
+    if (st.mode === "train") st.log.push({ item: item(), errors: st.errors });
+    paint(true);
+  }
+
+  function answer(stageEl, a) {
+    var n = +stageEl.getAttribute("data-step");
+    if (st.done || n !== st.step) return;
+    var toExit = a === EXIT[n];
+
+    if (st.mode === "train") {
+      var shouldExit = n === item().t;
+      if (toExit !== shouldExit) {
+        st.errors++;
+        st.fb = hint(item(), n, toExit);
+        stageEl.querySelector('.ask button[data-a="' + a + '"]').disabled = true;
+        paintBand();
+        stageEl.querySelector('.ask button:not(:disabled)').focus({ preventScroll: true });
+        return;
+      }
+    }
+    st.fb = "";
+    if (toExit) { finish(n); return; }
+    st.step = n + 1;
+    if (st.step === 5) { finish(5); return; }
+    paint(true);
+  }
+
+  function startTraining() {
+    st.order = shuffle(ITEMS.map(function (_, i) { return i; }));
+    st.pos = 0;
+    st.log = [];
+    st.summary = false;
+    resetPath();
+  }
+
+  function setMode(m) {
+    st.mode = m;
+    st.summary = false;
+    body.setAttribute("data-mode", m);
+    modeBtns.forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-mode") === m ? "true" : "false");
+    });
+    if (m === "train") startTraining(); else resetPath();
+    paint(false);
+  }
+
+  /* ---------- события ---------- */
+  document.getElementById("ladder").addEventListener("click", function (e) {
+    var btn = e.target.closest(".ask button");
+    if (!btn || btn.disabled) return;
+    answer(btn.closest(".stage"), btn.getAttribute("data-a"));
+  });
+
+  bBtn.addEventListener("click", function () {
+    if (st.mode === "walk") {
+      resetPath();
+    } else if (st.summary) {
+      startTraining();
+    } else if (st.pos + 1 < st.order.length) {
+      st.pos++;
+      resetPath();
+    } else {
+      st.summary = true;
+      paint(false);
+      bBtn.focus({ preventScroll: true });
+      return;
+    }
+    paint(true);
+  });
+
+  modeBtns.forEach(function (b) {
+    b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); });
+  });
+
+  fit();
+  setMode("walk");
+})();
+</script>
+</body>
+</html>

@@ -48,7 +48,7 @@
       padding: 1.3rem 1.3rem 1.1rem; box-shadow: var(--shadow);
       transition: border-color 0.15s, transform 0.15s;
     }
-    a.set:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .set:not(.soon):hover { border-color: var(--accent); }
     .set h3 { font-family: var(--serif); font-size: 1.05rem; line-height: 1.4; }
     .set p { font-size: 0.87rem; color: var(--muted); line-height: 1.6; flex: 1; }
     .set .ex { font-family: var(--serif); font-style: italic; font-size: 0.85rem; color: var(--hint); }
@@ -56,6 +56,12 @@
     .tag-ready { color: var(--green); background: var(--green-bg); border-radius: 99px; padding: 3px 12px; }
     .tag-soon { color: var(--hint); border: 1px dashed var(--border); border-radius: 99px; padding: 2px 12px; }
     .set .go { color: var(--accent); }
+    .set .links { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+    .lnk { text-decoration: none; padding: 5px 12px; border-radius: 99px; border: 2px solid var(--border); color: var(--text); }
+    .lnk:hover { border-color: var(--accent); color: var(--accent); }
+    .lnk.go { border-color: var(--accent); color: var(--accent); }
+    .lnk.go:hover { background: var(--accent-bg); }
+    .set .foot { gap: 8px; flex-wrap: wrap; }
     .set.soon { box-shadow: none; background: transparent; border-style: dashed; }
     .set.soon h3 { color: var(--muted); }
 
@@ -110,6 +116,7 @@
   2. Найдите нужную часть речи ниже и добавьте (или отредактируйте) объект в её списке sets:
      { title: "...", desc: "...", ex: "...", file: "имя_файла.html" }
   3. Если file не указан — карточка показывается как «В разработке».
+  4. Схема-алгоритм к теме подключается полем algo: "имя_файла.html" — появится кнопка «Алгоритм».
 */
 const PARTS = [
   { id: "sush",  name: "Существительное", sets: [] },
@@ -142,7 +149,8 @@ const PARTS = [
     { title: "НЕ с наречиями", ortho: "ne",
       desc: "Слитно и раздельно: синонимы без НЕ, противопоставление с А, «далеко не», «вовсе не», сравнительная степень.",
       ex: "недалеко — не далеко, а близко; ничуть не быстро",
-      file: "flashcards_ne_narechiya.html" },
+      file: "flashcards_ne_narechiya.html",
+      algo: "ne_narechiya_algoritm.html" },
     { title: "НЕ и НИ в отрицательных наречиях", ortho: "neni",
       desc: "Под ударением НЕ, без ударения НИ.",
       ex: "негде — нигде, некогда — никогда" }
@@ -219,11 +227,17 @@ function renderContent() {
   if (!p.sets.length) {
     body = `<div class="empty-msg">Тренировок по теме «${p.name}» пока нет.<br>Они появятся здесь, когда будут добавлены.</div>`;
   } else {
-    body = `<div class="sets">` + p.sets.map(s => s.file
-      ? `<a class="set" href="${s.file}">
+    body = `<div class="sets">` + p.sets.map(s => (s.file || s.algo)
+      ? `<div class="set">
            <h3>${s.title}</h3><p>${s.desc}</p><div class="ex">${s.ex}</div>
-           <div class="foot"><span class="tag-ready">Готово</span><span class="go">Начать →</span></div>
-         </a>`
+           <div class="foot">
+             ${s.file ? '<span class="tag-ready">Готово</span>' : '<span class="tag-soon">Тренажёр в разработке</span>'}
+             <span class="links">
+               ${s.algo ? `<a class="lnk algo" href="${s.algo}">Алгоритм</a>` : ""}
+               ${s.file ? `<a class="lnk go" href="${s.file}">Тренажёр →</a>` : ""}
+             </span>
+           </div>
+         </div>`
       : `<div class="set soon">
            <h3>${s.title}</h3><p>${s.desc}</p><div class="ex">${s.ex}</div>
            <div class="foot"><span class="tag-soon">В разработке</span></div>
