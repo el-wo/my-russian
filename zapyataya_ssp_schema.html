@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Запятая в ССП — схема-алгоритм</title>
+<style>
+  :root {
+    --paper: #ffffff;
+    --desk: #eeedf6;
+    --ink: #2d2a7a;
+    --ink-soft: #6562a3;
+    --rule: #c9c7e6;
+    --violet: #cfa3f3;
+    --violet-wash: #f3e9fc;
+    --lime: #dcf58f;
+    --lime-wash: #f5fbdc;
+    --err: #a3231a;
+    --err-wash: #fdecea;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: Georgia, "Times New Roman", "PT Serif", serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.38;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  i { font-family: var(--serif); font-style: italic; color: var(--ink); }
+  /* грамматическая основа: подлежащее — одна черта, сказуемое — две */
+  .subj { text-decoration: underline; text-underline-offset: 2px; }
+  .pred { text-decoration: underline double; text-underline-offset: 2px; }
+  /* общий для обеих частей элемент */
+  .com { padding: 0 2px; border-radius: 4px; background: var(--violet-wash); }
+
+  /* ---------- лист А4, альбомная ориентация: 297 × 210 мм ---------- */
+  .sheet {
+    width: 1122px;
+    height: 793px;
+    padding: 24px 30px 22px;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    transform-origin: top left;
+  }
+
+  /* ---------- шапка ---------- */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .modes {
+    flex: none;
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--desk);
+  }
+  .modes button {
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .modes button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+  /* ---------- полоса: как читать схему / пример / ответ ---------- */
+  .band {
+    flex: none;
+    height: 78px;
+    margin-top: 10px;
+    padding: 6px 18px;
+    display: flex;
+    align-items: center;
+    border-radius: 14px;
+    background: var(--ink);
+    color: #fff;
+  }
+  .band-static { margin: 0; font-size: 16.5px; }
+  .band-static b { font-weight: 700; }
+  .band-live { flex: 1; min-width: 0; display: flex; align-items: center; gap: 20px; }
+  body[data-mode="all"] .band-live { display: none; }
+  body:not([data-mode="all"]) .band-static { display: none; }
+  .band-text { flex: 1; min-width: 0; }
+  .band-main { margin: 0; font-family: var(--serif); font-size: 21px; line-height: 1.3; }
+  .band-main.plain { font-family: var(--sans); font-size: 16.5px; }
+  .band-note { margin: 3px 0 0; font-size: 13.5px; color: #e4e2fa; }
+  .band-note b { color: #fff; }
+  .band-note.bad { color: #ffd9d4; }
+  .band-side { flex: none; text-align: right; }
+  .band-meta { margin: 0 0 6px; font-size: 12.5px; color: #c9c7f0; }
+  .band-btn {
+    padding: 7px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .band-btn:focus-visible { outline-color: var(--lime); }
+  .tw {
+    font-weight: 700;
+    padding: 0 3px 1px;
+    border-radius: 6px;
+    border-bottom: 2px dashed #c9c7f0;
+  }
+  .tw.together, .tw.apart { border-bottom: 0; color: var(--ink); }
+  .tw.together { background: var(--violet); }
+  .tw.other { background: #fff; color: var(--ink); border-bottom: 0; }
+  .tw.apart { background: var(--lime); }
+
+  /* ---------- схема: вопросы слева направо, ответы внизу ---------- */
+  .ladder {
+    flex: 1;
+    min-height: 0;
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: 1.1fr 28px 1fr 28px 1.45fr 28px 1.5fr 28px 0.92fr;
+  }
+  .stage { min-width: 0; display: flex; flex-direction: column; }
+
+  .q {
+    position: relative;
+    flex: none;
+    margin-top: 14px;
+    padding: 21px 12px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: var(--paper);
+  }
+  .num {
+    position: absolute;
+    top: -15px;
+    left: 11px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 28px;
+    text-align: center;
+  }
+  .q h2 { margin: 0; font-size: 16px; line-height: 1.22; font-weight: 700; }
+  .q p { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .q p b { color: var(--ink); }
+
+  .signals { margin: 8px 0 0; padding: 0; list-style: none; font-size: 13px; }
+  .signals li { padding: 4px 0; border-top: 1px solid var(--rule); }
+  .signals li:last-child { padding-bottom: 0; }
+  .signals b { display: block; }
+  .signals.inline b { display: inline; }
+  .signals span { color: var(--ink-soft); }
+
+  /* кнопки ответа — только у текущего вопроса */
+  .ask { display: none; gap: 8px; margin-top: 10px; }
+  .q.cur .ask { display: flex; }
+  .ask button {
+    flex: 1;
+    max-width: 78px;
+    padding: 6px 0;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .ask button:hover:not(:disabled) { background: var(--ink); color: #fff; }
+  .ask button:disabled {
+    border-color: var(--err);
+    color: var(--err);
+    background: var(--err-wash);
+    text-decoration: line-through;
+    cursor: default;
+  }
+
+  /* стрелка вниз — к ответу */
+  .exit {
+    position: relative;
+    flex: 1;
+    min-height: 32px;
+    margin: 0 0 4px 25px;
+    padding: 5px 0 0 9px;
+    border-left: 2px solid var(--ink);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .exit::after {
+    content: "";
+    position: absolute;
+    left: -6px; bottom: -1px;
+    border-top: 9px solid var(--ink);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+
+  /* стрелка вправо — к следующему вопросу */
+  .next {
+    position: relative;
+    align-self: start;
+    margin-top: 34px;
+    padding-bottom: 6px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .next::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 8px; bottom: 0;
+    height: 2px;
+    background: var(--ink);
+  }
+  .next::after {
+    content: "";
+    position: absolute;
+    right: 1px; bottom: -4px;
+    border-left: 9px solid var(--ink);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+
+  /* ответы */
+  .verdict {
+    flex: 0 0 116px;
+    padding: 10px 12px 10px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    font-size: 13.5px;
+  }
+  .verdict.together { background: var(--violet-wash); }
+  .verdict.apart { background: var(--lime-wash); }
+  .verdict.hit { border-color: var(--ink); }
+  .mark {
+    display: inline-block;
+    padding: 0 12px 2px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    border-radius: 13px 8px 15px 7px / 9px 15px 8px 13px;
+    transform: rotate(-1deg);
+  }
+  .together .mark { background: var(--violet); }
+  .verdict.other { background: var(--desk); }
+  .other .mark { background: var(--rule); }
+  .apart .mark { background: var(--lime); }
+  .verdict p { margin: 7px 0 0; }
+  .verdict i { font-size: 14px; }
+  .verdict .note {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px dashed var(--ink-soft);
+    color: var(--ink-soft);
+  }
+  .verdict .note b { color: var(--ink); }
+  .stage.last .verdict { flex: 1; margin-top: 14px; }
+
+  /* ---------- ловушки ---------- */
+  .traps {
+    flex: none;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 2px solid var(--ink);
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr;
+    column-gap: 26px;
+  }
+  .traps h2 { margin: 0; font-family: var(--serif); font-size: 19px; line-height: 1.15; }
+  .trap h3 { margin: 0 0 2px; font-size: 13.5px; }
+  .trap p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .trap i { font-size: 13.5px; }
+  .hl-v { background: var(--violet-wash); padding: 0 3px; border-radius: 4px; }
+  .hl-l { background: var(--lime-wash); padding: 0 3px; border-radius: 4px; }
+
+  /* ---------- экран: приглушение непройденных частей ---------- */
+  @media screen {
+    .q, .exit, .next, .verdict { transition: opacity .2s; }
+    .dim { opacity: .3; }
+    .q.cur { box-shadow: 0 0 0 5px var(--violet-wash); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .q, .exit, .next, .verdict { transition: none; }
+  }
+
+  /* ---------- узкий экран (телефон): та же схема столбиком ---------- */
+  @media screen {
+    body.stacked { display: block; background: var(--paper); font-size: 15px; }
+    body.stacked .sheet { width: auto; height: auto; display: block; padding: 20px 16px 28px; transform: none; }
+    body.stacked header { display: block; }
+    body.stacked h1 { font-size: 27px; }
+    body.stacked .modes { margin-top: 12px; }
+    body.stacked .band {
+      position: sticky; top: 8px; z-index: 5;
+      height: auto; min-height: 60px; padding: 12px 14px;
+    }
+    body.stacked .band-static, body.stacked .band-main.plain { font-size: 15.5px; }
+    body.stacked .band-main { font-size: 19px; }
+    body.stacked .band-live { flex-direction: column; align-items: stretch; gap: 10px; }
+    body.stacked .band-side { text-align: left; }
+    body.stacked .band-meta { display: inline; margin-right: 10px; }
+    body.stacked .ladder { display: block; margin-top: 22px; }
+    body.stacked .stage {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      row-gap: 10px;
+      align-items: center;
+      scroll-margin-top: 170px;
+    }
+    body.stacked .q { grid-column: 1 / -1; padding: 22px 14px 14px; }
+    body.stacked .q h2 { font-size: 18px; }
+    body.stacked .q p, body.stacked .signals, body.stacked .verdict, body.stacked .trap p { font-size: 14.5px; }
+    body.stacked .verdict i, body.stacked .trap i { font-size: 15px; }
+    body.stacked .ask button { max-width: 96px; padding: 9px 0; font-size: 16px; }
+    body.stacked .verdict { flex: none; }
+    body.stacked .stage.last { display: block; }
+    body.stacked .stage.last .verdict { margin-top: 0; }
+    /* к ответу — вправо */
+    body.stacked .exit {
+      min-height: 0;
+      margin: 0 0 0 8px;
+      padding: 0 0 6px;
+      border-left: 0;
+      text-align: center;
+      font-size: 14.5px;
+    }
+    body.stacked .exit::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 8px; bottom: 0;
+      height: 2px;
+      background: var(--ink);
+    }
+    body.stacked .exit::after {
+      left: auto; right: 1px; bottom: -4px;
+      border-left: 9px solid var(--ink);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-right: 0;
+    }
+    /* к следующему вопросу — вниз */
+    body.stacked .next {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      margin: 0 0 14px 26px;
+      padding: 0 0 0 10px;
+      border-left: 2px solid var(--ink);
+      font-size: 14.5px;
+    }
+    body.stacked .next::before { content: none; }
+    body.stacked .next::after {
+      left: -6px; right: auto; bottom: -1px;
+      border-top: 9px solid var(--ink);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 0;
+    }
+    body.stacked .traps { display: block; margin-top: 30px; padding-top: 18px; }
+    body.stacked .traps h2 { margin-bottom: 12px; font-size: 22px; }
+    body.stacked .trap { margin-bottom: 14px; }
+    body.stacked .trap h3 { font-size: 15.5px; }
+  }
+
+  /* ---------- печать: ровно один лист А4, альбомная ориентация ---------- */
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { display: block; min-height: 0; background: #fff; }
+    .wrap { width: auto !important; height: auto !important; }
+    .sheet { transform: none !important; }
+    .modes, .ask, .band-live { display: none !important; }
+    .band-static { display: block !important; }
+    .band { height: 46px; background: var(--desk); color: var(--ink); }
+  }
+</style>
+</head>
+<body data-mode="walk">
+<div class="wrap" id="wrap">
+<main class="sheet" id="sheet">
+
+  <header>
+    <h1>Запятая в сложносочинённом предложении</h1>
+    <div class="modes" role="group" aria-label="Режим">
+      <button type="button" data-mode="walk" aria-pressed="true">По шагам</button>
+      <button type="button" data-mode="train" aria-pressed="false">Тренировка</button>
+      <button type="button" data-mode="all" aria-pressed="false">Вся схема</button>
+    </div>
+  </header>
+
+  <div class="band">
+    <p class="band-static">Найди союз и иди по вопросам слева направо. <b>Стрелка вправо — следующий вопрос, стрелка вниз — готовый ответ.</b></p>
+    <div class="band-live" aria-live="polite">
+      <div class="band-text">
+        <p class="band-main" id="bMain"></p>
+        <p class="band-note" id="bNote"></p>
+      </div>
+      <div class="band-side">
+        <p class="band-meta" id="bMeta"></p>
+        <button type="button" class="band-btn" id="bBtn"></button>
+      </div>
+    </div>
+  </div>
+
+  <section class="ladder" id="ladder" aria-label="Алгоритм">
+
+    <div class="stage" data-step="1">
+      <div class="q">
+        <span class="num">1</span>
+        <h2>Союз соединяет две грамматические основы?</h2>
+        <p><b>Да:</b> <i><span class="subj">Солнце</span> <span class="pred">село</span>, и <span class="pred">стало темно</span>.</i><br><b>Нет:</b> <i><span class="subj">Ветер</span> <span class="pred">усилился</span> и <span class="pred">сорвал</span> листья.</i></p>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">нет</div>
+      <div class="verdict other">
+        <span class="mark">не ССП</span>
+        <p>Однородные члены: одиночный <i>и</i> — без запятой.</p>
+      </div>
+    </div>
+    <div class="next" data-step="1">да</div>
+
+    <div class="stage" data-step="2">
+      <div class="q">
+        <span class="num">2</span>
+        <h2>Союз одиночный: и, да (= и), или, либо?</h2>
+        <p><b>Нет</b> — если союз другой: <i>а, но, зато, однако, тоже, также.</i><br><b>Нет</b> — если союз повторяется: <i>и… и, или… или, то… то.</i></p>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">нет</div>
+      <div class="verdict apart">
+        <span class="mark">запятая</span>
+        <p><i>Светило солнце, но было холодно.</i></p>
+      </div>
+    </div>
+    <div class="next" data-step="2">да</div>
+
+    <div class="stage" data-step="3">
+      <div class="q">
+        <span class="num">3</span>
+        <h2>У частей есть общий элемент?</h2>
+        <ul class="signals">
+          <li><b>Общий второстепенный член</b>
+            <span><i><span class="com">В саду</span> пели птицы и цвела сирень.</i></span></li>
+          <li><b>Общее придаточное</b>
+            <span><i><span class="com">Когда взошло солнце</span>, роса высохла и трава ожила.</i></span></li>
+          <li><b>Общее вводное слово</b>
+            <span><i><span class="com">К счастью</span>, дождь кончился и выглянуло солнце.</i></span></li>
+        </ul>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">да</div>
+      <div class="verdict together">
+        <span class="mark">без запятой</span>
+        <p>Общий элемент связывает части в одно целое.</p>
+      </div>
+    </div>
+    <div class="next" data-step="3">нет</div>
+
+    <div class="stage" data-step="4">
+      <div class="q">
+        <span class="num">4</span>
+        <h2>Обе части — одного из этих типов?</h2>
+        <ul class="signals inline">
+          <li><b>Вопросы:</b> <i>Кто это и что ему нужно?</i></li>
+          <li><b>Восклицания:</b> <i>Как тихо и как ярко светят звёзды!</i></li>
+          <li><b>Побуждения:</b> <i>Пусть стихнет ветер и выглянет солнце!</i></li>
+          <li><b>Назывные:</b> <i>Тишина и покой.</i></li>
+        </ul>
+        <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
+      </div>
+      <div class="exit">да</div>
+      <div class="verdict together">
+        <span class="mark">без запятой</span>
+        <p>Такие части запятой не разделяются.</p>
+      </div>
+    </div>
+    <div class="next" data-step="4">нет</div>
+
+    <div class="stage last" data-step="5">
+      <div class="verdict apart">
+        <span class="mark">запятая</span>
+        <p><i>Дверь открылась, и в класс вошёл учитель.</i></p>
+        <p class="note"><b>Проверка:</b> общего у частей нет, каждая могла бы стать отдельным предложением.</p>
+        <p class="note"><i>Дверь открылась. В класс вошёл учитель.</i></p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="traps" aria-label="Ловушки">
+    <h2>Три<br>ловушки</h2>
+    <div class="trap">
+      <h3>Общий — значит для обеих частей</h3>
+      <p><i>У Маши заболело горло<span class="hl-l">, и</span> она осталась дома.</i></p>
+      <p>«У Маши» относится только к первой части.</p>
+    </div>
+    <div class="trap">
+      <h3>ДА бывает равно НО</h3>
+      <p><i>Близок локоть<span class="hl-l">, да</span> не укусишь.</i></p>
+      <p>Здесь союз противительный — запятая нужна.</p>
+    </div>
+    <div class="trap">
+      <h3>Тире вместо запятой</h3>
+      <p><i>Ещё миг <span class="hl-l">— и</span> всё стихло.</i></p>
+      <p>Так показывают резкую смену событий.</p>
+    </div>
+  </section>
+
+</main>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- примеры для тренировки ----------
+     b — текст до места запятой, c — союз, a — текст после союза,
+     t — шаг, на котором получается ответ (5 — дошли до конца),
+     one   — почему основа одна (t = 1),
+     bases — какие две основы соединяет союз,
+     conj  — почему союз не «одиночный и, да, или, либо» (t = 2),
+     common — какой элемент общий (t = 3), nocommon — почему общего нет,
+     type  — какого типа обе части (t = 4). */
+  var ITEMS = [
+    { b: "Ветер усилился", c: "и", a: " сорвал с деревьев последние листья.", t: 1,
+      one: "Основа одна: «ветер усилился и сорвал» — это однородные сказуемые." },
+    { b: "Мы долго шли по лесу", c: "и", a: " только к вечеру вышли к реке.", t: 1,
+      one: "Основа одна: «мы шли и вышли» — это однородные сказуемые." },
+
+    { b: "Лето выдалось жаркое", c: "а", a: " осень пришла рано.", t: 2,
+      bases: "«лето выдалось жаркое» и «осень пришла»",
+      conj: "Союз «а» не входит в группу и, да (= и), или, либо." },
+    { b: "Билетов в кассе не было", c: "зато", a: " нам достались места на балконе.", t: 2,
+      bases: "«не было» и «места достались»",
+      conj: "Союз «зато» не входит в группу и, да (= и), или, либо." },
+    { b: "То дождь стучит по крыше", c: "то", a: " ветер воет в трубе.", t: 2,
+      bases: "«дождь стучит» и «ветер воет»",
+      conj: "Союз «то… то» повторяющийся, а не одиночный." },
+    { b: "Близок локоть", c: "да", a: " не укусишь.", t: 2,
+      bases: "«локоть близок» и «не укусишь»",
+      conj: "Здесь «да» значит «но», а не «и»." },
+
+    { b: "В лесу пахло грибами", c: "и", a: " шуршали под ногами листья.", t: 3,
+      bases: "«пахло» и «листья шуршали»",
+      common: "Общий второстепенный член — «в лесу»: он относится к обеим частям." },
+    { b: "Когда прозвенел звонок, коридор опустел", c: "и", a: " в школе стало тихо.", t: 3,
+      bases: "«коридор опустел» и «стало тихо»",
+      common: "Общее придаточное — «когда прозвенел звонок»: оно относится к обеим частям." },
+    { b: "По словам бабушки, зима будет снежной", c: "и", a: " морозы ударят рано.", t: 3,
+      bases: "«зима будет снежной» и «морозы ударят»",
+      common: "Общее вводное сочетание — «по словам бабушки»: оно относится к обеим частям." },
+    { b: "К вечеру дождь перестал", c: "и", a: " над рекой поднялся туман.", t: 3,
+      bases: "«дождь перестал» и «туман поднялся»",
+      common: "Общий второстепенный член — «к вечеру»: он относится к обеим частям." },
+
+    { b: "Сколько сейчас времени", c: "и", a: " когда отправляется поезд?", t: 4,
+      bases: "«сколько времени» и «поезд отправляется»", type: "Обе части — вопросы." },
+    { b: "Когда начнётся концерт", c: "и", a: " кто будет выступать?", t: 4,
+      bases: "«концерт начнётся» и «кто будет выступать»", type: "Обе части — вопросы." },
+    { b: "Как красиво падает снег", c: "и", a: " как тихо стало вокруг!", t: 4,
+      bases: "«снег падает» и «стало тихо»", type: "Обе части — восклицания." },
+
+    { b: "Прозвенел звонок", c: "и", a: " ребята вошли в класс.", t: 5,
+      bases: "«звонок прозвенел» и «ребята вошли»" },
+    { b: "У брата завтра экзамен", c: "и", a: " я стараюсь ему не мешать.", t: 5,
+      bases: "«экзамен» и «я стараюсь не мешать»",
+      nocommon: "«У брата» и «завтра» относятся только к первой части — общего элемента нет." },
+    { b: "Стемнело", c: "и", a: " на улицах зажглись фонари.", t: 5,
+      bases: "«стемнело» и «фонари зажглись»" },
+    { b: "Окно было открыто", c: "и", a: " в комнату залетали снежинки.", t: 5,
+      bases: "«окно было открыто» и «снежинки залетали»" }
+  ];
+
+  /* какой ответ на шаге ведёт вниз, к готовому ответу */
+  var EXIT = { 1: "no", 2: "no", 3: "yes", 4: "yes" };
+  var STEP_NAMES = { 1: "две основы", 2: "вид союза", 3: "общий элемент", 4: "тип частей" };
+
+  var WALK_RESULT = {
+    1: ["other", "Не ССП", "Союз соединяет однородные члены — работай по их правилу. Одиночный «и» между ними — без запятой."],
+    2: ["apart", "Запятая", "Союз не из группы и, да (= и), или, либо — или он повторяется."],
+    3: ["together", "Без запятой", "Общий элемент связывает части в одно целое."],
+    4: ["together", "Без запятой", "Такие части запятой не разделяются."],
+    5: ["apart", "Запятая", "Это сложносочинённое предложение, и ничего общего у частей нет."]
+  };
+
+  var W = 1122, H = 793;
+  var body = document.body;
+  var wrap = document.getElementById("wrap");
+  var sheet = document.getElementById("sheet");
+  var stages = Array.prototype.slice.call(document.querySelectorAll(".stage"));
+  var nexts = Array.prototype.slice.call(document.querySelectorAll(".next"));
+  var bMain = document.getElementById("bMain");
+  var bNote = document.getElementById("bNote");
+  var bMeta = document.getElementById("bMeta");
+  var bBtn = document.getElementById("bBtn");
+  var modeBtns = Array.prototype.slice.call(document.querySelectorAll(".modes button"));
+
+  var st = { mode: "walk", step: 1, done: false, verdict: 0, order: [], pos: 0, errors: 0, fb: "",
+             log: [], byStep: {}, summary: false };
+
+  /* ---------- лист целиком в окне, без прокрутки ---------- */
+  function fit() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    if (vw < 900) {
+      body.classList.add("stacked");
+      sheet.style.transform = "";
+      wrap.style.width = wrap.style.height = "";
+      return;
+    }
+    body.classList.remove("stacked");
+    var s = Math.max(0.7, Math.min(vw / W, vh / H));
+    sheet.style.transform = "scale(" + s + ")";
+    wrap.style.width = Math.floor(W * s) + "px";
+    wrap.style.height = Math.floor(H * s) + "px";
+  }
+  window.addEventListener("resize", fit);
+
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function low(s) { return s.charAt(0).toLowerCase() + s.slice(1); }
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function item() { return ITEMS[st.order[st.pos]]; }
+  function hasComma(it) { return it.t === 2 || it.t === 5; }
+
+  /* почему ответ ученика на этом шаге неверен.
+     toExit = ученик пошёл вниз, к ответу, а надо было идти дальше */
+  function hint(it, step, toExit) {
+    if (step === 1) {
+      return toExit ? "Основ две: " + it.bases + "." : it.one;
+    }
+    if (step === 2) {
+      return toExit
+        ? "Союз «" + it.c + "» здесь одиночный и входит в группу и, да (= и), или, либо."
+        : it.conj;
+    }
+    if (step === 3) {
+      return toExit
+        ? (it.nocommon || "У частей нет общего второстепенного члена, придаточного или вводного слова.")
+        : it.common;
+    }
+    return toExit
+      ? "Это обычные повествовательные части: не вопросы, не восклицания, не побуждения и не назывные предложения."
+      : it.type;
+  }
+
+  function reason(it) {
+    if (it.t === 1) return low(it.one) + " Одиночный союз между ними — без запятой.";
+    if (it.t === 2) return low(it.conj);
+    if (it.t === 3) return low(it.common);
+    if (it.t === 4) return low(it.type);
+    return "основ две (" + it.bases + "), союз одиночный, общего у частей нет.";
+  }
+
+  /* ---------- отрисовка ---------- */
+  function statusOf(n) {
+    if (st.mode === "all" || st.summary) return "plain";
+    if (st.done) return n < st.verdict ? "passed" : (n === st.verdict ? "exit" : "future");
+    return n < st.step ? "passed" : (n === st.step ? "current" : "future");
+  }
+
+  function paintStages() {
+    stages.forEach(function (el) {
+      var n = +el.getAttribute("data-step");
+      var s = statusOf(n);
+      var q = el.querySelector(".q"), ex = el.querySelector(".exit"), v = el.querySelector(".verdict");
+      if (q) {
+        q.classList.toggle("dim", s === "future");
+        q.classList.toggle("cur", s === "current");
+        if (s !== "current") {
+          Array.prototype.forEach.call(q.querySelectorAll(".ask button"), function (b) { b.disabled = false; });
+        }
+      }
+      if (ex) ex.classList.toggle("dim", s === "future" || s === "current" || s === "passed");
+      v.classList.toggle("dim", s === "future" || s === "current" || s === "passed");
+      v.classList.toggle("hit", s === "exit");
+    });
+    nexts.forEach(function (el) {
+      var s = statusOf(+el.getAttribute("data-step"));
+      el.classList.toggle("dim", s === "future" || s === "current" || s === "exit");
+    });
+  }
+
+  function setBand(mainHtml, plain, noteHtml, bad, meta, btn) {
+    bMain.innerHTML = mainHtml;
+    bMain.classList.toggle("plain", !!plain);
+    bNote.innerHTML = noteHtml || "";
+    bNote.hidden = !noteHtml;
+    bNote.classList.toggle("bad", !!bad);
+    bMeta.textContent = meta || "";
+    bMeta.hidden = !meta;
+    bBtn.textContent = btn || "";
+    bBtn.hidden = !btn;
+  }
+
+  function paintBand() {
+    if (st.mode === "all") return;
+
+    if (st.mode === "walk") {
+      if (!st.done) {
+        setBand("Возьми своё предложение, найди в нём союз и отвечай на вопросы: «Да» или «Нет».", true, "", false, "", st.step > 1 ? "Начать заново" : "");
+      } else {
+        var r = WALK_RESULT[st.verdict];
+        setBand('<span class="tw ' + r[0] + '">' + r[1] + "</span>", false, esc(r[2]), false, "", "Начать заново");
+      }
+      return;
+    }
+
+    if (st.summary) {
+      var clean = st.log.filter(function (x) { return x.errors === 0; }).length;
+      var worst = 0, worstN = 0;
+      [1, 2, 3, 4].forEach(function (n) { if ((st.byStep[n] || 0) > worstN) { worstN = st.byStep[n]; worst = n; } });
+      var note = worst
+        ? "<b>Больше всего ошибок — на шаге " + worst + "</b> (" + STEP_NAMES[worst] + "). Перечитай этот вопрос и пройди тренировку ещё раз."
+        : "Ни одной ошибки — алгоритм освоен.";
+      setBand("Без ошибок: " + clean + " из " + st.log.length, true, note, false, "Итог", "Пройти ещё раз");
+      return;
+    }
+
+    var it = item();
+    var meta = "Пример " + (st.pos + 1) + " из " + st.order.length;
+    if (!st.done) {
+      setBand(esc(it.b) + '<span class="tw">(,) ' + esc(it.c) + "</span>" + esc(it.a), false,
+        st.fb ? "<b>Не так.</b> " + esc(st.fb) : "", true, meta, "");
+    } else {
+      var comma = hasComma(it);
+      var tries = st.errors === 0 ? "Верно с первой попытки." : "Ошибок по пути: " + st.errors + ".";
+      var slot = comma
+        ? '<span class="tw apart">, ' + esc(it.c) + "</span>"
+        : ' <span class="tw together">' + esc(it.c) + "</span>";
+      setBand(esc(it.b) + slot + esc(it.a), false,
+        "<b>" + (comma ? "Запятая" : "Без запятой") + ":</b> " + esc(reason(it)) + " " + tries, false, meta,
+        st.pos + 1 < st.order.length ? "Следующий пример" : "Показать итог");
+    }
+  }
+
+  function paint(move) {
+    paintStages();
+    paintBand();
+    if (!move || st.mode === "all" || st.summary) return;
+    if (st.done) {
+      if (!bBtn.hidden) bBtn.focus({ preventScroll: true });
+      return;
+    }
+    var cur = stages[st.step - 1];
+    if (!cur) return;
+    var first = cur.querySelector(".ask button");
+    if (first) first.focus({ preventScroll: true });
+    if (body.classList.contains("stacked")) {
+      var smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      cur.scrollIntoView({ block: "nearest", behavior: smooth ? "smooth" : "auto" });
+    }
+  }
+
+  /* ---------- ход ---------- */
+  function resetPath() { st.step = 1; st.done = false; st.verdict = 0; st.errors = 0; st.fb = ""; }
+
+  function finish(v) {
+    st.done = true;
+    st.verdict = v;
+    st.fb = "";
+    if (st.mode === "train") st.log.push({ item: item(), errors: st.errors });
+    paint(true);
+  }
+
+  function answer(stageEl, a) {
+    var n = +stageEl.getAttribute("data-step");
+    if (st.done || n !== st.step) return;
+    var toExit = a === EXIT[n];
+
+    if (st.mode === "train") {
+      var shouldExit = n === item().t;
+      if (toExit !== shouldExit) {
+        st.errors++;
+        st.byStep[n] = (st.byStep[n] || 0) + 1;
+        st.fb = hint(item(), n, toExit);
+        stageEl.querySelector('.ask button[data-a="' + a + '"]').disabled = true;
+        paintBand();
+        stageEl.querySelector(".ask button:not(:disabled)").focus({ preventScroll: true });
+        return;
+      }
+    }
+    st.fb = "";
+    if (toExit) { finish(n); return; }
+    st.step = n + 1;
+    if (st.step === 5) { finish(5); return; }
+    paint(true);
+  }
+
+  function startTraining() {
+    st.order = shuffle(ITEMS.map(function (_, i) { return i; }));
+    st.pos = 0;
+    st.log = [];
+    st.byStep = {};
+    st.summary = false;
+    resetPath();
+  }
+
+  function setMode(m) {
+    st.mode = m;
+    st.summary = false;
+    body.setAttribute("data-mode", m);
+    modeBtns.forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-mode") === m ? "true" : "false");
+    });
+    if (m === "train") startTraining(); else resetPath();
+    paint(false);
+  }
+
+  /* ---------- события ---------- */
+  document.getElementById("ladder").addEventListener("click", function (e) {
+    var btn = e.target.closest(".ask button");
+    if (!btn || btn.disabled) return;
+    answer(btn.closest(".stage"), btn.getAttribute("data-a"));
+  });
+
+  bBtn.addEventListener("click", function () {
+    if (st.mode === "walk") {
+      resetPath();
+    } else if (st.summary) {
+      startTraining();
+    } else if (st.pos + 1 < st.order.length) {
+      st.pos++;
+      resetPath();
+    } else {
+      st.summary = true;
+      paint(false);
+      bBtn.focus({ preventScroll: true });
+      return;
+    }
+    paint(true);
+  });
+
+  modeBtns.forEach(function (b) {
+    b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); });
+  });
+
+  fit();
+  setMode("walk");
+})();
+</script>
+</body>
+</html>
