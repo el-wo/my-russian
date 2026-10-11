@@ -69,6 +69,84 @@
     .pos-btn.test.active { border-style: solid; color: #fff; }
     .tag-test { color: var(--accent); background: var(--accent-bg); border-radius: 99px; padding: 3px 12px; }
     .note { background: var(--accent-bg); color: var(--text); border-radius: 12px; padding: 0.9rem 1.1rem; margin-bottom: 1.2rem; font-size: 0.92rem; line-height: 1.6; }
+    .theory { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; box-shadow: var(--shadow); margin-bottom: 1.8rem; }
+    .theory summary { cursor: pointer; list-style: none; padding: 1.1rem 1.4rem; font-family: var(--serif); font-weight: 700; font-size: 1.1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+    .theory summary::-webkit-details-marker { display: none; }
+    .theory summary::after { content: "Свернуть"; font-family: var(--sans); font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+    .theory:not([open]) summary::after { content: "Развернуть"; }
+    .theory summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 18px; }
+    .th-body { padding: 0 1.4rem 1.4rem; font-size: 0.95rem; line-height: 1.65; }
+    .th-body h4 { font-family: var(--serif); font-size: 1rem; margin: 1.2rem 0 0.5rem; }
+    .th-body p { color: var(--text); }
+    .th-body i { font-family: var(--serif); }
+    .th-def { background: var(--green-bg); border-radius: 12px; padding: 0.9rem 1.1rem; font-size: 1rem; }
+    .th-def b { color: var(--green); }
+    .th-cols { display: grid; grid-template-columns: 1fr 1.25fr; gap: 1.6rem; }
+    .th-list { padding-left: 1.2rem; }
+    .th-attn { margin-top: 0.9rem; border-left: 4px solid var(--red); background: #fdf3f1; border-radius: 0 10px 10px 0; padding: 0.7rem 1rem; font-size: 0.92rem; }
+    .th-attn > b:first-child { color: var(--red); margin-right: 4px; }
+    .th-q { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; }
+    .th-q span { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted var(--border); padding-bottom: 3px; }
+    .th-q b { font-weight: 700; }
+    .th-q i { color: var(--muted); }
+    .th-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+    .th-table th { text-align: left; vertical-align: top; width: 9.5rem; padding: 0.6rem 0.8rem 0.6rem 0; font-family: var(--serif); border-top: 1px solid var(--border); }
+    .th-table th small { font-family: var(--sans); font-weight: 400; color: var(--muted); }
+    .th-table td { padding: 0.6rem 0; border-top: 1px solid var(--border); }
+    .u-obst { text-decoration: underline dashed; text-decoration-color: var(--accent); text-underline-offset: 4px; text-decoration-thickness: 2px; }
+    .u-def { text-decoration: underline wavy; text-decoration-color: var(--accent); text-underline-offset: 4px; }
+    .u-pred { text-decoration: underline double; text-decoration-color: var(--accent); text-underline-offset: 4px; }
+    .sets-title { font-family: var(--serif); font-size: 1.15rem; margin: 0 0 0.9rem; }
+    @media (max-width: 640px) { .th-cols { grid-template-columns: 1fr; gap: 0.4rem; } .th-q { grid-template-columns: 1fr; } .th-table th { width: 7rem; } }
+
+    /* ---------- теория в стиле схем-алгоритмов ---------- */
+    .al { --ink:#2d2a7a; --ink-soft:#6562a3; --rule:#c9c7e6; --violet:#cfa3f3; --violet-wash:#f3e9fc; --lime:#dcf58f; --lime-wash:#f5fbdc; --desk:#eeedf6;
+      color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; font-size: 14px; line-height: 1.4; }
+    .al i { font-family: Georgia, "Times New Roman", serif; color: var(--ink); }
+    .al u { text-decoration-color: var(--ink-soft); text-underline-offset: 3px; }
+    .al-band { background: var(--ink); color: #fff; border-radius: 14px; padding: 14px 18px; font-size: 16px; }
+    .al-band b { color: var(--lime); }
+    .al-ladder { display: grid; grid-template-columns: 1fr 26px 1fr 26px 1.15fr 26px 1.1fr; margin-top: 22px; align-items: stretch; }
+    .al-q { position: relative; border: 2px solid var(--ink); border-radius: 14px; padding: 20px 12px 12px; background: #fff; }
+    .al-num { position: absolute; top: -15px; left: 11px; width: 28px; height: 28px; border-radius: 50%; background: var(--ink); color: #fff; font-weight: 700; font-size: 15px; line-height: 28px; text-align: center; }
+    .al h5 { margin: 0 0 8px; font-size: 15.5px; font-weight: 700; line-height: 1.25; font-family: inherit; }
+    .al-sig { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+    .al-sig li { padding: 5px 0; border-top: 1px solid var(--rule); }
+    .al-sig b { display: block; }
+    .al-sig span { color: var(--ink-soft); }
+    .al-plain { padding-left: 1.1em; margin: 6px 0 0; font-size: 13px; color: var(--ink-soft); }
+    .al-but { margin-top: 8px; padding: 6px 9px; border-radius: 10px; background: var(--violet-wash); font-size: 12.5px; }
+    .al-qs { display: flex; flex-wrap: wrap; gap: 5px; }
+    .al-qs span { font-size: 12.5px; font-weight: 700; background: var(--desk); border-radius: 8px; padding: 3px 7px; }
+    .al-qs i { font-weight: 400; color: var(--ink-soft); }
+    .al-next { position: relative; align-self: start; margin-top: 46px; height: 2px; background: var(--ink); margin-right: 4px; }
+    .al-next::after { content: ""; position: absolute; right: -5px; top: -4px; border-left: 9px solid var(--ink); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+    .al-mark { display: inline-block; padding: 0 12px 2px; font-size: 17px; font-weight: 800; border-radius: 13px 8px 15px 7px / 9px 15px 8px 13px; transform: rotate(-1deg); }
+    .al-mark.no { background: var(--violet); }
+    .al-h { margin: 22px 0 10px !important; font-size: 17px !important; font-family: Georgia, serif !important; }
+    .al-roles { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 12px; }
+    .al-v { border-radius: 14px; padding: 10px 12px; font-size: 13.5px; }
+    .al-v.lime { background: var(--lime-wash); } .al-v.lime .al-mark { background: var(--lime); }
+    .al-v.violet { background: var(--violet-wash); } .al-v.violet .al-mark { background: var(--violet); }
+    .al-v.desk { background: var(--desk); } .al-v.desk .al-mark { background: var(--rule); }
+    .al-v small { margin-left: 8px; color: var(--ink-soft); font-weight: 700; }
+    .al-v p { margin: 7px 0 0; }
+    .al-note { padding-top: 6px; border-top: 1px dashed var(--ink-soft); color: var(--ink-soft); }
+    .al-note b { color: var(--ink); }
+    .al-trap { display: grid; grid-template-columns: auto 1fr; gap: 22px; margin-top: 18px; padding-top: 10px; border-top: 2px solid var(--ink); font-size: 13.5px; }
+    .al-trap h5 { font-family: Georgia, serif; font-size: 18px; }
+    .al-trap p { margin: 3px 0 0; color: var(--ink-soft); }
+    .al .hl-v { background: var(--violet-wash); padding: 0 3px; border-radius: 4px; }
+    .al .hl-l { background: var(--lime); padding: 0 3px; border-radius: 4px; }
+    .al .u-obst, .al .u-def, .al .u-pred { text-decoration-color: var(--ink); }
+    @media (max-width: 760px) {
+      .al-ladder { grid-template-columns: 1fr; }
+      .al-next { width: 2px; height: 26px; margin: 0 0 0 24px; }
+      .al-next::after { right: auto; left: -4px; top: auto; bottom: -5px; border-left: 5px solid transparent; border-right: 5px solid transparent; border-top: 9px solid var(--ink); border-bottom: 0; }
+      .al-q { margin-top: 14px; }
+      .al-roles { grid-template-columns: 1fr; }
+      .al-trap { grid-template-columns: 1fr; gap: 6px; }
+    }
     .empty-msg { text-align: center; color: var(--muted); padding: 2.5rem 1rem; border: 1px dashed var(--border); border-radius: 16px; line-height: 1.7; }
     @media (max-width: 480px) { header h1 { font-size: 1.4rem; } .pos-btn { font-size: 0.9rem; padding: 8px 14px; } }
     @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
@@ -137,7 +215,8 @@
      { title: "...", desc: "...", ex: "...", file: "имя_файла.html" }
   3. Если file не указан — карточка показывается как «В разработке».
   4. Схема-алгоритм к теме подключается полем algo: "имя_файла.html" — появится кнопка «Алгоритм».
-  5. Проверочные задания добавляются в раздел с id: "tests" (в самом конце списка PARTS).
+  5. Напоминание о части речи (теория) задаётся полем theory у части речи — оно показывается над тренажёрами.
+  6. Проверочные задания добавляются в раздел с id: "tests" (в самом конце списка PARTS).
 */
 const PARTS = [
   { id: "sush",  name: "Существительное", sets: [] },
@@ -147,7 +226,75 @@ const PARTS = [
   { id: "glag",  name: "Глагол",          sets: [] },
   { id: "prich", name: "Причастие",       sets: [] },
   { id: "deepr", name: "Деепричастие",    sets: [] },
-  { id: "narech", name: "Наречие", sets: [
+  { id: "narech", name: "Наречие",
+    theory: `
+      <div class="al">
+        <div class="al-band"><b>Наречие</b> — самостоятельная часть речи, которая не изменяется и называет признак.</div>
+
+        <div class="al-ladder">
+          <div class="al-q"><span class="al-num">1</span>
+            <h5>Что называет?</h5>
+            <ul class="al-sig">
+              <li><b>признак действия</b><span><i>бежать <u>быстро</u></i></span></li>
+              <li><b>признак признака</b><span><i><u>удивительно</u> тёплый</i></span></li>
+              <li><b>признак предмета <span style="font-weight:400">(реже)</span></b><span><i>яйцо <u>всмятку</u></i></span></li>
+            </ul>
+          </div>
+          <div class="al-next" aria-hidden="true"></div>
+          <div class="al-q"><span class="al-num">2</span>
+            <h5>Изменяется?</h5>
+            <p><span class="al-mark no">нет</span></p>
+            <ul class="al-plain">
+              <li>не меняется по падежам;</li><li>не меняется по лицам и временам;</li>
+              <li>не подстраивается под другие слова;</li><li>нет окончания: <i>громк<b>о</b></i> — -о суффикс.</li>
+            </ul>
+            <div class="al-but"><b>Но:</b> у наречий на -о, -е бывают степени сравнения: <i>смело — смелее, ярко — ярче.</i></div>
+          </div>
+          <div class="al-next" aria-hidden="true"></div>
+          <div class="al-q"><span class="al-num">3</span>
+            <h5>На какие вопросы отвечает?</h5>
+            <div class="al-qs">
+              <span>как? <i>весело</i></span><span>каким образом? <i>пешком</i></span>
+              <span>в какой степени? <i>чересчур</i></span><span>во сколько раз? <i>вдвое</i></span>
+              <span>где? <i>наверху</i></span><span>куда? <i>вниз</i></span><span>откуда? <i>сверху</i></span>
+              <span>когда? <i>вчера</i></span><span>почему? <i>сгоряча</i></span><span>зачем? <i>нарочно</i></span>
+            </div>
+          </div>
+          <div class="al-next" aria-hidden="true"></div>
+          <div class="al-q"><span class="al-num">4</span>
+            <h5>К какому слову относится?</h5>
+            <ul class="al-sig">
+              <li><b>чаще к глаголу</b><span><i>говорить <u>тихо</u></i></span></li>
+              <li><b>к прилагательному, наречию</b><span><i><u>необычайно</u> яркий, <u>совсем</u> рано</i></span></li>
+              <li><b>к причастию, деепричастию</b><span><i><u>недавно</u> построенный, <u>громко</u> смеясь</i></span></li>
+              <li><b>к существительному</b><span><i>кофе <u>по-турецки</u>, шаг <u>вперёд</u></i></span></li>
+            </ul>
+          </div>
+        </div>
+
+        <h5 class="al-h">Каким членом предложения бывает</h5>
+        <div class="al-roles">
+          <div class="al-v lime"><span class="al-mark">обстоятельство</span><small>чаще всего</small>
+            <p><i><span class="u-obst">Утром</span> туман <span class="u-obst">быстро</span> рассеялся.</i></p>
+            <p class="al-note">рассеялся <b>когда?</b> утром, <b>как?</b> быстро</p></div>
+          <div class="al-v violet"><span class="al-mark">определение</span>
+            <p><i>Тропинка <span class="u-def">налево</span> вела к озеру.</i></p>
+            <p class="al-note">тропинка <b>какая?</b> налево</p></div>
+          <div class="al-v desk"><span class="al-mark">часть сказуемого</span>
+            <p><i>Помощь <span class="u-pred">пришлась кстати</span>.</i> <i>Бросать друга — <span class="u-pred">не по-товарищески</span>.</i></p>
+            <p class="al-note">пришлась <b>какой?</b> кстати; это <b>каково?</b> не по-товарищески</p></div>
+        </div>
+
+        <div class="al-trap">
+          <h5>Ловушка</h5>
+          <div><b>Наречие или существительное?</b>
+            <p><i>Любовались (чем?) летним <span class="hl-v">утром</span></i> — существительное: есть определение, можно изменить (<i>утро, утра</i>).</p>
+            <p><i>Уехали (когда?) <span class="hl-l">утром</span></i> — наречие: время действия, определение не подставить.</p>
+          </div>
+        </div>
+      </div>
+    `,
+    sets: [
     { title: "Слитно или раздельно: слова для запоминания", ortho: "slit",
       desc: "Исключения, фразеологизмы и наречные сочетания, написание которых нужно запомнить.",
       ex: "на боковую, доверху, ни при чём, впопыхах",
@@ -356,8 +503,15 @@ function renderGroup(p) {
     <div class="section-head"><h2>${p.name}</h2>
       <span>${!p.sets.length ? "" : isTest ? `Заданий: ${ready}` : `Готово тренировок: ${ready} из ${p.sets.length}`}</span></div>
     ${p.note ? `<div class="note">${p.note}</div>` : ""}
+    ${p.theory ? `<details class="theory" ${theoryOpen(p.id) ? "open" : ""} ontoggle="theoryToggle('${p.id}', this.open)">
+      <summary>Вспомним: что такое ${p.name.toLowerCase()}</summary>
+      <div class="th-body">${p.theory}</div></details>
+      ${p.sets.length ? `<h3 class="sets-title">Тренировки</h3>` : ""}` : ""}
     ${body}`;
 }
+
+function theoryOpen(id) { return lsGet("theory-" + id) !== "closed"; }
+function theoryToggle(id, open) { lsSet("theory-" + id, open ? "open" : "closed"); }
 
 function setSection(sct) { section = sct; lsSet("ru-section", sct); renderAll(); }
 function selectPunct(id) { pgroup = id; lsSet("punct-group", id); renderAll(); }
