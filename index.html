@@ -102,6 +102,9 @@
     a.mix-btn { border: 2px solid var(--accent); color: var(--accent); }
     a.mix-btn:hover { background: var(--accent-bg); }
     span.mix-btn { border: 2px dashed var(--border); color: var(--hint); }
+    .ortho-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    a.mix-btn.algo-btn { border-color: var(--text); color: var(--text); }
+    a.mix-btn.algo-btn:hover { background: var(--bg); }
     .chips-label { font-size: 0.78rem; color: var(--hint); font-weight: 600; margin-bottom: 6px; }
   </style>
 </head>
@@ -198,6 +201,7 @@ const PARTS = [
   ОБОБЩАЮЩИЕ ОРФОГРАММЫ
   - parts: части речи, где встречается орфограмма (id из списка PARTS выше);
   - file: смешанная тренировка по всем частям речи (если не указан — «В разработке»);
+  - algo: общая схема-алгоритм по орфограмме (появится кнопка «Алгоритм»), algoTitle — её подпись;
   - чтобы сет части речи появился здесь, добавьте ему поле ortho с id орфограммы.
 */
 const ORTHO = [
@@ -208,6 +212,7 @@ const ORTHO = [
   { id: "nn", title: "Н и НН в разных частях речи",
     desc: "Суффиксы прилагательных, полные и краткие причастия, отглагольные прилагательные, наречия и существительные.",
     ex: "серебряный, жареный — жаренный на масле, туманно, гостиная",
+    algo: "n_nn_pril_prich_schema.html", algoTitle: "Алгоритм: прилагательные и причастия",
     parts: ["pril","prich","narech","sush"] },
   { id: "oyo", title: "О — Ё (Е) после шипящих и Ц",
     desc: "В корнях, суффиксах и окончаниях существительных, прилагательных, наречий; в глаголах и отглагольных формах.",
@@ -382,8 +387,9 @@ function renderOrtho() {
     const mix = o.file
       ? `<a class="mix-btn" href="${o.file}">Смешанная тренировка →</a>`
       : `<span class="mix-btn">Смешанная — в разработке</span>`;
+    const algo = o.algo ? `<a class="mix-btn algo-btn" href="${o.algo}">${o.algoTitle || "Алгоритм"}</a>` : "";
     return `<section class="ortho">
-      <div class="ortho-top"><h3>${o.title}</h3>${mix}</div>
+      <div class="ortho-top"><h3>${o.title}</h3><div class="ortho-btns">${algo}${mix}</div></div>
       <p>${o.desc}</p>
       <div class="ex">${o.ex}</div>
       <div class="chips-label">Готово по частям речи: ${readyN} из ${o.parts.length}</div>
