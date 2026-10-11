@@ -220,6 +220,7 @@ function begin(n) {
   deckSize = n;
   const all = shuffle(SOURCE);
   deck = n ? all.slice(0, n) : all;
+  roundSet = [...deck];
   idx = 0; mistakes = []; isErrorMode = false;
   render();
 }
@@ -299,6 +300,7 @@ function showFinish() {
       <div class="finish-sub">Верно с первого раза: ${correct} из ${total}</div>
       ${mistakesHTML}
       <div class="btn-row">
+        <button class="btn-restart" onclick="repeatRound()">Повторить эти же слова</button>
         <button class="btn-restart" onclick="startScreen()">Начать заново</button>
         <a class="btn-restart" href="index.html" style="text-decoration:none">На главную</a>
         ${errBtn}
@@ -306,9 +308,16 @@ function showFinish() {
     </div>`;
 }
 
+let roundSet = [];
+function repeatRound() {
+  deck = shuffle(roundSet);
+  idx = 0; mistakes = [];
+  render();
+}
+
 function startErrorMode() {
   const errs = [...mistakes];
-  mistakes = []; deck = shuffle(errs); idx = 0; isErrorMode = true;
+  mistakes = []; deck = shuffle(errs); roundSet = [...deck]; idx = 0; isErrorMode = true;
   render();
 }
 
