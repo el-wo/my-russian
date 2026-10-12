@@ -83,6 +83,13 @@
   }
   .modes button[aria-pressed="true"] { background: var(--ink); color: #fff; }
 
+  .head-right { flex: none; display: flex; align-items: center; gap: 10px; }
+  .home-link { padding: 6px 14px; border-radius: 999px; border: 2px solid var(--rule); color: var(--ink-soft); font-weight: 600; font-size: 13.5px; text-decoration: none; }
+  .home-link:hover { border-color: var(--ink); color: var(--ink); }
+  body.stacked .head-right { margin-top: 12px; flex-wrap: wrap; }
+  body.stacked .head-right .modes { margin-top: 0; }
+  @media print { .home-link { display: none !important; } }
+
   /* ---------- полоса: как читать схему / пример / ответ ---------- */
   .band {
     flex: none;
@@ -441,10 +448,13 @@
 
   <header>
     <h1>О или Е на конце наречий после шипящих</h1>
+    <div class="head-right">
+    <a class="home-link" href="index.html">← Главная</a>
     <div class="modes" role="group" aria-label="Режим">
       <button type="button" data-mode="walk" aria-pressed="true">По шагам</button>
       <button type="button" data-mode="train" aria-pressed="false">Тренировка</button>
       <button type="button" data-mode="all" aria-pressed="false">Вся схема</button>
+    </div>
     </div>
   </header>
 
@@ -463,13 +473,13 @@
         <span class="num">1</span>
         <h2>Пропуск на самом конце слова?</h2>
         <p><b>Да:</b> <i>горяч?, певуч?</i> — это суффикс наречия.</p>
-        <p><b>Нет:</b> <i>деш?во, ж?стко</i> — пропуск в корне.</p>
+        <p><b>Нет:</b> <i>ч?рство, ж?стко</i> — пропуск в корне.</p>
         <div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div>
       </div>
       <div class="exit">нет</div>
       <div class="verdict apart">
         <span class="mark big">корень</span>
-        <p>Другое правило: Ё, если есть слово с Е — <i>деш<b>ё</b>во ← дешевле, ж<b>ё</b>стко ← жестковатый.</i></p>
+        <p>Другое правило: Ё, если есть слово с Е — <i>ч<b>ё</b>рство ← черстветь, ж<b>ё</b>стко ← жестковатый.</i></p>
       </div>
     </div>
     <div class="next" data-step="1">да</div>
@@ -527,7 +537,7 @@
     </div>
     <div class="trap">
       <h3>Ё в корне — это не про суффикс</h3>
-      <p><i>дешёво, жёстко, жёлто</i> — проверяй корень словом с Е.</p>
+      <p><i>чёрство, жёстко, жёлто</i> — проверяй корень словом с Е.</p>
     </div>
   </section>
 
@@ -555,7 +565,7 @@
     { b: "Он посмотрел ", stem: "вызывающ", end: "е", a: ".", t: 2, acc: "вызывАюще" },
     { b: "Голос звучал ", stem: "тягуч", end: "е", a: ".", t: 2, acc: "тягУче" },
 
-    { b: "Мы купили это ", stem: "деш", end: "ё", a: "во.", t: 1, chk: "дешевле" },
+    { b: "С ним обошлись ", stem: "ч", end: "ё", a: "рство.", t: 1, chk: "черстветь" },
     { b: "Он ответил ", stem: "ж", end: "ё", a: "стко.", t: 1, chk: "жестковатый" },
     { b: "Листья горели ", stem: "ж", end: "ё", a: "лто.", t: 1, chk: "желтеть" }
   ];
@@ -565,7 +575,7 @@
   var STEP_NAMES = { 1: "где пропуск: на конце или в корне", 2: "ударение на конце" };
 
   var WALK_RESULT = {
-    1: ["apart", "Корень", "Буква в корне — это другое правило: Ё, если есть слово с Е (дешёво — дешевле)."],
+    1: ["apart", "Корень", "Буква в корне — это другое правило: Ё, если есть слово с Е (жёстко — жестковатый)."],
     2: ["other", "-Е", "На конце наречия без ударения — Е."],
     3: ["together", "-О", "На конце наречия под ударением — О. Исключение: ещё."]
   };
