@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Запятые в СПП с несколькими придаточными</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; position: relative; }
+    .home-link { position: absolute; top: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 700; color: var(--muted);
+      text-decoration: none; padding: 6px 14px; border: 2px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.35rem; }
+    .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 1.5rem; }
+    .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+    .card-wrap { width: 100%; max-width: 640px; }
+    .card, .finish-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.2rem 2rem 2rem; text-align: center; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; }
+    .top-msg { font-size: 1.1rem; font-weight: 700; min-height: 30px; margin-bottom: 0.4rem; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.5px; }
+    .top-msg.show { opacity: 1; }
+    .top-msg.good { color: var(--green); }
+    .top-msg.remind { color: var(--red); }
+    .mode-badge { display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--red); background: var(--red-bg);
+      border: 1px solid #f0c4be; border-radius: 99px; padding: 3px 14px; margin-bottom: 0.8rem; }
+    .counter { font-size: 0.78rem; color: var(--hint); margin-bottom: 0.6rem; font-weight: 600; letter-spacing: 1px; }
+    .task { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+
+    .sentence { font-family: var(--serif); font-size: 1.45rem; line-height: 2.3; margin-bottom: 1.6rem; text-align: left; }
+    .w { white-space: nowrap; }
+    .gap { display: inline-block; vertical-align: baseline; width: 1.05em; height: 1.5em; margin: 0 1px; padding: 0;
+      border: 0; border-bottom: 2px dotted var(--border); background: transparent; color: var(--accent);
+      font-family: var(--serif); font-size: 1em; font-weight: 700; line-height: 1.3; cursor: pointer; border-radius: 4px 4px 0 0;
+      transition: background .12s, border-color .12s; }
+    .gap:hover:not(:disabled) { background: var(--accent-bg); border-bottom-color: var(--accent); }
+    .gap:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+    .gap.on { border-bottom-color: var(--accent); }
+    .gap:disabled { cursor: default; border-bottom-color: transparent; }
+    .gap.ok { color: var(--green); background: var(--green-bg); }
+    .gap.miss { color: var(--red); background: var(--red-bg); }
+    .gap.extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .legend { font-size: 0.78rem; color: var(--muted); margin: -0.6rem 0 1.2rem; display: none; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .legend.show { display: flex; }
+    .legend b { font-family: var(--serif); padding: 0 5px; border-radius: 4px; }
+    .lg-ok { color: var(--green); background: var(--green-bg); }
+    .lg-miss { color: var(--red); background: var(--red-bg); }
+    .lg-extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .explanation { font-size: 0.92rem; color: var(--muted); line-height: 1.75; max-width: 520px; opacity: 0; transition: opacity 0.4s; min-height: 20px; }
+    .explanation.show { opacity: 1; }
+    .explanation b { color: var(--text); }
+    .explanation i { color: var(--text); font-family: var(--serif); }
+    .nav-row { display: flex; justify-content: center; gap: 12px; margin-top: 1.4rem; }
+    .nav-btn, .btn-restart, .btn-errors, .btn-start { padding: 11px 26px; border-radius: 99px; border: 2px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background .15s, border-color .15s; }
+    .nav-btn:hover, .btn-restart:hover, .btn-start:hover { background: var(--bg); border-color: var(--muted); }
+    .nav-btn.primary, .btn-start.primary { border-color: var(--accent); color: var(--accent); }
+    .nav-btn.primary:hover, .btn-start.primary:hover { background: var(--accent-bg); }
+    .btn-errors { border-color: var(--red); color: var(--red); background: transparent; }
+    .btn-errors:hover { background: var(--red-bg); }
+    .finish-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .finish-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .finish-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.6; }
+    .rules { text-align: left; font-size: 0.88rem; line-height: 1.65; color: var(--muted); background: var(--bg); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem; }
+    .rules b { color: var(--text); }
+    .rules i { font-family: var(--serif); color: var(--text); }
+    .mistakes-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.8rem; }
+    .mistake-item { font-family: var(--serif); font-size: 1rem; margin: 7px 0; text-align: left; }
+    .all-correct { font-size: 0.95rem; color: var(--green); font-weight: 700; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+    .kbd-hint { font-size: 0.75rem; color: var(--hint); margin-top: 1rem; text-align: center; }
+    @media (max-width: 520px) {
+      .home-link { position: static; align-self: flex-start; margin-bottom: 1rem; }
+      header h1 { font-size: 1.2rem; }
+      .sentence { font-size: 1.2rem; line-height: 2.4; }
+      .gap { width: 1.3em; }
+      .card, .finish-card { padding: 1.8rem 1.1rem 1.5rem; }
+      .kbd-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+
+<a class="home-link" href="index.html">← На главную</a>
+
+<header>
+  <h1>СПП с несколькими придаточными</h1>
+  <p>Поставь запятые там, где они нужны: между главной частью и придаточными и между самими придаточными</p>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="prog"></div></div></div>
+<div class="card-wrap"><div id="main"></div></div>
+
+<script>
+/*
+  КАК ДОБАВИТЬ ПРЕДЛОЖЕНИЕ:
+  [предложение с правильно расставленными запятыми, пояснение]
+  Запятые в предложении — это правильный ответ. Ученик видит предложение без запятых.
+*/
+const RAW = [
+  ["Бабушка рассказывала, как жили в деревне, как пекли хлеб, как встречали праздники.", "Придаточные <b>однородные</b>: относятся к одному слову (рассказывала что?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Мы видели, как солнце садилось за лес, как темнело небо над рекой.", "Придаточные <b>однородные</b>: относятся к одному слову (видели что?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Мне казалось, что все уже спят, что в доме никого нет.", "Придаточные <b>однородные</b>: относятся к одному слову (казалось что?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Он помнил, где стоял старый дом, где росла высокая липа.", "Придаточные <b>однородные</b>: относятся к одному слову (помнил что?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Когда наступила весна, когда растаял последний снег, мы поехали за город.", "Придаточные <b>однородные</b>: относятся к одному слову (поехали когда?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах. Придаточные стоят перед главной частью — после второго тоже запятая."],
+  ["Я слышал, как шумел ветер, как скрипели старые сосны.", "Придаточные <b>однородные</b>: относятся к одному слову (слышал что?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Учитель объяснил, что задача трудная, что спешить не нужно.", "Придаточные <b>однородные</b>: относятся к одному слову (объяснил что?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Пока свободою горим, пока сердца для чести живы, мой друг, отчизне посвятим души прекрасные порывы!", "Придаточные <b>однородные</b>: относятся к одному слову (посвятим когда?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах. Обращение «мой друг» тоже выделяется запятыми. <i>(А. С. Пушкин)</i>"],
+  ["Если будет тепло, если не пойдёт дождь, мы устроим пикник.", "Придаточные <b>однородные</b>: относятся к одному слову (устроим при каком условии?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Нам рассказали, кто построил этот мост, когда его открыли.", "Придаточные <b>однородные</b>: относятся к одному слову (рассказали что?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах. Союзные слова разные, но вопрос один."],
+  ["Мама просила, чтобы мы не шумели, чтобы вернулись до темноты.", "Придаточные <b>однородные</b>: относятся к одному слову (просила о чём?) и отвечают на один вопрос. Союза между ними нет → <b>запятая</b> между придаточными, как при однородных членах."],
+  ["Я не знал, придёт ли он сегодня, или нам придётся ждать до завтра.", "Придаточные <b>однородные</b> (не знал чего?), союз <b>повторяется</b> (ли… или) → <b>запятая</b> между придаточными."],
+  ["Трудно сказать, то ли он обиделся, то ли просто устал.", "Придаточные <b>однородные</b> (сказать что?), союз <b>повторяется</b> (то ли… то ли) → <b>запятая</b> между придаточными."],
+  ["Мы не понимали, то ли это гроза приближается, то ли где-то стреляют.", "Придаточные <b>однородные</b> (не понимали чего?), союз <b>повторяется</b> (то ли… то ли) → <b>запятая</b> между придаточными."],
+  ["Неизвестно, успеем ли мы на поезд, или придётся ехать утром.", "Придаточные <b>однородные</b> (неизвестно что?), союз <b>повторяется</b> (ли… или) → <b>запятая</b> между придаточными."],
+  ["Я понял, что опоздал и что поезд уже ушёл.", "Придаточные <b>однородные</b>: относятся к одному слову (понял что?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Никто не знал, когда начнётся концерт или где будет сбор.", "Придаточные <b>однородные</b>: относятся к одному слову (не знал чего?) и отвечают на один вопрос. Их соединяет <b>одиночный союз ИЛИ</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Мама сказала, что обед готов и что нужно мыть руки.", "Придаточные <b>однородные</b>: относятся к одному слову (сказала что?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Я вспомнил, как мы ходили в лес и как собирали грибы.", "Придаточные <b>однородные</b>: относятся к одному слову (вспомнил что?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Когда стемнело и на небе показались звёзды, мы развели костёр.", "Придаточные <b>однородные</b>: относятся к одному слову (развели когда?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>. Во втором придаточном союз «когда» пропущен."],
+  ["Если ты устал или у тебя болит голова, ложись спать.", "Придаточные <b>однородные</b>: относятся к одному слову (ложись при каком условии?) и отвечают на один вопрос. Их соединяет <b>одиночный союз ИЛИ</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Было видно, как по реке плывут лодки и как рыбаки забрасывают сети.", "Придаточные <b>однородные</b>: относятся к одному слову (видно что?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Он рассказал, где был летом и что видел в путешествии.", "Придаточные <b>однородные</b>: относятся к одному слову (рассказал что?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Я надеюсь, что погода наладится и мы пойдём в поход.", "Придаточные <b>однородные</b>: относятся к одному слову (надеюсь на что?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>. Во втором придаточном союз «что» пропущен."],
+  ["Дедушка говорил, что лес надо беречь и что каждое дерево живое.", "Придаточные <b>однородные</b>: относятся к одному слову (говорил что?) и отвечают на один вопрос. Их соединяет <b>одиночный союз И</b> → между придаточными запятая <b>не нужна</b>."],
+  ["Когда мы вернулись домой, мама сказала, что звонил дедушка.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (сказала когда? и сказала что?) → запятой отделяется каждая часть."],
+  ["Если завтра будет солнечно, мы пойдём на озеро, где много рыбы.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (пойдём при каком условии? и на какое озеро?) → запятой отделяется каждая часть."],
+  ["Когда мы подошли к дому, в окнах уже горел свет, который зажгла сестра.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (горел когда? и какой свет?) → запятой отделяется каждая часть."],
+  ["Хотя было поздно, бабушка рассказала, как познакомилась с дедушкой.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (рассказала несмотря на что? и рассказала что?) → запятой отделяется каждая часть."],
+  ["Пока шёл дождь, мы сидели в беседке, которую построил отец.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (сидели как долго? и в какой беседке?) → запятой отделяется каждая часть."],
+  ["Чтобы не опоздать, я завёл будильник, который звенит очень громко.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (завёл зачем? и какой будильник?) → запятой отделяется каждая часть."],
+  ["Учитель, который вёл у нас историю, говорил, что прошлое надо знать.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (какой учитель? и говорил что?) → запятой отделяется каждая часть. Первое придаточное стоит внутри главной части — запятые с двух сторон."],
+  ["Когда кончились уроки, мы пошли в музей, о котором давно мечтали.", "Подчинение <b>неоднородное</b>: придаточные отвечают на разные вопросы (пошли когда? и в какой музей?) → запятой отделяется каждая часть. Предлог «о» входит в придаточное — запятая перед ним."],
+  ["Был прекрасный июльский день, один из тех дней, которые случаются только тогда, когда погода установилась надолго.", "Подчинение <b>последовательное</b>: первое придаточное поясняет слово «дней», второе — слово «тогда» из первого придаточного → запятой отделяется каждая часть. Запятая после «день» отделяет приложение. <i>(И. С. Тургенев)</i>"],
+  ["Я знаю, что ты читаешь книгу, которую тебе подарили на день рождения.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «книгу» из первого → запятой отделяется каждая часть."],
+  ["Мы узнали, что в городе открылся музей, где хранятся старинные карты.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «музей» из первого → запятой отделяется каждая часть."],
+  ["Он сказал, что приедет, когда закончит работу.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «приедет» из первого (приедет когда?) → запятой отделяется каждая часть."],
+  ["Мы остановились у дома, в котором жил человек, о котором писали все газеты.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «человек» из первого → запятой отделяется каждая часть."],
+  ["Брат признался, что потерял книгу, которую взял в библиотеке.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «книгу» из первого → запятой отделяется каждая часть."],
+  ["Мне написали, что поезд прибудет в город, где нас будут встречать.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «город» из первого → запятой отделяется каждая часть."],
+  ["Я думаю, что он обиделся, потому что его не позвали.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «обиделся» из первого (обиделся почему?) → запятой отделяется каждая часть. Союз «потому что» не делится."],
+  ["Учительница спросила, кто знает, где находится Байкал.", "Подчинение <b>последовательное</b>: второе придаточное поясняет слово «знает» из первого → запятой отделяется каждая часть."]
+];
+
+function parse(sentence) {
+  const tokens = sentence.split(" ");
+  const words = [], ans = [];
+  tokens.forEach((t, i) => {
+    const comma = t.endsWith(",");
+    words.push(comma ? t.slice(0, -1) : t);
+    if (i < tokens.length - 1) ans.push(comma);
+  });
+  return { words, ans };
+}
+const SOURCE = RAW.map(([s, expl]) => Object.assign({ src: s, expl }, parse(s)));
+
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+let deck = [], idx = 0, mistakes = [], marks = [], checked = false, isErrorMode = false;
+
+function startScreen() {
+  document.getElementById("prog").style.width = "0%";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">✍️</div>
+      <div class="finish-title" style="color:var(--text)">Как это работает</div>
+      <div class="rules">
+        Между словами есть пропуски. <b>Нажми на пропуск</b>, чтобы поставить запятую; нажми ещё раз, чтобы убрать.
+        Потом нажми <b>«Проверить»</b>.<br><br>
+        Помни: придаточное <b>всегда</b> отделяется запятыми.<br>
+        • Придаточное <b>внутри</b> главного — две запятые: <i>Книга, которую ты дал, интересная.</i><br>
+        • <b>Составной союз</b> (<i>потому что, так как</i>) обычно не делится: <i>…, потому что шёл дождь.</i><br>
+        • Но он <b>делится</b>, если перед ним частица, вводное слово или однородный член: <i>не для того, чтобы…</i><br>
+        • Если перед союзным словом стоит <b>предлог</b>, запятая — перед предлогом: <i>Дорога, по которой…</i>
+      </div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn-start primary" onclick="begin(20)">20 случайных</button>
+        <button class="btn-start" onclick="begin(0)">Все ${SOURCE.length}</button>
+      </div>
+    </div>`;
+}
+
+function begin(n) {
+  const all = shuffle(SOURCE);
+  deck = n ? all.slice(0, n) : all;
+  roundSet = [...deck];
+  idx = 0; mistakes = []; isErrorMode = false;
+  render();
+}
+
+function sentenceHTML(w) {
+  return w.words.map((word, i) => {
+    let html = `<span class="w">${word}`;
+    if (i < w.words.length - 1) {
+      html += `<button class="gap" data-i="${i}" aria-label="Пропуск после слова «${word}»" onclick="toggle(${i})"></button>`;
+    }
+    return html + "</span> ";
+  }).join("");
+}
+
+function render() {
+  if (idx >= deck.length) { showFinish(); return; }
+  const w = deck[idx];
+  marks = w.ans.map(() => false); checked = false;
+  document.getElementById("prog").style.width = (idx / deck.length * 100) + "%";
+  const badge = isErrorMode ? '<div class="mode-badge">Работа над ошибками</div>' : "";
+  document.getElementById("main").innerHTML = `
+    <div class="card">
+      <div class="top-msg" id="topmsg"></div>
+      ${badge}
+      <div class="counter">${idx + 1} / ${deck.length}</div>
+      <div class="task">Нажми на пропуски, где нужна запятая. Если запятые не нужны — сразу проверяй.</div>
+      <div class="sentence" id="sent">${sentenceHTML(w)}</div>
+      <div class="legend" id="legend">
+        <span><b class="lg-ok">,</b> верно</span><span><b class="lg-miss">,</b> пропущена</span><span><b class="lg-extra">,</b> лишняя</span>
+      </div>
+      <div class="explanation" id="expl">${w.expl}</div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn primary" id="actBtn" onclick="act()">Проверить</button>
+    </div>
+    <div class="kbd-hint">Enter — проверить / дальше</div>`;
+}
+
+function toggle(i) {
+  if (checked) return;
+  marks[i] = !marks[i];
+  const g = document.querySelector(`.gap[data-i="${i}"]`);
+  g.textContent = marks[i] ? "," : "";
+  g.classList.toggle("on", marks[i]);
+}
+
+function act() { checked ? next() : check(); }
+
+function check() {
+  const w = deck[idx];
+  checked = true;
+  let ok = true;
+  w.ans.forEach((need, i) => {
+    const g = document.querySelector(`.gap[data-i="${i}"]`);
+    g.disabled = true;
+    g.classList.remove("on");
+    if (need && marks[i]) { g.textContent = ","; g.classList.add("ok"); }
+    else if (need && !marks[i]) { g.textContent = ","; g.classList.add("miss"); ok = false; }
+    else if (!need && marks[i]) { g.textContent = ","; g.classList.add("extra"); ok = false; }
+  });
+  const top = document.getElementById("topmsg");
+  if (ok) { top.textContent = "МОЛОДЕЦ!"; top.className = "top-msg good show"; }
+  else {
+    top.textContent = "Запомни!"; top.className = "top-msg remind show";
+    document.getElementById("legend").classList.add("show");
+    if (!mistakes.includes(w)) mistakes.push(w);
+  }
+  document.getElementById("expl").classList.add("show");
+  const b = document.getElementById("actBtn");
+  b.textContent = "Следующее →"; b.focus();
+}
+
+function next() { idx++; render(); }
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && deck.length && idx < deck.length && document.getElementById("actBtn")) {
+    if (e.target.classList && e.target.classList.contains("gap")) return;
+    e.preventDefault(); act();
+  }
+});
+
+function showFinish() {
+  document.getElementById("prog").style.width = "100%";
+  const total = deck.length, correct = total - mistakes.length;
+  const list = mistakes.length
+    ? `<div class="mistakes-title">Предложения с ошибками</div>` + mistakes.map(w => `<div class="mistake-item">${w.src}</div>`).join("")
+    : `<div class="all-correct">Все запятые расставлены верно! 🎉</div>`;
+  const errBtn = mistakes.length ? `<button class="btn-errors" onclick="startErrorMode()">Работа над ошибками</button>` : "";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">${mistakes.length ? "📝" : "🏆"}</div>
+      <div class="finish-title">${isErrorMode ? "Работа над ошибками завершена!" : "Тренировка завершена!"}</div>
+      <div class="finish-sub">Без ошибок: ${correct} из ${total}</div>
+      ${list}
+      <div class="btn-row">
+        <button class="btn-restart" onclick="repeatRound()">Повторить эти же предложения</button>
+        <button class="btn-restart" onclick="startScreen()">Начать заново</button>
+        ${errBtn}
+        <a class="btn-restart" href="index.html">На главную</a>
+      </div>
+    </div>`;
+}
+
+let roundSet = [];
+function repeatRound() {
+  deck = shuffle(roundSet);
+  idx = 0; mistakes = [];
+  render();
+}
+
+function startErrorMode() { const errs = [...mistakes]; mistakes = []; deck = shuffle(errs); roundSet = [...deck]; idx = 0; isErrorMode = true; render(); }
+
+startScreen();
+</script>
+</body>
+</html>
