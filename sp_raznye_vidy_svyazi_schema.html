@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СП с разными видами связи — схема</title>
+<style>
+  :root {
+    --paper: #ffffff;
+    --desk: #eeedf6;
+    --ink: #2d2a7a;
+    --ink-soft: #6562a3;
+    --rule: #c9c7e6;
+    --violet: #cfa3f3;
+    --violet-wash: #f3e9fc;
+    --lime: #dcf58f;
+    --lime-wash: #f5fbdc;
+    --err: #a3231a;
+    --err-wash: #fdecea;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --serif: Georgia, "Times New Roman", "PT Serif", serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    background: var(--desk);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 13px;
+    line-height: 1.38;
+  }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:focus-visible { outline: 3px solid var(--violet); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+  i { font-family: var(--serif); font-style: italic; color: var(--ink); }
+  /* грамматическая основа: подлежащее — одна черта, сказуемое — две */
+  .subj { text-decoration: underline; text-underline-offset: 2px; }
+  .pred { text-decoration: underline double; text-underline-offset: 2px; }
+  /* общий для обеих частей элемент */
+  .com { padding: 0 2px; border-radius: 4px; background: var(--violet-wash); }
+
+  /* ---------- лист А4, альбомная ориентация: 297 × 210 мм ---------- */
+  .sheet {
+    width: 1122px;
+    height: 793px;
+    padding: 24px 30px 22px;
+    display: flex;
+    flex-direction: column;
+    background: var(--paper);
+    transform-origin: top left;
+  }
+
+  /* ---------- шапка ---------- */
+  header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  h1 {
+    margin: 0;
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+  .modes {
+    flex: none;
+    display: inline-flex;
+    gap: 3px;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--desk);
+  }
+  .modes button {
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .modes button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+
+  /* ---------- полоса: как читать схему / пример / ответ ---------- */
+  .band {
+    flex: none;
+    height: 78px;
+    margin-top: 10px;
+    padding: 6px 18px;
+    display: flex;
+    align-items: center;
+    border-radius: 14px;
+    background: var(--ink);
+    color: #fff;
+  }
+  .band-static { margin: 0; font-size: 16.5px; }
+  .band-static b { font-weight: 700; }
+  .band-live { flex: 1; min-width: 0; display: flex; align-items: center; gap: 20px; }
+  body[data-mode="all"] .band-live { display: none; }
+  body:not([data-mode="all"]) .band-static { display: none; }
+  .band-text { flex: 1; min-width: 0; }
+  .band-main { margin: 0; font-family: var(--serif); font-size: 21px; line-height: 1.3; }
+  .band-main.plain { font-family: var(--sans); font-size: 16.5px; }
+  .band-note { margin: 3px 0 0; font-size: 13.5px; color: #e4e2fa; }
+  .band-note b { color: #fff; }
+  .band-note.bad { color: #ffd9d4; }
+  .band-side { flex: none; text-align: right; }
+  .band-meta { margin: 0 0 6px; font-size: 12.5px; color: #c9c7f0; }
+  .band-btn {
+    padding: 7px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .band-btn:focus-visible { outline-color: var(--lime); }
+  .tw {
+    font-weight: 700;
+    padding: 0 3px 1px;
+    border-radius: 6px;
+    border-bottom: 2px dashed #c9c7f0;
+  }
+  .tw.together, .tw.apart { border-bottom: 0; color: var(--ink); }
+  .tw.together { background: var(--violet); }
+  .tw.other { background: #fff; color: var(--ink); border-bottom: 0; }
+  .tw.apart { background: var(--lime); }
+
+  /* ---------- схема: вопросы слева направо, ответы внизу ---------- */
+  .ladder {
+    flex: 1;
+    min-height: 0;
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) 30px minmax(0, 2.2fr) 30px minmax(0, 0.72fr);
+  }
+  .stage { min-width: 0; display: flex; flex-direction: column; }
+
+  .q {
+    position: relative;
+    flex: none;
+    margin-top: 14px;
+    padding: 21px 12px 12px;
+    border: 2px solid var(--ink);
+    border-radius: 14px;
+    background: var(--paper);
+  }
+  .num {
+    position: absolute;
+    top: -15px;
+    left: 11px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    line-height: 28px;
+    text-align: center;
+  }
+  .q h2 { margin: 0; font-size: 16px; line-height: 1.22; font-weight: 700; }
+  .q p { margin: 6px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+  .q p b { color: var(--ink); }
+
+  .signals { margin: 8px 0 0; padding: 0; list-style: none; font-size: 13px; }
+  .signals li { padding: 4px 0; border-top: 1px solid var(--rule); }
+  .signals li:last-child { padding-bottom: 0; }
+  .signals b { display: block; }
+  .nb { white-space: nowrap; }
+  .tw { white-space: nowrap; }
+  .signals.inline b { display: inline; }
+  .signals span { color: var(--ink-soft); }
+
+  /* кнопки ответа — только у текущего вопроса */
+  .ask { display: none; gap: 8px; margin-top: 10px; }
+  .q.cur .ask { display: flex; }
+  .ask button {
+    flex: 1;
+    max-width: 78px;
+    padding: 6px 0;
+    border: 2px solid var(--ink);
+    border-radius: 999px;
+    background: var(--paper);
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .ask button:hover:not(:disabled) { background: var(--ink); color: #fff; }
+  .ask button:disabled {
+    border-color: var(--err);
+    color: var(--err);
+    background: var(--err-wash);
+    text-decoration: line-through;
+    cursor: default;
+  }
+
+  /* стрелка вниз — к ответу */
+  .exit {
+    position: relative;
+    flex: 1;
+    min-height: 32px;
+    margin: 0 0 4px 25px;
+    padding: 5px 0 0 9px;
+    border-left: 2px solid var(--ink);
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .exit::after {
+    content: "";
+    position: absolute;
+    left: -6px; bottom: -1px;
+    border-top: 9px solid var(--ink);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+
+  /* стрелка вправо — к следующему вопросу */
+  .next {
+    position: relative;
+    align-self: start;
+    margin-top: 34px;
+    padding-bottom: 6px;
+    text-align: center;
+    font-weight: 700;
+    font-size: 13.5px;
+  }
+  .next::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 8px; bottom: 0;
+    height: 2px;
+    background: var(--ink);
+  }
+  .next::after {
+    content: "";
+    position: absolute;
+    right: 1px; bottom: -4px;
+    border-left: 9px solid var(--ink);
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+
+  /* ответы */
+  .verdict {
+    flex: 0 0 128px;
+    padding: 10px 12px 10px;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    font-size: 13.5px;
+  }
+  .verdict.together { background: var(--violet-wash); }
+  .verdict.apart { background: var(--lime-wash); }
+  .verdict.hit { border-color: var(--ink); }
+  .mark {
+    display: inline-block;
+    padding: 0 12px 2px;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    border-radius: 13px 8px 15px 7px / 9px 15px 8px 13px;
+    transform: rotate(-1deg);
+  }
+  .together .mark { background: var(--violet); }
+  .verdict.other { background: var(--desk); }
+  .other .mark { background: var(--rule); }
+  .apart .mark { background: var(--lime); }
+  .verdict p { margin: 7px 0 0; }
+  .verdict i { font-size: 14px; }
+  .verdict .note {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px dashed var(--ink-soft);
+    color: var(--ink-soft);
+  }
+  .verdict .note b { color: var(--ink); }
+  .stage.last .verdict { flex: 1; margin-top: 14px; }
+
+
+  /* ---------- фраза для запоминания ---------- */
+  .q-big h2 { font-size: 17px; }
+  .mark.big { font-size: 23px; padding: 0 14px 2px; }
+  .phrase { margin: 14px 0 6px; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 22px; align-items: center; }
+  .phrase svg { display: block; width: 158px; height: 140px; }
+  .q p.phrase-words { margin: 0; font-family: var(--serif); font-weight: 700; font-size: 40px; line-height: 1.55; color: var(--ink); }
+  .phrase-words .w {
+    display: inline-block;
+    margin-right: 10px;
+    padding: 0 12px 2px;
+    line-height: 1.25;
+    white-space: nowrap;
+    background: var(--violet);
+    border-radius: 14px 9px 16px 8px / 10px 16px 9px 14px;
+  }
+  .phrase-words s { margin-left: 3px; font-size: 0.72em; font-weight: 700; color: var(--err); text-decoration-thickness: 3px; }
+  .q p.phrase-cap { margin: 10px 0 0; font-size: 14.5px; color: var(--ink); }
+  .soft-list { margin: 8px 0 0; padding: 0; list-style: none; font-family: var(--serif); font-style: italic; font-size: 16.5px; line-height: 1.5; }
+  .soft-list li { white-space: nowrap; }
+  .sf { padding: 0 3px 1px; border-radius: 5px; background: var(--lime); font-family: var(--sans); font-style: normal; font-weight: 800; }
+  .verdict.apart .sf { background: #fff; }
+  .traps.dict2 { grid-template-columns: auto repeat(3, minmax(0, 1fr)); column-gap: 22px; }
+  .traps.dict { grid-template-columns: auto repeat(4, minmax(0, 1fr)); column-gap: 22px; }
+
+
+  /* ---------- дерево: часть речи, затем ветка ---------- */
+  .tree { flex: 1; min-height: 0; margin-top: 12px; display: flex; flex-direction: column; }
+  .q1 { margin-top: 14px; padding: 16px 16px 14px; display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 20px; align-items: center; }
+  .q1 .num { top: -15px; }
+  .q1 h2 { font-size: 18px; }
+  .q1 p { margin: 4px 0 0; }
+  .q1 .ask { margin-top: 0; }
+  .q1 .ask button { flex: none; max-width: none; width: auto; padding: 6px 13px; font-size: 14px; }
+  .q1.cur .ask { display: flex; }
+  .cols { flex: 1; min-height: 0; display: grid; grid-template-columns: 1.18fr 0.82fr 1.05fr 1.12fr 0.98fr; column-gap: 12px; }
+  .col { min-width: 0; display: flex; flex-direction: column; }
+  .drop { position: relative; flex: none; height: 48px; margin-left: 24px; padding: 4px 0 0 10px; border-left: 2px solid var(--ink); }
+  .drop::after { content: ""; position: absolute; left: -6px; bottom: -1px; border-top: 9px solid var(--ink); border-left: 5px solid transparent; border-right: 5px solid transparent; }
+  .drop b { display: block; font-size: 14.5px; line-height: 1.2; }
+  .drop span { display: block; font-size: 12.5px; color: var(--ink-soft); }
+  .col > .q { margin-top: 6px; padding: 12px 12px 12px; }
+  .col > .q h2 { font-size: 15.5px; }
+  .col > .q p { font-size: 13px; }
+  .col > .verdict { flex: 1; margin-top: 6px; }
+  .opts { flex: 1; display: grid; grid-template-rows: 1fr 1fr; row-gap: 8px; margin-top: 8px; }
+  .opt { position: relative; min-height: 0; display: grid; grid-template-columns: 34px minmax(0, 1fr); }
+  .opt .lead { position: relative; font-weight: 700; font-size: 13px; padding-top: 8px; }
+  .opt .lead::before { content: ""; position: absolute; left: 0; right: 7px; top: 30px; height: 2px; background: var(--ink); }
+  .opt .lead::after { content: ""; position: absolute; right: 0; top: 26px; border-left: 8px solid var(--ink); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .opt .verdict { padding: 8px 10px; font-size: 13px; }
+  .verdict .mark.mid { font-size: 19px; padding: 0 11px 2px; }
+  .verdict p { margin-top: 6px; }
+  .verdict p i { font-size: 13.5px; }
+  .uzh { font-family: var(--serif); font-weight: 700; font-size: 15px; }
+  .sf { padding: 0 2px 1px; border-radius: 4px; background: var(--lime); font-family: var(--sans); font-style: normal; font-weight: 800; }
+  .verdict.apart .sf { background: #fff; }
+  .lead.dim, .drop.dim { opacity: .3; }
+
+  @media screen {
+    body.stacked .q1 { display: block; padding: 22px 14px 14px; }
+    body.stacked .q1 .ask { margin-top: 12px; flex-wrap: wrap; }
+    body.stacked .cols { display: block; }
+    body.stacked .col { margin-top: 20px; scroll-margin-top: 170px; }
+    body.stacked .opts { display: block; }
+    body.stacked .opt { margin-top: 10px; }
+  }
+
+
+  /* ---------- три дорожки: Ц, корень, суффикс и окончание ---------- */
+  .lanes {
+    flex: 1; min-height: 0; margin-top: 4px;
+    display: grid;
+    grid-template-columns: 208px 34px minmax(0, 1fr) 262px;
+    grid-template-rows: auto auto auto;
+    row-gap: 0;
+  }
+  .lcell { min-width: 0; display: flex; flex-direction: column; }
+  .lanes .q { margin-top: 13px; padding: 16px 12px 10px; }
+  .lanes .q h2 { font-size: 15.5px; }
+  .lanes .q p { font-size: 13px; margin-top: 4px; }
+  .lanes .q i { font-size: 13.5px; }
+  .lanes .ask { margin-top: 7px; }
+  .lanes .ask button { padding: 4px 0; }
+  .lanes .next { margin-top: 36px; }
+  .lanes .drop { position: relative; flex: 1; min-height: 22px; margin: 0 0 4px 24px; padding: 3px 0 0 9px; border-left: 2px solid var(--ink); font-weight: 700; font-size: 13px; }
+  .lanes .drop::after { content: ""; position: absolute; left: -6px; bottom: -1px; border-top: 9px solid var(--ink); border-left: 5px solid transparent; border-right: 5px solid transparent; }
+  .lanes .drop.short { flex: none; height: 20px; }
+  #sheet .band { height: 66px; }
+  #sheet .traps { margin-top: 8px; padding-top: 8px; }
+  .outs { min-width: 0; margin-top: 13px; display: grid; grid-template-rows: 1fr 1fr; row-gap: 5px; }
+  .opt { min-height: 0; display: grid; grid-template-columns: 36px minmax(0, 1fr); }
+  .opt .lead { position: relative; font-weight: 700; font-size: 13px; padding-top: 4px; }
+  .opt .lead::before { content: ""; position: absolute; left: 0; right: 7px; top: 24px; height: 2px; background: var(--ink); }
+  .opt .lead::after { content: ""; position: absolute; right: 0; top: 20px; border-left: 8px solid var(--ink); border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+  .opt .verdict, .eout .verdict { padding: 6px 10px 7px; font-size: 13px; }
+  .verdict .mark.mid { font-size: 20px; padding: 0 12px 2px; }
+  .verdict p { margin-top: 3px; }
+  .verdict p i { font-size: 13.5px; }
+  .eout { margin-left: 0; }
+  .lt { padding: 0 2px; border-radius: 4px; font-family: var(--sans); font-style: normal; font-weight: 800; }
+  .lt.o { background: var(--violet); }
+  .lt.yo { background: var(--lime); }
+  .lt.e { background: var(--rule); }
+  .verdict .lt { background: #fff; }
+  .morph { display: inline-block; vertical-align: -2px; margin-right: 5px; }
+  .lead.dim, .drop.dim { opacity: .3; }
+
+  /* ---------- лист 2: диктант ---------- */
+  .dict { flex: 1; min-height: 0; margin-top: 14px; display: grid; grid-template-columns: minmax(0, 1fr) 250px; column-gap: 24px; }
+  .dtext p { margin: 0 0 9px; font-family: var(--serif); font-size: 16.5px; line-height: 1.85; }
+  .w { white-space: nowrap; }
+  .gap {
+    display: inline-block; min-width: 13px; margin: 0; padding: 0 1px;
+    border: 0; border-bottom: 2px dashed var(--ink-soft); border-radius: 4px 4px 0 0;
+    background: var(--desk); font-family: var(--serif); font-size: 17px; font-weight: 700; line-height: 1.3;
+  }
+  .gap.set { border-bottom-style: solid; border-bottom-color: var(--ink); }
+  .gap.ok.o { background: var(--violet); }
+  .gap.ok.yo { background: var(--lime); }
+  .gap.bad { background: var(--err-wash); color: var(--err); border-bottom-color: var(--err); text-decoration: line-through; }
+  .gap.miss { background: var(--err-wash); color: var(--err); }
+  .gap .fix { margin-left: 2px; color: var(--ink); text-decoration: none; display: inline-block; }
+  .dside { display: flex; flex-direction: column; gap: 10px; }
+  .dbox { padding: 12px 14px; border-radius: 14px; background: var(--desk); font-size: 13.5px; }
+  .dbox h3 { margin: 0 0 6px; font-size: 15px; }
+  .dbox p { margin: 6px 0 0; }
+  .dbtn { padding: 8px 16px; border: 2px solid var(--ink); border-radius: 999px; background: var(--paper); font-weight: 700; font-size: 14px; }
+  .dbtn.main { background: var(--ink); color: #fff; }
+  .dbtns { display: flex; gap: 8px; flex-wrap: wrap; }
+  .score { font-size: 18px; font-weight: 800; }
+  .excl { font-family: var(--serif); font-style: italic; font-weight: 700; font-size: 14px; line-height: 1.45; }
+
+  @media screen {
+    body[data-mode="dict"] #sheet { display: none; }
+    body:not([data-mode="dict"]) #sheet2 { display: none; }
+    body.stacked .lanes { display: block; }
+    body.stacked .lcell, body.stacked .outs { margin-bottom: 4px; }
+    body.stacked .lanes .next { margin: 6px 0 0 26px; }
+    body.stacked .outs { display: block; margin-top: 8px; }
+    body.stacked .opt { margin-top: 8px; }
+    body.stacked .lanes .drop { min-height: 30px; }
+    body.stacked .dict { display: block; }
+    body.stacked .dside { margin-top: 16px; }
+    body.stacked .modes { flex-wrap: wrap; border-radius: 20px; }
+  }
+  @media print {
+    #sheet, #sheet2 { display: flex !important; }
+    #sheet { break-after: page; }
+    .dbtns, .score-box { display: none !important; }
+    .gap { background: none; border-bottom: 2px solid var(--ink); }
+    .gap .v { display: none; }
+    .gap::after { content: attr(data-r); }
+    .gap .fix { display: none; }
+    .gap, .gap.bad, .gap.miss { color: var(--ink); text-decoration: none; border-bottom-color: var(--ink); }
+    .gap[data-r="о"] { background: var(--violet); }
+    .gap[data-r="ё"] { background: var(--lime); }
+  }
+
+  /* ---------- ловушки ---------- */
+  .traps {
+    flex: none;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 2px solid var(--ink);
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr;
+    column-gap: 26px;
+  }
+  .traps h2 { margin: 0; font-family: var(--serif); font-size: 19px; line-height: 1.15; }
+  .trap h3 { margin: 0 0 2px; font-size: 13.5px; }
+  .trap p { margin: 0; font-size: 13px; color: var(--ink-soft); }
+  .trap i { font-size: 13.5px; }
+  .hl-v { background: var(--violet-wash); padding: 0 3px; border-radius: 4px; }
+  .hl-l { background: var(--lime-wash); padding: 0 3px; border-radius: 4px; }
+
+  /* ---------- экран: приглушение непройденных частей ---------- */
+  @media screen {
+    .q, .exit, .next, .verdict { transition: opacity .2s; }
+    .dim { opacity: .3; }
+    .q.cur { box-shadow: 0 0 0 5px var(--violet-wash); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .q, .exit, .next, .verdict { transition: none; }
+  }
+
+  /* ---------- узкий экран (телефон): та же схема столбиком ---------- */
+  @media screen {
+    body.stacked { display: block; background: var(--paper); font-size: 15px; }
+    body.stacked .sheet { width: auto; height: auto; display: block; padding: 20px 16px 28px; transform: none; }
+    body.stacked header { display: block; }
+    body.stacked h1 { font-size: 27px; }
+    body.stacked .modes { margin-top: 12px; }
+    body.stacked .band {
+      position: sticky; top: 8px; z-index: 5;
+      height: auto; min-height: 60px; padding: 12px 14px;
+    }
+    body.stacked .band-static, body.stacked .band-main.plain { font-size: 15.5px; }
+    body.stacked .band-main { font-size: 19px; }
+    body.stacked .band-live { flex-direction: column; align-items: stretch; gap: 10px; }
+    body.stacked .band-side { text-align: left; }
+    body.stacked .band-meta { display: inline; margin-right: 10px; }
+    body.stacked .ladder { display: block; margin-top: 22px; }
+    body.stacked .stage {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr);
+      row-gap: 10px;
+      align-items: center;
+      scroll-margin-top: 170px;
+    }
+    body.stacked .q { grid-column: 1 / -1; padding: 22px 14px 14px; }
+    body.stacked .q h2 { font-size: 18px; }
+    body.stacked .q p, body.stacked .signals, body.stacked .verdict, body.stacked .trap p { font-size: 14.5px; }
+    body.stacked .verdict i, body.stacked .trap i { font-size: 15px; }
+    body.stacked .ask button { max-width: 96px; padding: 9px 0; font-size: 16px; }
+    body.stacked .verdict { flex: none; }
+    body.stacked .stage.last { display: block; }
+    body.stacked .stage.last .verdict { margin-top: 0; }
+    /* к ответу — вправо */
+    body.stacked .exit {
+      min-height: 0;
+      margin: 0 0 0 8px;
+      padding: 0 0 6px;
+      border-left: 0;
+      text-align: center;
+      font-size: 14.5px;
+    }
+    body.stacked .exit::before {
+      content: "";
+      position: absolute;
+      left: 0; right: 8px; bottom: 0;
+      height: 2px;
+      background: var(--ink);
+    }
+    body.stacked .exit::after {
+      left: auto; right: 1px; bottom: -4px;
+      border-left: 9px solid var(--ink);
+      border-top: 5px solid transparent;
+      border-bottom: 5px solid transparent;
+      border-right: 0;
+    }
+    /* к следующему вопросу — вниз */
+    body.stacked .next {
+      display: flex;
+      align-items: center;
+      height: 40px;
+      margin: 0 0 14px 26px;
+      padding: 0 0 0 10px;
+      border-left: 2px solid var(--ink);
+      font-size: 14.5px;
+    }
+    body.stacked .next::before { content: none; }
+    body.stacked .next::after {
+      left: -6px; right: auto; bottom: -1px;
+      border-top: 9px solid var(--ink);
+      border-left: 5px solid transparent;
+      border-right: 5px solid transparent;
+      border-bottom: 0;
+    }
+    body.stacked .traps { display: block; margin-top: 30px; padding-top: 18px; }
+    body.stacked .traps h2 { margin-bottom: 12px; font-size: 22px; }
+    body.stacked .trap { margin-bottom: 14px; }
+    body.stacked .trap h3 { font-size: 15.5px; }
+  }
+
+
+  @media screen {
+    body.stacked .phrase { grid-template-columns: minmax(0, 1fr); row-gap: 8px; }
+    body.stacked .phrase svg { margin: 0 auto; }
+    body.stacked .q p.phrase-words { font-size: 28px; }
+    body.stacked .traps.dict { display: block; }
+  }
+
+  /* ---------- печать: ровно один лист А4, альбомная ориентация ---------- */
+  @media print {
+    @page { size: A4 landscape; margin: 0; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { display: block; min-height: 0; background: #fff; }
+    .wrap { width: auto !important; height: auto !important; }
+    .sheet { transform: none !important; }
+    .modes, .ask, .band-live { display: none !important; }
+    .band-static { display: block !important; }
+    .band { height: 46px; background: var(--desk); color: var(--ink); }
+  }
+
+  .info { grid-column: 3 / 5; grid-row: 3; margin-top: 13px; padding: 10px 14px 11px; border-radius: 14px; background: var(--desk); font-size: 13.5px; display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; }
+  .info h3 { margin: 0 0 3px; font-size: 14px; }
+  .info p { margin: 0; }
+  .info i { font-size: 14px; }
+  .lanes .signals { margin-top: 6px; font-size: 13px; }
+  .lanes .signals li { padding: 3px 0; }
+  .q p.never { margin-top: 6px; padding: 5px 8px; border-radius: 8px; background: var(--violet-wash); color: var(--ink); font-size: 12.5px; }
+  .un { font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+  .cm { padding: 0 3px; border-radius: 4px; background: var(--lime); color: var(--ink); font-weight: 800; }
+  .lanes { grid-template-columns: 214px 34px minmax(0, 1fr) 300px !important; }
+  #sheet .band { height: 80px; }
+  #sheet .band-note { font-size: 13px; }
+  @media screen { body.stacked .info { display: block; } body.stacked .info > div + div { margin-top: 10px; } }
+
+  .lanes { grid-template-rows: auto 1fr !important; }
+  .band-main { font-size: 18px; }
+  .info.big { grid-row: 2; align-self: start; font-size: 15px; padding: 14px 16px; }
+  .info.big i { font-size: 15.5px; }
+  .info.big h3 { font-size: 16px; }
+  .lanes .q h2 { font-size: 17px; }
+  .lanes .q p { font-size: 14px; }
+  .lanes .q i { font-size: 14.5px; }
+  .q .ex { font-size: 13.5px; }
+  .opt .verdict, .eout .verdict { font-size: 14px; padding: 8px 12px 10px; }
+  .verdict p i { font-size: 14.5px; }
+  .lanes .q { padding: 20px 14px 13px; }
+  .info.big p + p { margin-top: 6px; }
+  .zero { padding: 0 4px; border-radius: 4px; background: var(--err-wash); color: var(--err); font-weight: 800; font-style: normal; }
+  .q .ex { margin-top: 6px; padding: 6px 9px; border-radius: 8px; background: var(--desk); font-size: 13px; }
+</style>
+</head>
+<body data-mode="walk">
+<div class="wrap" id="wrap">
+<main class="sheet" id="sheet">
+  <header>
+    <h1>СП с разными видами связи</h1>
+    <div class="modes" role="group" aria-label="Режим">
+      <button type="button" data-mode="walk" aria-pressed="true">По шагам</button>
+      <button type="button" data-mode="train" aria-pressed="false">Тренировка</button>
+      <button type="button" data-mode="all" aria-pressed="false">Вся схема</button>
+    </div>
+  </header>
+  <div class="band">
+    <p class="band-static">В одном предложении есть сочинительная, подчинительная и бессоюзная связь. <b>Особый случай — сочинительный и подчинительный союзы рядом: и когда, и хотя.</b></p>
+    <div class="band-live" aria-live="polite">
+      <div class="band-text"><p class="band-main" id="bMain"></p><p class="band-note" id="bNote"></p></div>
+      <div class="band-side"><p class="band-meta" id="bMeta"></p><button type="button" class="band-btn" id="bBtn"></button></div>
+    </div>
+  </div>
+  <section class="lanes" id="ladder" aria-label="Алгоритм">
+    <div class="lcell" style="grid-column:1;grid-row:1">
+      <div class="q" data-q="q1"><span class="num">1</span>
+        <h2>Сочинительный и подчинительный союзы стоят рядом?</h2>
+        <p><i>и когда, и хотя, и если, но так как.</i></p>
+        <p class="ex"><b>Нет</b> — союзы разделены другими словами или союз один.</p>
+<div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div></div>
+      <div class="drop" data-edge="q1:no">нет</div>
+    </div>
+    <div class="next" data-edge="q1:yes" style="grid-column:2;grid-row:1">да</div>
+    <div class="lcell" style="grid-column:3;grid-row:1">
+      <div class="q" data-q="q2"><span class="num">2</span>
+        <h2>Дальше есть ТО, ТАК или НО?</h2>
+        <p><b>Да:</b> <i>и когда…, <b>то</b>…; и хотя…, <b>но</b>…</i></p>
+        <p class="ex">Ищи после придаточного: вторая часть двойного союза «держит» его, и запятая между союзами не нужна.</p>
+<div class="ask"><button type="button" data-a="yes">Да</button><button type="button" data-a="no">Нет</button></div></div>
+    </div>
+    <div class="outs" style="grid-column:4;grid-row:1"><div class="opt"><div class="lead" data-edge="q2:yes">да</div><div class="verdict together" data-v="v21"><span class="mark mid">без запятой</span><p><i>…первыми, и <span class="zero">∅</span> когда стали пересчитывать, <b>то</b> Андрей сказал…</i></p></div></div><div class="opt"><div class="lead" data-edge="q2:no">нет</div><div class="verdict apart" data-v="v20"><span class="mark mid">запятая</span><p><i>…первыми, и<span class="cm">,</span> когда стали пересчитывать, Андрей сказал…</i></p></div></div></div>
+    <div class="lcell" style="grid-column:1;grid-row:2">
+      <div class="eout"><div class="verdict other" data-v="v10"><span class="mark mid">по границам</span><p>Раздели предложение на части и реши для каждой границы отдельно.</p></div></div>
+    </div>
+    <div class="info big" style="grid-column:3 / 5"><div><h3>Как ставить знаки на каждой границе</h3>
+        <p><b>Сочинительный союз</b> (и, а, но) — правила ССП: <i>Солнце село, и стало прохладно.</i></p>
+        <p><b>Подчинительный союз</b> (что, когда, хотя) — правила СПП: <i>Андрей сказал, что…</i></p>
+        <p><b>Союза нет</b> — правила БСП: запятая, ; : или — по смыслу.</p></div>
+      <div><h3>Порядок работы</h3>
+        <p>1. Найди все грамматические основы и союзы.</p>
+        <p>2. Отметь границы частей.</p>
+        <p>3. Если два союза встали рядом — пройди эту схему.</p>
+        <p>Знаки внутри каждой части ставь как в простом предложении.</p></div></div>
+
+  </section>
+</main>
+</div>
+<script>
+(function () {
+  "use strict";
+  var ROUTES = { q1: { yes: "q2", no: "v10" }, q2: { yes: "v21", no: "v20" } };
+  var VERD = {
+    v10: ["other", "Каждая граница — по своему правилу", "Союзы не стоят рядом: на каждой границе смотри, какая там связь."],
+    v21: ["together", "Без запятой между союзами", "Дальше есть то, так или но — запятая между сочинительным и подчинительным союзами не нужна."],
+    v20: ["apart", "Запятая между союзами", "Ни то, ни так, ни но дальше нет — ставим запятую между союзами."]
+  };
+  var STEP_NAMES = { q1: "шаге 1 (союзы рядом)", q2: "шаге 2 (то, так, но)" };
+  var ITEMS = [
+    { r: "Мы прибежали к финишу первыми§ {и}§ {когда} стали пересчитывать членов нашей команды§ Андрей сказал§ что кого-то не хватает.", a1: "yes", a2: "no",
+      h1: "Сочинительный «и» и подчинительный «когда» стоят рядом.", h2: "Ни «то», ни «так», ни «но» дальше нет.", why: "Дальше нет «то» — запятая между «и» и «когда» нужна." },
+    { r: "Мы прибежали к финишу первыми§ {и}∅ {когда} стали пересчитывать членов нашей команды§ {то} Андрей сказал§ что кого-то не хватает.", a1: "yes", a2: "yes",
+      h1: "Сочинительный «и» и подчинительный «когда» стоят рядом.", h2: "Дальше есть «то».", why: "Дальше есть «то» — запятая между «и» и «когда» не нужна." },
+    { r: "Дождь шёл уже давно§ {и}§ {хотя} мы промокли§ идти домой совсем не хотелось.", a1: "yes", a2: "no",
+      h1: "Сочинительный «и» и подчинительный «хотя» стоят рядом.", h2: "Ни «то», ни «так», ни «но» дальше нет.", why: "Дальше нет «но» — запятая между «и» и «хотя» нужна." },
+    { r: "Дождь шёл уже давно§ {и}∅ {хотя} мы промокли§ {но} идти домой совсем не хотелось.", a1: "yes", a2: "yes",
+      h1: "Сочинительный «и» и подчинительный «хотя» стоят рядом.", h2: "Дальше есть «но».", why: "Дальше есть «но» — запятая между «и» и «хотя» не нужна." },
+    { r: "Стемнело§ {и}§ {если} бы не фонарь§ мы бы заблудились.", a1: "yes", a2: "no",
+      h1: "Сочинительный «и» и подчинительный «если» стоят рядом.", h2: "Ни «то», ни «так», ни «но» дальше нет.", why: "Дальше нет «то» — запятая нужна." },
+    { r: "Стемнело§ {и}∅ {если} бы не фонарь§ {то} мы бы заблудились.", a1: "yes", a2: "yes",
+      h1: "Сочинительный «и» и подчинительный «если» стоят рядом.", h2: "Дальше есть «то».", why: "Дальше есть «то» — запятая не нужна." },
+    { r: "Я позвал друга§ {но}§ {так как} он был занят§ пришлось идти одному.", a1: "yes", a2: "no",
+      h1: "Сочинительный «но» и подчинительный «так как» стоят рядом.", h2: "Ни «то», ни «так», ни «но» после придаточного нет.", why: "Дальше нет «то» — запятая нужна." },
+
+    { r: "Солнце село§ {и} стало прохладно§ {потому что} подул ветер.", a1: "no", h1: "Между «и» и «потому что» есть другие слова — союзы не стоят рядом.", why: "" },
+    { r: "{Когда} мы вышли из дома§ пошёл дождь: небо затянуло тучами.", a1: "no", h1: "Союз в предложении один — «когда»; стыка нет.", why: "" }
+  ];
+
+  ITEMS.forEach(function (it) {
+    it.q = it.r;
+    var a = { q1: it.a1 };
+    if (it.a1 === "yes") { a.q2 = it.a2; it.v = it.a2 === "yes" ? "v21" : "v20"; } else it.v = "v10";
+    it.ans = a;
+  });
+  function hint(it, q, right) { return q === "q1" ? it.h1 : it.h2; }
+  var W = 1122, H = 793;
+  var body = document.body, wrap = document.getElementById("wrap"), sheet = document.getElementById("sheet");
+  var all = function (sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); };
+  var qEls = all("[data-q]"), edgeEls = all("[data-edge]"), vEls = all("[data-v]");
+  var bMain = document.getElementById("bMain"), bNote = document.getElementById("bNote");
+  var bMeta = document.getElementById("bMeta"), bBtn = document.getElementById("bBtn");
+  var modeBtns = all(".modes button");
+  var st = { mode: "walk", cur: "q1", path: {}, verdict: "", order: [], pos: 0, errors: 0, fb: "", log: [], byStep: {}, summary: false };
+
+  function fit() {
+    var vw = window.innerWidth, vh = window.innerHeight;
+    if (vw < 900) { body.classList.add("stacked"); sheet.style.transform = ""; wrap.style.width = wrap.style.height = ""; return; }
+    body.classList.remove("stacked");
+    var k = Math.max(0.7, Math.min(vw / W, vh / H));
+    sheet.style.transform = "scale(" + k + ")";
+    wrap.style.width = Math.floor(W * k) + "px"; wrap.style.height = Math.floor(H * k) + "px";
+  }
+  window.addEventListener("resize", fit);
+  window.addEventListener("beforeprint", function () { body.classList.remove("stacked"); });
+  window.addEventListener("afterprint", fit);
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function item() { return ITEMS[st.order[st.pos]]; }
+  /* § — место запятой, которую ставит правило; ∅ в ответе — место, где запятая не нужна */
+  function show(s, commas) {
+    var h = esc(s).replace(/\{([^}]*)\}/g, '<span class="un">$1</span>');
+    if (!commas) return h.replace(/§/g, "").replace(/∅/g, "");
+    return h.replace(/§/g, '<span class="cm">,</span>').replace(/∅/g, '<span class="zero">∅</span>');
+  }
+
+  function paintScheme() {
+    var plain = st.mode === "all" || st.summary;
+    qEls.forEach(function (el) {
+      var q = el.getAttribute("data-q"), isCur = !plain && st.cur === q;
+      el.classList.toggle("cur", isCur);
+      el.classList.toggle("dim", !plain && !isCur && !st.path[q]);
+      if (!isCur) Array.prototype.forEach.call(el.querySelectorAll(".ask button"), function (b) { b.disabled = false; });
+    });
+    edgeEls.forEach(function (el) { var e = el.getAttribute("data-edge").split(":"); el.classList.toggle("dim", !plain && st.path[e[0]] !== e[1]); });
+    vEls.forEach(function (el) {
+      var hit = !plain && st.verdict === el.getAttribute("data-v");
+      el.classList.toggle("hit", hit); el.classList.toggle("dim", !plain && !hit);
+    });
+  }
+  function setBand(mainHtml, plain, noteHtml, bad, meta, btn) {
+    bMain.innerHTML = mainHtml; bMain.classList.toggle("plain", !!plain);
+    bNote.innerHTML = noteHtml || ""; bNote.hidden = !noteHtml; bNote.classList.toggle("bad", !!bad);
+    bMeta.textContent = meta || ""; bMeta.hidden = !meta;
+    bBtn.textContent = btn || ""; bBtn.hidden = !btn;
+  }
+  function paintBand() {
+    if (st.mode === "all") return;
+    if (st.mode === "walk") {
+      if (!st.verdict) setBand("Возьми своё сложное предложение, найди союзы и отвечай на вопросы.", true, "", false, "", st.path.q1 ? "Начать заново" : "");
+      else { var r = VERD[st.verdict]; setBand('<span class="tw ' + r[0] + '">' + r[1] + "</span>", false, esc(r[2]), false, "", "Начать заново"); }
+      return;
+    }
+    if (st.summary) {
+      var clean = st.log.filter(function (x) { return x.errors === 0; }).length, worst = "", n = 0;
+      Object.keys(STEP_NAMES).forEach(function (q) { if ((st.byStep[q] || 0) > n) { n = st.byStep[q]; worst = q; } });
+      setBand("Без ошибок: " + clean + " из " + st.log.length, true,
+        worst ? "<b>Больше всего ошибок — на " + STEP_NAMES[worst] + ".</b> Перечитай этот вопрос и пройди тренировку ещё раз." : "Ни одной ошибки — алгоритм освоен.", false, "Итог", "Пройти ещё раз");
+      return;
+    }
+    var it = item(), meta = "Пример " + (st.pos + 1) + " из " + st.order.length;
+    if (!st.verdict) setBand(show(it.q, false), false, st.fb ? "<b>Не так.</b> " + esc(st.fb) : "", true, meta, "");
+    else {
+      var v = VERD[it.v], tries = st.errors === 0 ? "Верно с первой попытки." : "Ошибок по пути: " + st.errors + ".";
+      var extra = it.why ? " " + it.why : "";
+      setBand(show(it.r, true), false, "<b>" + v[1] + ".</b> " + esc(it.why ? it.why : v[2]) + " " + tries, false, meta,
+        st.pos + 1 < st.order.length ? "Следующий пример" : "Показать итог");
+    }
+  }
+  function paint(move) {
+    paintScheme(); paintBand();
+    if (!move || st.mode === "all" || st.summary) return;
+    if (st.verdict) { if (!bBtn.hidden) bBtn.focus({ preventScroll: true }); return; }
+    var cur = document.querySelector('[data-q="' + st.cur + '"]'); if (!cur) return;
+    var first = cur.querySelector(".ask button"); if (first) first.focus({ preventScroll: true });
+    if (body.classList.contains("stacked")) cur.scrollIntoView({ block: "center", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  }
+  function resetPath() { st.cur = "q1"; st.path = {}; st.verdict = ""; st.errors = 0; st.fb = ""; }
+  function answer(qEl, a) {
+    var q = qEl.getAttribute("data-q");
+    if (st.verdict || q !== st.cur) return;
+    if (st.mode === "train") {
+      var it = item(), right = it.ans[q];
+      if (a !== right) {
+        st.errors++; st.byStep[q] = (st.byStep[q] || 0) + 1;
+        st.fb = hint(it, q, right);
+        qEl.querySelector('.ask button[data-a="' + a + '"]').disabled = true;
+        paintBand(); qEl.querySelector(".ask button:not(:disabled)").focus({ preventScroll: true });
+        return;
+      }
+    }
+    st.fb = ""; st.path[q] = a;
+    var to = ROUTES[q][a];
+    if (ROUTES[to]) st.cur = to;
+    else { st.cur = ""; st.verdict = to; if (st.mode === "train") st.log.push({ item: item(), errors: st.errors }); }
+    paint(true);
+  }
+  function startTraining() { st.order = shuffle(ITEMS.map(function (_, i) { return i; })); st.pos = 0; st.log = []; st.byStep = {}; st.summary = false; resetPath(); }
+  function setMode(m) {
+    st.mode = m; st.summary = false; body.setAttribute("data-mode", m);
+    modeBtns.forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-mode") === m ? "true" : "false"); });
+    if (m === "train") startTraining(); else resetPath();
+    paint(false);
+  }
+  document.getElementById("ladder").addEventListener("click", function (e) {
+    var btn = e.target.closest(".ask button"); if (!btn || btn.disabled) return;
+    answer(btn.closest("[data-q]"), btn.getAttribute("data-a"));
+  });
+  bBtn.addEventListener("click", function () {
+    if (st.mode === "walk") resetPath();
+    else if (st.summary) startTraining();
+    else if (st.pos + 1 < st.order.length) { st.pos++; resetPath(); }
+    else { st.summary = true; paint(false); bBtn.focus({ preventScroll: true }); return; }
+    paint(true);
+  });
+  modeBtns.forEach(function (b) { b.addEventListener("click", function () { setMode(b.getAttribute("data-mode")); }); });
+  fit(); setMode("walk");
+})();
+</script>
+</body>
+</html>
