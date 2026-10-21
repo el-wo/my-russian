@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Запятые в СП с разными видами связи</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; position: relative; }
+    .home-link { position: absolute; top: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 700; color: var(--muted);
+      text-decoration: none; padding: 6px 14px; border: 2px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.35rem; }
+    .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 1.5rem; }
+    .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+    .card-wrap { width: 100%; max-width: 640px; }
+    .card, .finish-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.2rem 2rem 2rem; text-align: center; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; }
+    .top-msg { font-size: 1.1rem; font-weight: 700; min-height: 30px; margin-bottom: 0.4rem; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.5px; }
+    .top-msg.show { opacity: 1; }
+    .top-msg.good { color: var(--green); }
+    .top-msg.remind { color: var(--red); }
+    .mode-badge { display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--red); background: var(--red-bg);
+      border: 1px solid #f0c4be; border-radius: 99px; padding: 3px 14px; margin-bottom: 0.8rem; }
+    .counter { font-size: 0.78rem; color: var(--hint); margin-bottom: 0.6rem; font-weight: 600; letter-spacing: 1px; }
+    .task { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+
+    .sentence { font-family: var(--serif); font-size: 1.45rem; line-height: 2.3; margin-bottom: 1.6rem; text-align: left; }
+    .w { white-space: nowrap; }
+    .gap { display: inline-block; vertical-align: baseline; width: 1.05em; height: 1.5em; margin: 0 1px; padding: 0;
+      border: 0; border-bottom: 2px dotted var(--border); background: transparent; color: var(--accent);
+      font-family: var(--serif); font-size: 1em; font-weight: 700; line-height: 1.3; cursor: pointer; border-radius: 4px 4px 0 0;
+      transition: background .12s, border-color .12s; }
+    .gap:hover:not(:disabled) { background: var(--accent-bg); border-bottom-color: var(--accent); }
+    .gap:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+    .gap.on { border-bottom-color: var(--accent); }
+    .gap:disabled { cursor: default; border-bottom-color: transparent; }
+    .gap.ok { color: var(--green); background: var(--green-bg); }
+    .gap.miss { color: var(--red); background: var(--red-bg); }
+    .gap.extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .legend { font-size: 0.78rem; color: var(--muted); margin: -0.6rem 0 1.2rem; display: none; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .legend.show { display: flex; }
+    .legend b { font-family: var(--serif); padding: 0 5px; border-radius: 4px; }
+    .lg-ok { color: var(--green); background: var(--green-bg); }
+    .lg-miss { color: var(--red); background: var(--red-bg); }
+    .lg-extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .explanation { font-size: 0.92rem; color: var(--muted); line-height: 1.75; max-width: 520px; opacity: 0; transition: opacity 0.4s; min-height: 20px; }
+    .explanation.show { opacity: 1; }
+    .explanation b { color: var(--text); }
+    .explanation i { color: var(--text); font-family: var(--serif); }
+    .nav-row { display: flex; justify-content: center; gap: 12px; margin-top: 1.4rem; }
+    .nav-btn, .btn-restart, .btn-errors, .btn-start { padding: 11px 26px; border-radius: 99px; border: 2px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background .15s, border-color .15s; }
+    .nav-btn:hover, .btn-restart:hover, .btn-start:hover { background: var(--bg); border-color: var(--muted); }
+    .nav-btn.primary, .btn-start.primary { border-color: var(--accent); color: var(--accent); }
+    .nav-btn.primary:hover, .btn-start.primary:hover { background: var(--accent-bg); }
+    .btn-errors { border-color: var(--red); color: var(--red); background: transparent; }
+    .btn-errors:hover { background: var(--red-bg); }
+    .finish-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .finish-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .finish-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.6; }
+    .rules { text-align: left; font-size: 0.88rem; line-height: 1.65; color: var(--muted); background: var(--bg); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem; }
+    .rules b { color: var(--text); }
+    .rules i { font-family: var(--serif); color: var(--text); }
+    .mistakes-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.8rem; }
+    .mistake-item { font-family: var(--serif); font-size: 1rem; margin: 7px 0; text-align: left; }
+    .all-correct { font-size: 0.95rem; color: var(--green); font-weight: 700; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+    .kbd-hint { font-size: 0.75rem; color: var(--hint); margin-top: 1rem; text-align: center; }
+    @media (max-width: 520px) {
+      .home-link { position: static; align-self: flex-start; margin-bottom: 1rem; }
+      header h1 { font-size: 1.2rem; }
+      .sentence { font-size: 1.2rem; line-height: 2.4; }
+      .gap { width: 1.3em; }
+      .card, .finish-card { padding: 1.8rem 1.1rem 1.5rem; }
+      .kbd-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+
+<a class="home-link" href="index.html">← На главную</a>
+
+<header>
+  <h1>СП с разными видами связи</h1>
+  <p>Поставь запятые на всех границах частей. Внимание на стык «и» с подчинительным союзом!</p>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="prog"></div></div></div>
+<div class="card-wrap"><div id="main"></div></div>
+
+<script>
+/*
+  КАК ДОБАВИТЬ ПРЕДЛОЖЕНИЕ:
+  [предложение с правильно расставленными запятыми, пояснение]
+  Запятые в предложении — это правильный ответ. Ученик видит предложение без запятых.
+*/
+const RAW = [
+  ["Солнце скрылось за лесом, и, когда мы вышли к реке, стало совсем темно.", "Сочинительный «и» и подчинительный «когда» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «когда…» можно убрать: «солнце скрылось за лесом, и стало совсем темно»."],
+  ["Мы долго шли по полю, и, хотя ноги гудели от усталости, никто не жаловался.", "Сочинительный «и» и подчинительный «хотя» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «хотя…» можно убрать: «мы долго шли по полю, и никто не жаловался»."],
+  ["Поезд опаздывал, и, если бы не книга, ожидание было бы невыносимым.", "Сочинительный «и» и подчинительный «если» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «если…» можно убрать: «поезд опаздывал, и ожидание было бы невыносимым»."],
+  ["Наступила осень, и, как только похолодало, птицы собрались в стаи.", "Сочинительный «и» и подчинительный «как только» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «как только…» можно убрать: «наступила осень, и птицы собрались в стаи»."],
+  ["Гроза кончилась, и, пока с крыш капала вода, дети пускали кораблики.", "Сочинительный «и» и подчинительный «пока» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «пока…» можно убрать: «гроза кончилась, и дети пускали кораблики»."],
+  ["Брат долго молчал, и, когда я спросил его о причине, он отвернулся.", "Сочинительный «и» и подчинительный «когда» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «когда…» можно убрать: «брат долго молчал, и он отвернулся»."],
+  ["Мы опоздали на автобус, и, так как следующий шёл через час, пришлось идти пешком.", "Сочинительный «и» и подчинительный «так как» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «так как…» можно убрать: «мы опоздали на автобус, и пришлось идти пешком»."],
+  ["Ветер усилился, и, чтобы не замёрзнуть, мы развели костёр.", "Сочинительный «и» и подчинительный «чтобы» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «чтобы…» можно убрать: «ветер усилился, и мы развели костёр»."],
+  ["Я открыл окно, и, хотя на улице было холодно, в комнате сразу стало легче дышать.", "Сочинительный «и» и подчинительный «хотя» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «хотя…» можно убрать: «я открыл окно, и в комнате сразу стало легче дышать»."],
+  ["Начался дождь, и, пока мы искали укрытие, все промокли насквозь.", "Сочинительный «и» и подчинительный «пока» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «пока…» можно убрать: «начался дождь, и все промокли насквозь»."],
+  ["Звонок прозвенел, и, едва учитель вошёл в класс, все затихли.", "Сочинительный «и» и подчинительный «едва» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «едва…» можно убрать: «звонок прозвенел, и все затихли»."],
+  ["Мы вернулись с прогулки, и, когда мама увидела наши мокрые ботинки, она только покачала головой.", "Сочинительный «и» и подчинительный «когда» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «когда…» можно убрать: «мы вернулись с прогулки, и она только покачала головой»."],
+  ["Кончились уроки, и, если погода не испортится, мы пойдём в парк.", "Сочинительный «и» и подчинительный «если» стоят <b>рядом</b>, а дальше нет ни «то», ни «так», ни «но» → <b>запятая между союзами</b>. Придаточное «если…» можно убрать: «кончились уроки, и мы пойдём в парк»."],
+  ["Солнце скрылось за лесом, и когда мы вышли к реке, то стало совсем темно.", "Союзы «и» и «когда» стоят рядом, но дальше есть <b>«то»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Мы долго шли по полю, и хотя ноги гудели от усталости, но никто не жаловался.", "Союзы «и» и «хотя» стоят рядом, но дальше есть <b>«но»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Поезд опаздывал, и если бы не книга, то ожидание было бы невыносимым.", "Союзы «и» и «если» стоят рядом, но дальше есть <b>«то»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Наступила осень, и как только похолодало, так птицы собрались в стаи.", "Союзы «и» и «как только» стоят рядом, но дальше есть <b>«так»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Брат долго молчал, и когда я спросил его о причине, то он отвернулся.", "Союзы «и» и «когда» стоят рядом, но дальше есть <b>«то»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Я открыл окно, и хотя на улице было холодно, но в комнате сразу стало легче дышать.", "Союзы «и» и «хотя» стоят рядом, но дальше есть <b>«но»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Кончились уроки, и если погода не испортится, то мы пойдём в парк.", "Союзы «и» и «если» стоят рядом, но дальше есть <b>«то»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Ветер стих, и когда мы вышли на берег, то море было совсем спокойным.", "Союзы «и» и «когда» стоят рядом, но дальше есть <b>«то»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Задача оказалась трудной, и хотя мы сидели над ней весь вечер, но так и не решили её.", "Союзы «и» и «хотя» стоят рядом, но дальше есть <b>«но»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Мы заблудились, и если бы не старый лесник, то пришлось бы ночевать в лесу.", "Союзы «и» и «если» стоят рядом, но дальше есть <b>«то»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Друзья поссорились, и хотя прошла неделя, но они всё ещё не разговаривают.", "Союзы «и» и «хотя» стоят рядом, но дальше есть <b>«но»</b> → запятая между союзами <b>не нужна</b>."],
+  ["Солнце село, и стало прохладно, потому что с реки потянуло сыростью.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: перед «и» — граница сочинения (правило ССП), перед «потому что» — граница придаточного (правило СПП)."],
+  ["Когда мы вышли из дома, пошёл дождь, и пришлось вернуться за зонтом.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «когда…» отделяется запятой, перед «и» — граница двух простых предложений."],
+  ["Мама ушла на работу, а мы остались дома, потому что начались каникулы.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: перед «а» — сочинительная связь, перед «потому что» — подчинительная."],
+  ["Наступил вечер, в окнах зажглись огни, и город, который днём казался серым, стал нарядным.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: между первыми частями бессоюзная связь (перечисление → запятая), перед «и» — сочинение, придаточное «который…» стоит внутри части и выделяется с двух сторон."],
+  ["Мы подошли к дому, где жил дедушка, и постучали в дверь.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «где жил дедушка» выделяется с двух сторон; «подошли и постучали» — однородные сказуемые, но запятая перед «и» закрывает придаточное."],
+  ["Я долго ждал письма, но оно не приходило, и я начал волноваться.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: перед «но» и перед «и» — границы сочинённых частей."],
+  ["Если завтра будет хорошая погода, мы пойдём в лес, а вечером будем жечь костёр.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «если…» отделяется запятой, перед «а» — противопоставление."],
+  ["Шёл снег, дети лепили снеговика, и никто не хотел возвращаться домой.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: первые две части связаны без союза (перечисление → запятая), перед «и» — сочинение."],
+  ["Учитель сказал, что контрольная будет в пятницу, и все начали готовиться.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: перед «что» — граница придаточного, перед «и» — граница сочинённых частей."],
+  ["Лес шумел, где-то кричала птица, и мне казалось, что мы здесь не одни.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: бессоюзная связь (запятая), сочинение перед «и», подчинение перед «что»."],
+  ["Когда стемнело, мы зажгли лампу, и комната сразу стала уютной.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «когда стемнело» отделяется запятой, перед «и» — сочинение."],
+  ["Мы спешили, потому что начинался дождь, но всё равно промокли.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «потому что…» выделяется с двух сторон, «спешили, но промокли» — однородные сказуемые с союзом «но»."],
+  ["Отец обещал, что мы поедем на море, и мы целый месяц ждали лета.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: перед «что» — подчинение, перед «и» — сочинение."],
+  ["Дверь открылась, вошла бабушка, и все бросились ей навстречу.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: бессоюзная связь (запятая), перед «и» — сочинение."],
+  ["Я не знал, куда идти, и решил подождать, пока кто-нибудь появится.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «куда идти» выделяется с двух сторон, перед «пока» — граница второго придаточного."],
+  ["Ветер утих, облака рассеялись, и на небе показалась луна, которая осветила всю поляну.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: бессоюзная связь, сочинение перед «и», подчинение перед «которая»."],
+  ["Брат читал книгу, которую взял в библиотеке, а сестра рисовала.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «которую…» выделяется с двух сторон, перед «а» — сочинение."],
+  ["Пока мы обедали, на улице потемнело, и начался настоящий ливень.", "Союзы не стоят рядом → ставим знаки <b>на каждой границе</b>: придаточное «пока…» отделяется запятой, перед «и» — сочинение."]
+];
+
+function parse(sentence) {
+  const tokens = sentence.split(" ");
+  const words = [], ans = [];
+  tokens.forEach((t, i) => {
+    const comma = t.endsWith(",");
+    words.push(comma ? t.slice(0, -1) : t);
+    if (i < tokens.length - 1) ans.push(comma);
+  });
+  return { words, ans };
+}
+const SOURCE = RAW.map(([s, expl]) => Object.assign({ src: s, expl }, parse(s)));
+
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+let deck = [], idx = 0, mistakes = [], marks = [], checked = false, isErrorMode = false;
+
+function startScreen() {
+  document.getElementById("prog").style.width = "0%";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">✍️</div>
+      <div class="finish-title" style="color:var(--text)">Как это работает</div>
+      <div class="rules">Между словами есть пропуски. <b>Нажми на пропуск</b>, чтобы поставить запятую; ещё раз — чтобы убрать. Потом нажми <b>«Проверить»</b>.<br><br>1. Найди все грамматические основы и союзы, отметь границы частей.<br>2. На каждой границе ставь знак по своему правилу: сочинение — как в ССП, подчинение — как в СПП, без союза — как в БСП.<br>3. Если <b>«и»</b> и подчинительный союз оказались рядом (<i>и когда, и хотя</i>), посмотри дальше: есть <b>то, так, но</b> — запятой между союзами нет, нет — запятая нужна:<br><i>…, и, когда мы пришли, стемнело.</i> / <i>…, и когда мы пришли, то стемнело.</i></div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn-start primary" onclick="begin(20)">20 случайных</button>
+        <button class="btn-start" onclick="begin(0)">Все ${SOURCE.length}</button>
+      </div>
+    </div>`;
+}
+
+function begin(n) {
+  const all = shuffle(SOURCE);
+  deck = n ? all.slice(0, n) : all;
+  roundSet = [...deck];
+  idx = 0; mistakes = []; isErrorMode = false;
+  render();
+}
+
+function sentenceHTML(w) {
+  return w.words.map((word, i) => {
+    let html = `<span class="w">${word}`;
+    if (i < w.words.length - 1) {
+      html += `<button class="gap" data-i="${i}" aria-label="Пропуск после слова «${word}»" onclick="toggle(${i})"></button>`;
+    }
+    return html + "</span> ";
+  }).join("");
+}
+
+function render() {
+  if (idx >= deck.length) { showFinish(); return; }
+  const w = deck[idx];
+  marks = w.ans.map(() => false); checked = false;
+  document.getElementById("prog").style.width = (idx / deck.length * 100) + "%";
+  const badge = isErrorMode ? '<div class="mode-badge">Работа над ошибками</div>' : "";
+  document.getElementById("main").innerHTML = `
+    <div class="card">
+      <div class="top-msg" id="topmsg"></div>
+      ${badge}
+      <div class="counter">${idx + 1} / ${deck.length}</div>
+      <div class="task">Нажми на пропуски, где нужна запятая. Если запятые не нужны — сразу проверяй.</div>
+      <div class="sentence" id="sent">${sentenceHTML(w)}</div>
+      <div class="legend" id="legend">
+        <span><b class="lg-ok">,</b> верно</span><span><b class="lg-miss">,</b> пропущена</span><span><b class="lg-extra">,</b> лишняя</span>
+      </div>
+      <div class="explanation" id="expl">${w.expl}</div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn primary" id="actBtn" onclick="act()">Проверить</button>
+    </div>
+    <div class="kbd-hint">Enter — проверить / дальше</div>`;
+}
+
+function toggle(i) {
+  if (checked) return;
+  marks[i] = !marks[i];
+  const g = document.querySelector(`.gap[data-i="${i}"]`);
+  g.textContent = marks[i] ? "," : "";
+  g.classList.toggle("on", marks[i]);
+}
+
+function act() { checked ? next() : check(); }
+
+function check() {
+  const w = deck[idx];
+  checked = true;
+  let ok = true;
+  w.ans.forEach((need, i) => {
+    const g = document.querySelector(`.gap[data-i="${i}"]`);
+    g.disabled = true;
+    g.classList.remove("on");
+    if (need && marks[i]) { g.textContent = ","; g.classList.add("ok"); }
+    else if (need && !marks[i]) { g.textContent = ","; g.classList.add("miss"); ok = false; }
+    else if (!need && marks[i]) { g.textContent = ","; g.classList.add("extra"); ok = false; }
+  });
+  const top = document.getElementById("topmsg");
+  if (ok) { top.textContent = "МОЛОДЕЦ!"; top.className = "top-msg good show"; }
+  else {
+    top.textContent = "Запомни!"; top.className = "top-msg remind show";
+    document.getElementById("legend").classList.add("show");
+    if (!mistakes.includes(w)) mistakes.push(w);
+  }
+  document.getElementById("expl").classList.add("show");
+  const b = document.getElementById("actBtn");
+  b.textContent = "Следующее →"; b.focus();
+}
+
+function next() { idx++; render(); }
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && deck.length && idx < deck.length && document.getElementById("actBtn")) {
+    if (e.target.classList && e.target.classList.contains("gap")) return;
+    e.preventDefault(); act();
+  }
+});
+
+function showFinish() {
+  document.getElementById("prog").style.width = "100%";
+  const total = deck.length, correct = total - mistakes.length;
+  const list = mistakes.length
+    ? `<div class="mistakes-title">Предложения с ошибками</div>` + mistakes.map(w => `<div class="mistake-item">${w.src}</div>`).join("")
+    : `<div class="all-correct">Все запятые расставлены верно! 🎉</div>`;
+  const errBtn = mistakes.length ? `<button class="btn-errors" onclick="startErrorMode()">Работа над ошибками</button>` : "";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">${mistakes.length ? "📝" : "🏆"}</div>
+      <div class="finish-title">${isErrorMode ? "Работа над ошибками завершена!" : "Тренировка завершена!"}</div>
+      <div class="finish-sub">Без ошибок: ${correct} из ${total}</div>
+      ${list}
+      <div class="btn-row">
+        <button class="btn-restart" onclick="repeatRound()">Повторить эти же предложения</button>
+        <button class="btn-restart" onclick="startScreen()">Начать заново</button>
+        ${errBtn}
+        <a class="btn-restart" href="index.html">На главную</a>
+      </div>
+    </div>`;
+}
+
+let roundSet = [];
+function repeatRound() {
+  deck = shuffle(roundSet);
+  idx = 0; mistakes = [];
+  render();
+}
+
+function startErrorMode() { const errs = [...mistakes]; mistakes = []; deck = shuffle(errs); roundSet = [...deck]; idx = 0; isErrorMode = true; render(); }
+
+startScreen();
+</script>
+</body>
+</html>
