@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Причастный оборот: запятые</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; position: relative; }
+    .home-link { position: absolute; top: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 700; color: var(--muted);
+      text-decoration: none; padding: 6px 14px; border: 2px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.35rem; }
+    .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 1.5rem; }
+    .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+    .card-wrap { width: 100%; max-width: 640px; }
+    .card, .finish-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.2rem 2rem 2rem; text-align: center; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; }
+    .top-msg { font-size: 1.1rem; font-weight: 700; min-height: 30px; margin-bottom: 0.4rem; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.5px; }
+    .top-msg.show { opacity: 1; }
+    .top-msg.good { color: var(--green); }
+    .top-msg.remind { color: var(--red); }
+    .mode-badge { display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--red); background: var(--red-bg);
+      border: 1px solid #f0c4be; border-radius: 99px; padding: 3px 14px; margin-bottom: 0.8rem; }
+    .counter { font-size: 0.78rem; color: var(--hint); margin-bottom: 0.6rem; font-weight: 600; letter-spacing: 1px; }
+    .task { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+
+    .sentence { font-family: var(--serif); font-size: 1.45rem; line-height: 2.3; margin-bottom: 1.6rem; text-align: left; }
+    .w { white-space: nowrap; }
+    .gap { display: inline-block; vertical-align: baseline; width: 1.05em; height: 1.5em; margin: 0 1px; padding: 0;
+      border: 0; border-bottom: 2px dotted var(--border); background: transparent; color: var(--accent);
+      font-family: var(--serif); font-size: 1em; font-weight: 700; line-height: 1.3; cursor: pointer; border-radius: 4px 4px 0 0;
+      transition: background .12s, border-color .12s; }
+    .gap:hover:not(:disabled) { background: var(--accent-bg); border-bottom-color: var(--accent); }
+    .gap:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+    .gap.on { border-bottom-color: var(--accent); }
+    .gap:disabled { cursor: default; border-bottom-color: transparent; }
+    .gap.ok { color: var(--green); background: var(--green-bg); }
+    .gap.miss { color: var(--red); background: var(--red-bg); }
+    .gap.extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .legend { font-size: 0.78rem; color: var(--muted); margin: -0.6rem 0 1.2rem; display: none; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .legend.show { display: flex; }
+    .legend b { font-family: var(--serif); padding: 0 5px; border-radius: 4px; }
+    .lg-ok { color: var(--green); background: var(--green-bg); }
+    .lg-miss { color: var(--red); background: var(--red-bg); }
+    .lg-extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .explanation { font-size: 0.92rem; color: var(--muted); line-height: 1.75; max-width: 520px; opacity: 0; transition: opacity 0.4s; min-height: 20px; }
+    .explanation.show { opacity: 1; }
+    .explanation b { color: var(--text); }
+    .explanation i { color: var(--text); font-family: var(--serif); }
+    .nav-row { display: flex; justify-content: center; gap: 12px; margin-top: 1.4rem; }
+    .nav-btn, .btn-restart, .btn-errors, .btn-start { padding: 11px 26px; border-radius: 99px; border: 2px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background .15s, border-color .15s; }
+    .nav-btn:hover, .btn-restart:hover, .btn-start:hover { background: var(--bg); border-color: var(--muted); }
+    .nav-btn.primary, .btn-start.primary { border-color: var(--accent); color: var(--accent); }
+    .nav-btn.primary:hover, .btn-start.primary:hover { background: var(--accent-bg); }
+    .btn-errors { border-color: var(--red); color: var(--red); background: transparent; }
+    .btn-errors:hover { background: var(--red-bg); }
+    .finish-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .finish-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .finish-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.6; }
+    .rules { text-align: left; font-size: 0.88rem; line-height: 1.65; color: var(--muted); background: var(--bg); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem; }
+    .rules b { color: var(--text); }
+    .rules i { font-family: var(--serif); color: var(--text); }
+    .mistakes-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.8rem; }
+    .mistake-item { font-family: var(--serif); font-size: 1rem; margin: 7px 0; text-align: left; }
+    .all-correct { font-size: 0.95rem; color: var(--green); font-weight: 700; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+    .kbd-hint { font-size: 0.75rem; color: var(--hint); margin-top: 1rem; text-align: center; }
+    @media (max-width: 520px) {
+      .home-link { position: static; align-self: flex-start; margin-bottom: 1rem; }
+      header h1 { font-size: 1.2rem; }
+      .sentence { font-size: 1.2rem; line-height: 2.4; }
+      .gap { width: 1.3em; }
+      .card, .finish-card { padding: 1.8rem 1.1rem 1.5rem; }
+      .kbd-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+
+<a class="home-link" href="index.html">← На главную</a>
+
+<header>
+  <h1>Причастный оборот: запятые</h1>
+  <p>Выделять оборот или нет? Поставь запятые там, где они нужны</p>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="prog"></div></div></div>
+<div class="card-wrap"><div id="main"></div></div>
+
+<script>
+/*
+  КАК ДОБАВИТЬ ПРЕДЛОЖЕНИЕ:
+  [предложение с правильно расставленными запятыми, пояснение]
+  Запятые в предложении — это правильный ответ. Ученик видит предложение без запятых.
+*/
+const RAW = [
+  ["Тропинка, заросшая высокой травой, вела к реке.", "Оборот «заросшая высокой травой» стоит <b>после</b> определяемого слова «тропинка» → <b>выделяется</b> запятыми с двух сторон."],
+  ["Мы долго смотрели на облака, плывущие над лесом.", "Оборот «плывущие над лесом» стоит <b>после</b> определяемого слова «облака» → <b>выделяется</b>. Оборот в конце предложения — одна запятая перед ним."],
+  ["Письмо, полученное вчера, обрадовало всю семью.", "Оборот «полученное вчера» стоит <b>после</b> определяемого слова «письмо» → <b>выделяется</b> запятыми с двух сторон."],
+  ["Дети, игравшие во дворе, побежали домой.", "Оборот «игравшие во дворе» стоит <b>после</b> определяемого слова «дети» → <b>выделяется</b> запятыми с двух сторон."],
+  ["Я нашёл книгу, забытую кем-то на скамейке.", "Оборот «забытую кем-то на скамейке» стоит <b>после</b> определяемого слова «книгу» → <b>выделяется</b>. Оборот в конце предложения — одна запятая перед ним."],
+  ["Дорога, ведущая к деревне, была размыта дождями.", "Оборот «ведущая к деревне» стоит <b>после</b> определяемого слова «дорога» → <b>выделяется</b> запятыми с двух сторон."],
+  ["Над полем кружили птицы, встревоженные нашим появлением.", "Оборот «встревоженные нашим появлением» стоит <b>после</b> определяемого слова «птицы» → <b>выделяется</b>. Оборот в конце предложения — одна запятая перед ним."],
+  ["Мальчик, сидевший у окна, первым увидел снег.", "Оборот «сидевший у окна» стоит <b>после</b> определяемого слова «мальчик» → <b>выделяется</b> запятыми с двух сторон."],
+  ["Мама испекла пирог, украшенный ягодами.", "Оборот «украшенный ягодами» стоит <b>после</b> определяемого слова «пирог» → <b>выделяется</b>. Оборот в конце предложения — одна запятая перед ним."],
+  ["Озеро, окружённое соснами, казалось тёмным.", "Оборот «окружённое соснами» стоит <b>после</b> определяемого слова «озеро» → <b>выделяется</b> запятыми с двух сторон."],
+  ["Мы остановились у дома, построенного ещё прадедом.", "Оборот «построенного ещё прадедом» стоит <b>после</b> определяемого слова «дома» → <b>выделяется</b>. Оборот в конце предложения — одна запятая перед ним."],
+  ["Листья, сорванные ветром, кружились в воздухе.", "Оборот «сорванные ветром» стоит <b>после</b> определяемого слова «листья» → <b>выделяется</b> запятыми с двух сторон."],
+  ["Ученики, выполнившие задание, могут идти домой.", "Оборот «выполнившие задание» стоит <b>после</b> определяемого слова «ученики» → <b>выделяется</b> запятыми с двух сторон."],
+  ["В вазе стояли цветы, собранные утром в саду.", "Оборот «собранные утром в саду» стоит <b>после</b> определяемого слова «цветы» → <b>выделяется</b>. Оборот в конце предложения — одна запятая перед ним."],
+  ["Мы долго смотрели на плывущие над лесом облака.", "Оборот «плывущие над лесом» стоит <b>перед</b> словом «облака», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Заросшая высокой травой тропинка вела к реке.", "Оборот «заросшая высокой травой» стоит <b>перед</b> словом «тропинка», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Полученное вчера письмо обрадовало всю семью.", "Оборот «полученное вчера» стоит <b>перед</b> словом «письмо», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Игравшие во дворе дети побежали домой.", "Оборот «игравшие во дворе» стоит <b>перед</b> словом «дети», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Я нашёл забытую кем-то на скамейке книгу.", "Оборот «забытую кем-то на скамейке» стоит <b>перед</b> словом «книгу», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Ведущая к деревне дорога была размыта дождями.", "Оборот «ведущая к деревне» стоит <b>перед</b> словом «дорога», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Мама испекла украшенный ягодами пирог.", "Оборот «украшенный ягодами» стоит <b>перед</b> словом «пирог», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Сорванные ветром листья кружились в воздухе.", "Оборот «сорванные ветром» стоит <b>перед</b> словом «листья», особых признаков нет → запятые <b>не нужны</b>."],
+  ["В окно стучали покрытые инеем ветки.", "Оборот «покрытые инеем» стоит <b>перед</b> словом «ветки», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Мы шли по засыпанной листьями аллее.", "Оборот «засыпанной листьями» стоит <b>перед</b> словом «аллее», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Выполнившие задание ученики могут идти домой.", "Оборот «выполнившие задание» стоит <b>перед</b> словом «ученики», особых признаков нет → запятые <b>не нужны</b>."],
+  ["На столе лежала исписанная мелким почерком тетрадь.", "Оборот «исписанная мелким почерком» стоит <b>перед</b> словом «тетрадь», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Под напором ветра скрипели растущие у дома берёзы.", "Оборот «растущие у дома» стоит <b>перед</b> словом «берёзы», особых признаков нет → запятые <b>не нужны</b>."],
+  ["Уставшие после долгого пути, путники быстро уснули.", "Оборот впереди, но в нём есть значение <b>причины</b>: путники уснули, <i>так как устали</i> → <b>выделяется</b>."],
+  ["Обрадованная хорошей новостью, сестра запела.", "Оборот впереди, но в нём есть значение <b>причины</b>: сестра запела, <i>так как была обрадована</i> → <b>выделяется</b>."],
+  ["Испуганная шумом, птица взлетела с ветки.", "Оборот впереди, но в нём есть значение <b>причины</b>: птица взлетела, <i>так как была испугана</i> → <b>выделяется</b>."],
+  ["Встревоженный долгим молчанием, отец позвонил сыну.", "Оборот впереди, но в нём есть значение <b>причины</b>: отец позвонил, <i>так как был встревожен</i> → <b>выделяется</b>."],
+  ["Измученные жарой, лошади еле шли.", "Оборот впереди, но в нём есть значение <b>причины</b>: лошади еле шли, <i>так как были измучены</i> → <b>выделяется</b>."],
+  ["Оставленный без присмотра, костёр едва не вызвал пожар.", "Оборот впереди, но в нём есть значение <b>причины</b>: костёр едва не вызвал пожар, <i>так как был оставлен без присмотра</i> → <b>выделяется</b>."],
+  ["Удивлённые неожиданным вопросом, мы переглянулись.", "Определяемое слово — <b>личное местоимение</b> «мы» → оборот <b>выделяется</b> всегда, где бы он ни стоял."],
+  ["Увлечённый игрой, он не услышал звонка.", "Определяемое слово — <b>личное местоимение</b> «он» → оборот <b>выделяется</b> всегда, где бы он ни стоял."],
+  ["Она, взволнованная предстоящей встречей, долго не могла уснуть.", "Определяемое слово — <b>личное местоимение</b> «она» → оборот <b>выделяется</b> всегда, где бы он ни стоял. Здесь оборот к тому же стоит после слова."],
+  ["Оглушённые громом, они остановились.", "Определяемое слово — <b>личное местоимение</b> «они» → оборот <b>выделяется</b> всегда, где бы он ни стоял."],
+  ["Утомлённая дорогой, я сразу легла спать.", "Определяемое слово — <b>личное местоимение</b> «я» → оборот <b>выделяется</b> всегда, где бы он ни стоял."],
+  ["Освещённая луной, блестела вдали река.", "Оборот «освещённая луной» <b>оторван</b> от слова «река» другими словами → <b>выделяется</b>."],
+  ["Покрытые росой, сверкали на солнце травы.", "Оборот «покрытые росой» <b>оторван</b> от слова «травы» другими словами → <b>выделяется</b>."],
+  ["Окружённый садами, раскинулся на холме старинный город.", "Оборот «окружённый садами» <b>оторван</b> от слова «город» другими словами → <b>выделяется</b>."],
+  ["Сбитые ветром, лежали на дороге яблоки.", "Оборот «сбитые ветром» <b>оторван</b> от слова «яблоки» другими словами → <b>выделяется</b>."]
+];
+
+function parse(sentence) {
+  const tokens = sentence.split(" ");
+  const words = [], ans = [];
+  tokens.forEach((t, i) => {
+    const comma = t.endsWith(",");
+    words.push(comma ? t.slice(0, -1) : t);
+    if (i < tokens.length - 1) ans.push(comma);
+  });
+  return { words, ans };
+}
+const SOURCE = RAW.map(([s, expl]) => Object.assign({ src: s, expl }, parse(s)));
+
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+let deck = [], idx = 0, mistakes = [], marks = [], checked = false, isErrorMode = false;
+
+function startScreen() {
+  document.getElementById("prog").style.width = "0%";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">✍️</div>
+      <div class="finish-title" style="color:var(--text)">Как это работает</div>
+      <div class="rules">Между словами есть пропуски. <b>Нажми на пропуск</b>, чтобы поставить запятую; ещё раз — чтобы убрать. Если запятые не нужны — сразу нажимай <b>«Проверить»</b>.<br><br>Найди причастный оборот и <b>определяемое слово</b>.<br>• Оборот <b>после</b> слова — выделяется: <i>Дети, игравшие во дворе, побежали домой.</i><br>• Оборот <b>перед</b> словом — не выделяется: <i>Игравшие во дворе дети побежали домой.</i><br>• Но выделяется и впереди, если есть <b>причина</b> (= так как), определяемое слово — <b>личное местоимение</b> или оборот <b>оторван</b> от слова:<br><i>Испуганная шумом, птица взлетела. Увлечённый игрой, он не услышал звонка. Освещённая луной, блестела вдали река.</i></div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn-start primary" onclick="begin(20)">20 случайных</button>
+        <button class="btn-start" onclick="begin(0)">Все ${SOURCE.length}</button>
+      </div>
+    </div>`;
+}
+
+function begin(n) {
+  const all = shuffle(SOURCE);
+  deck = n ? all.slice(0, n) : all;
+  roundSet = [...deck];
+  idx = 0; mistakes = []; isErrorMode = false;
+  render();
+}
+
+function sentenceHTML(w) {
+  return w.words.map((word, i) => {
+    let html = `<span class="w">${word}`;
+    if (i < w.words.length - 1) {
+      html += `<button class="gap" data-i="${i}" aria-label="Пропуск после слова «${word}»" onclick="toggle(${i})"></button>`;
+    }
+    return html + "</span> ";
+  }).join("");
+}
+
+function render() {
+  if (idx >= deck.length) { showFinish(); return; }
+  const w = deck[idx];
+  marks = w.ans.map(() => false); checked = false;
+  document.getElementById("prog").style.width = (idx / deck.length * 100) + "%";
+  const badge = isErrorMode ? '<div class="mode-badge">Работа над ошибками</div>' : "";
+  document.getElementById("main").innerHTML = `
+    <div class="card">
+      <div class="top-msg" id="topmsg"></div>
+      ${badge}
+      <div class="counter">${idx + 1} / ${deck.length}</div>
+      <div class="task">Нажми на пропуски, где нужна запятая. Если запятые не нужны — сразу проверяй.</div>
+      <div class="sentence" id="sent">${sentenceHTML(w)}</div>
+      <div class="legend" id="legend">
+        <span><b class="lg-ok">,</b> верно</span><span><b class="lg-miss">,</b> пропущена</span><span><b class="lg-extra">,</b> лишняя</span>
+      </div>
+      <div class="explanation" id="expl">${w.expl}</div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn primary" id="actBtn" onclick="act()">Проверить</button>
+    </div>
+    <div class="kbd-hint">Enter — проверить / дальше</div>`;
+}
+
+function toggle(i) {
+  if (checked) return;
+  marks[i] = !marks[i];
+  const g = document.querySelector(`.gap[data-i="${i}"]`);
+  g.textContent = marks[i] ? "," : "";
+  g.classList.toggle("on", marks[i]);
+}
+
+function act() { checked ? next() : check(); }
+
+function check() {
+  const w = deck[idx];
+  checked = true;
+  let ok = true;
+  w.ans.forEach((need, i) => {
+    const g = document.querySelector(`.gap[data-i="${i}"]`);
+    g.disabled = true;
+    g.classList.remove("on");
+    if (need && marks[i]) { g.textContent = ","; g.classList.add("ok"); }
+    else if (need && !marks[i]) { g.textContent = ","; g.classList.add("miss"); ok = false; }
+    else if (!need && marks[i]) { g.textContent = ","; g.classList.add("extra"); ok = false; }
+  });
+  const top = document.getElementById("topmsg");
+  if (ok) { top.textContent = "МОЛОДЕЦ!"; top.className = "top-msg good show"; }
+  else {
+    top.textContent = "Запомни!"; top.className = "top-msg remind show";
+    document.getElementById("legend").classList.add("show");
+    if (!mistakes.includes(w)) mistakes.push(w);
+  }
+  document.getElementById("expl").classList.add("show");
+  const b = document.getElementById("actBtn");
+  b.textContent = "Следующее →"; b.focus();
+}
+
+function next() { idx++; render(); }
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && deck.length && idx < deck.length && document.getElementById("actBtn")) {
+    if (e.target.classList && e.target.classList.contains("gap")) return;
+    e.preventDefault(); act();
+  }
+});
+
+function showFinish() {
+  document.getElementById("prog").style.width = "100%";
+  const total = deck.length, correct = total - mistakes.length;
+  const list = mistakes.length
+    ? `<div class="mistakes-title">Предложения с ошибками</div>` + mistakes.map(w => `<div class="mistake-item">${w.src}</div>`).join("")
+    : `<div class="all-correct">Все запятые расставлены верно! 🎉</div>`;
+  const errBtn = mistakes.length ? `<button class="btn-errors" onclick="startErrorMode()">Работа над ошибками</button>` : "";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">${mistakes.length ? "📝" : "🏆"}</div>
+      <div class="finish-title">${isErrorMode ? "Работа над ошибками завершена!" : "Тренировка завершена!"}</div>
+      <div class="finish-sub">Без ошибок: ${correct} из ${total}</div>
+      ${list}
+      <div class="btn-row">
+        <button class="btn-restart" onclick="repeatRound()">Повторить эти же предложения</button>
+        <button class="btn-restart" onclick="startScreen()">Начать заново</button>
+        ${errBtn}
+        <a class="btn-restart" href="index.html">На главную</a>
+      </div>
+    </div>`;
+}
+
+let roundSet = [];
+function repeatRound() {
+  deck = shuffle(roundSet);
+  idx = 0; mistakes = [];
+  render();
+}
+
+function startErrorMode() { const errs = [...mistakes]; mistakes = []; deck = shuffle(errs); roundSet = [...deck]; idx = 0; isErrorMode = true; render(); }
+
+startScreen();
+</script>
+</body>
+</html>
