@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Запятая на стыке союзов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; position: relative; }
+    .home-link { position: absolute; top: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 700; color: var(--muted);
+      text-decoration: none; padding: 6px 14px; border: 2px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.35rem; }
+    .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 1.5rem; }
+    .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+    .card-wrap { width: 100%; max-width: 640px; }
+    .card, .finish-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.2rem 2rem 2rem; text-align: center; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; }
+    .top-msg { font-size: 1.1rem; font-weight: 700; min-height: 30px; margin-bottom: 0.4rem; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.5px; }
+    .top-msg.show { opacity: 1; }
+    .top-msg.good { color: var(--green); }
+    .top-msg.remind { color: var(--red); }
+    .mode-badge { display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--red); background: var(--red-bg);
+      border: 1px solid #f0c4be; border-radius: 99px; padding: 3px 14px; margin-bottom: 0.8rem; }
+    .counter { font-size: 0.78rem; color: var(--hint); margin-bottom: 0.6rem; font-weight: 600; letter-spacing: 1px; }
+    .task { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+
+    .sentence { font-family: var(--serif); font-size: 1.45rem; line-height: 2.3; margin-bottom: 1.6rem; text-align: left; }
+    .w { white-space: nowrap; }
+    .gap { display: inline-block; vertical-align: baseline; width: 1.05em; height: 1.5em; margin: 0 1px; padding: 0;
+      border: 0; border-bottom: 2px dotted var(--border); background: transparent; color: var(--accent);
+      font-family: var(--serif); font-size: 1em; font-weight: 700; line-height: 1.3; cursor: pointer; border-radius: 4px 4px 0 0;
+      transition: background .12s, border-color .12s; }
+    .gap:hover:not(:disabled) { background: var(--accent-bg); border-bottom-color: var(--accent); }
+    .gap:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+    .gap.on { border-bottom-color: var(--accent); }
+    .gap:disabled { cursor: default; border-bottom-color: transparent; }
+    .gap.ok { color: var(--green); background: var(--green-bg); }
+    .gap.miss { color: var(--red); background: var(--red-bg); }
+    .gap.extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .legend { font-size: 0.78rem; color: var(--muted); margin: -0.6rem 0 1.2rem; display: none; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .legend.show { display: flex; }
+    .legend b { font-family: var(--serif); padding: 0 5px; border-radius: 4px; }
+    .lg-ok { color: var(--green); background: var(--green-bg); }
+    .lg-miss { color: var(--red); background: var(--red-bg); }
+    .lg-extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .explanation { font-size: 0.92rem; color: var(--muted); line-height: 1.75; max-width: 520px; opacity: 0; transition: opacity 0.4s; min-height: 20px; }
+    .explanation.show { opacity: 1; }
+    .explanation b { color: var(--text); }
+    .explanation i { color: var(--text); font-family: var(--serif); }
+    .nav-row { display: flex; justify-content: center; gap: 12px; margin-top: 1.4rem; }
+    .nav-btn, .btn-restart, .btn-errors, .btn-start { padding: 11px 26px; border-radius: 99px; border: 2px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background .15s, border-color .15s; }
+    .nav-btn:hover, .btn-restart:hover, .btn-start:hover { background: var(--bg); border-color: var(--muted); }
+    .nav-btn.primary, .btn-start.primary { border-color: var(--accent); color: var(--accent); }
+    .nav-btn.primary:hover, .btn-start.primary:hover { background: var(--accent-bg); }
+    .btn-errors { border-color: var(--red); color: var(--red); background: transparent; }
+    .btn-errors:hover { background: var(--red-bg); }
+    .finish-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .finish-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .finish-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.6; }
+    .rules { text-align: left; font-size: 0.88rem; line-height: 1.65; color: var(--muted); background: var(--bg); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem; }
+    .rules b { color: var(--text); }
+    .rules i { font-family: var(--serif); color: var(--text); }
+    .mistakes-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.8rem; }
+    .mistake-item { font-family: var(--serif); font-size: 1rem; margin: 7px 0; text-align: left; }
+    .all-correct { font-size: 0.95rem; color: var(--green); font-weight: 700; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+    .kbd-hint { font-size: 0.75rem; color: var(--hint); margin-top: 1rem; text-align: center; }
+    @media (max-width: 520px) {
+      .home-link { position: static; align-self: flex-start; margin-bottom: 1rem; }
+      header h1 { font-size: 1.2rem; }
+      .sentence { font-size: 1.2rem; line-height: 2.4; }
+      .gap { width: 1.3em; }
+      .card, .finish-card { padding: 1.8rem 1.1rem 1.5rem; }
+      .kbd-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+
+<a class="home-link" href="index.html">← На главную</a>
+
+<header>
+  <h1>Запятая на стыке союзов</h1>
+  <p>Поставь запятые там, где они нужны. Не забудь проверить: нужна ли запятая между двумя союзами?</p>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="prog"></div></div></div>
+<div class="card-wrap"><div id="main"></div></div>
+
+<script>
+/*
+  КАК ДОБАВИТЬ ПРЕДЛОЖЕНИЕ:
+  [предложение с правильно расставленными запятыми, пояснение]
+  Запятые в предложении — это правильный ответ. Ученик видит предложение без запятых.
+*/
+const RAW = [
+  ["Он сказал, что, когда закончит работу, сразу позвонит.", "Союзы <b>что когда</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «когда…» — останется «он сказал, что сразу позвонит», предложение цело."],
+  ["Мама решила, что, если пойдёт дождь, мы останемся дома.", "Союзы <b>что если</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «если…» — останется «мама решила, что мы останемся дома», предложение цело."],
+  ["Я знал, что, хотя он устал, он всё равно придёт.", "Союзы <b>что хотя</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «хотя…» — останется «я знал, что он всё равно придёт», предложение цело."],
+  ["Учитель объяснил, что, когда наступает осень, птицы улетают на юг.", "Союзы <b>что когда</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «когда…» — останется «учитель объяснил, что птицы улетают на юг», предложение цело."],
+  ["Мне кажется, что, если мы поторопимся, мы успеем на автобус.", "Союзы <b>что если</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «если…» — останется «мне кажется, что мы успеем на автобус», предложение цело."],
+  ["Брат обещал, что, как только освободится, поможет мне с уроками.", "Союзы <b>что как только</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «как только…» — останется «брат обещал, что поможет мне с уроками», предложение цело."],
+  ["Врач сказал, что, если я буду гулять каждый день, я быстро поправлюсь.", "Союзы <b>что если</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «если…» — останется «врач сказал, что я быстро поправлюсь», предложение цело."],
+  ["Мы договорились, что, когда кончится дождь, пойдём на реку.", "Союзы <b>что когда</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «когда…» — останется «мы договорились, что пойдём на реку», предложение цело."],
+  ["Я заметил, что, пока мы разговаривали, стало совсем темно.", "Союзы <b>что пока</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «пока…» — останется «я заметил, что стало совсем темно», предложение цело."],
+  ["Он признался, что, хотя книга толстая, он прочитал её за два дня.", "Союзы <b>что хотя</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «хотя…» — останется «он признался, что прочитал её за два дня», предложение цело."],
+  ["Это был человек, который, если обещал, всегда выполнял обещание.", "Союзы <b>который если</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «если…» — останется «это был человек, который всегда выполнял обещание», предложение цело."],
+  ["Мы шли по дороге, которая, когда начинался дождь, превращалась в болото.", "Союзы <b>которая когда</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «когда…» — останется «мы шли по дороге, которая превращалась в болото», предложение цело."],
+  ["У нас был сосед, который, хотя ему было за восемьдесят, каждое утро бегал в парке.", "Союзы <b>который хотя</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «хотя…» — останется «у нас был сосед, который каждое утро бегал в парке», предложение цело."],
+  ["Я подумал, что, если не позвоню сейчас, потом будет поздно.", "Союзы <b>что если</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «если…» — останется «я подумал, что потом будет поздно», предложение цело."],
+  ["Бабушка говорила, что, когда она была маленькой, в деревне не было электричества.", "Союзы <b>что когда</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «когда…» — останется «бабушка говорила, что в деревне не было электричества», предложение цело."],
+  ["Все знали, что, пока идёт урок, шуметь в коридоре нельзя.", "Союзы <b>что пока</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «пока…» — останется «все знали, что шуметь в коридоре нельзя», предложение цело."],
+  ["Капитан приказал, чтобы, как только покажется берег, ему доложили.", "Союзы <b>чтобы как только</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «как только…» — останется «капитан приказал, чтобы ему доложили», предложение цело."],
+  ["Мы поняли, что, если не найдём дорогу до вечера, придётся ночевать в лесу.", "Союзы <b>что если</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «если…» — останется «мы поняли, что придётся ночевать в лесу», предложение цело."],
+  ["Сестра написала, что, когда приедет, привезёт нам подарки.", "Союзы <b>что когда</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «когда…» — останется «сестра написала, что привезёт нам подарки», предложение цело."],
+  ["Это была книга, которую, если начнёшь читать, уже невозможно отложить.", "Союзы <b>которую если</b> стоят рядом, дальше нет ни «то», ни «так», ни «но» → <b>запятая на стыке</b>. Проверка: убери придаточное «если…» — останется «это была книга, которую уже невозможно отложить», предложение цело."],
+  ["Он сказал, что когда закончит работу, то сразу позвонит.", "Союзы <b>что когда</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «когда…» осталось бы «он сказал, что то сразу позвонит» — так сказать нельзя."],
+  ["Мама решила, что если пойдёт дождь, то мы останемся дома.", "Союзы <b>что если</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «если…» осталось бы «мама решила, что то мы останемся дома» — так сказать нельзя."],
+  ["Я знал, что хотя он устал, но всё равно придёт.", "Союзы <b>что хотя</b> стоят рядом, но дальше есть <b>«но»</b> → запятая на стыке <b>не нужна</b>. Без «хотя…» осталось бы «я знал, что но всё равно придёт» — так сказать нельзя."],
+  ["Мне кажется, что если мы поторопимся, то успеем на автобус.", "Союзы <b>что если</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «если…» осталось бы «мне кажется, что то успеем на автобус» — так сказать нельзя."],
+  ["Мы договорились, что когда кончится дождь, то пойдём на реку.", "Союзы <b>что когда</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «когда…» осталось бы «мы договорились, что то пойдём на реку» — так сказать нельзя."],
+  ["Он признался, что хотя книга толстая, но он прочитал её за два дня.", "Союзы <b>что хотя</b> стоят рядом, но дальше есть <b>«но»</b> → запятая на стыке <b>не нужна</b>. Без «хотя…» осталось бы «он признался, что но он прочитал её» — так сказать нельзя."],
+  ["Это был человек, который если обещал, то всегда выполнял обещание.", "Союзы <b>который если</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «если…» осталось бы «это был человек, который то всегда выполнял обещание» — так сказать нельзя."],
+  ["Я подумал, что если не позвоню сейчас, то потом будет поздно.", "Союзы <b>что если</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «если…» осталось бы «я подумал, что то потом будет поздно» — так сказать нельзя."],
+  ["Бабушка говорила, что когда она была маленькой, то в деревне не было электричества.", "Союзы <b>что когда</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «когда…» осталось бы «бабушка говорила, что то в деревне не было электричества» — так сказать нельзя."],
+  ["Врач сказал, что если я буду гулять каждый день, то быстро поправлюсь.", "Союзы <b>что если</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «если…» осталось бы «врач сказал, что то быстро поправлюсь» — так сказать нельзя."],
+  ["Сестра написала, что как только приедет, так сразу нам позвонит.", "Союзы <b>что как только</b> стоят рядом, но дальше есть <b>«так»</b> → запятая на стыке <b>не нужна</b>. Без «как только…» осталось бы «сестра написала, что так сразу нам позвонит» — так сказать нельзя."],
+  ["Мы поняли, что если не найдём дорогу до вечера, то придётся ночевать в лесу.", "Союзы <b>что если</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «если…» осталось бы «мы поняли, что то придётся ночевать в лесу» — так сказать нельзя."],
+  ["Учитель предупредил, что если кто-то опоздает, то его не пустят на экскурсию.", "Союзы <b>что если</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «если…» осталось бы «учитель предупредил, что то его не пустят на экскурсию» — так сказать нельзя."],
+  ["Я заметил, что хотя все молчали, но никто не уходил.", "Союзы <b>что хотя</b> стоят рядом, но дальше есть <b>«но»</b> → запятая на стыке <b>не нужна</b>. Без «хотя…» осталось бы «я заметил, что но никто не уходил» — так сказать нельзя."],
+  ["У нас был сосед, который хотя ему было за восемьдесят, но каждое утро бегал в парке.", "Союзы <b>который хотя</b> стоят рядом, но дальше есть <b>«но»</b> → запятая на стыке <b>не нужна</b>. Без «хотя…» осталось бы «у нас был сосед, который но каждое утро бегал» — так сказать нельзя."],
+  ["Дети решили, что когда вырастут, то обязательно станут моряками.", "Союзы <b>что когда</b> стоят рядом, но дальше есть <b>«то»</b> → запятая на стыке <b>не нужна</b>. Без «когда…» осталось бы «дети решили, что то обязательно станут моряками» — так сказать нельзя."],
+  ["Мы знали, что брат вернётся к ужину.", "Стыка нет: в предложении один союз «что» → действует обычное правило, запятая на границах частей."],
+  ["Когда стемнело, мы зажгли фонарь, который висел у двери.", "Стыка нет: союзы «когда» и «который» разделены другими словами → действует обычное правило, запятая на границах частей."],
+  ["Если хочешь успеть, выходи прямо сейчас.", "Стыка нет: в предложении один союз «если» → действует обычное правило, запятая на границах частей."],
+  ["Он сказал, что позвонит, когда закончит работу.", "Стыка нет: союзы «что» и «когда» разделены словом «позвонит» → действует обычное правило, запятая на границах частей."],
+  ["Мама сказала, что мы поедем на дачу, если будет тепло.", "Стыка нет: союзы «что» и «если» разделены другими словами → действует обычное правило, запятая на границах частей."],
+  ["Хотя было холодно, дети играли во дворе.", "Стыка нет: в предложении один союз «хотя» → действует обычное правило, запятая на границах частей."]
+];
+
+function parse(sentence) {
+  const tokens = sentence.split(" ");
+  const words = [], ans = [];
+  tokens.forEach((t, i) => {
+    const comma = t.endsWith(",");
+    words.push(comma ? t.slice(0, -1) : t);
+    if (i < tokens.length - 1) ans.push(comma);
+  });
+  return { words, ans };
+}
+const SOURCE = RAW.map(([s, expl]) => Object.assign({ src: s, expl }, parse(s)));
+
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+let deck = [], idx = 0, mistakes = [], marks = [], checked = false, isErrorMode = false;
+
+function startScreen() {
+  document.getElementById("prog").style.width = "0%";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">✍️</div>
+      <div class="finish-title" style="color:var(--text)">Как это работает</div>
+      <div class="rules">Между словами есть пропуски. <b>Нажми на пропуск</b>, чтобы поставить запятую; ещё раз — чтобы убрать. Потом нажми <b>«Проверить»</b>.<br><br>• Если два подчинительных союза стоят рядом (<i>что если, что когда, который хотя</i>), посмотри дальше.<br>• Есть <b>то, так, но</b> — запятой между союзами <b>нет</b>: <i>Он сказал, что если пойдёт дождь, то…</i><br>• Нет — запятая <b>нужна</b>: <i>Он сказал, что, если пойдёт дождь, мы останемся.</i><br>• Проверка: убери придаточное. Предложение не развалилось — запятая нужна.</div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn-start primary" onclick="begin(20)">20 случайных</button>
+        <button class="btn-start" onclick="begin(0)">Все ${SOURCE.length}</button>
+      </div>
+    </div>`;
+}
+
+function begin(n) {
+  const all = shuffle(SOURCE);
+  deck = n ? all.slice(0, n) : all;
+  roundSet = [...deck];
+  idx = 0; mistakes = []; isErrorMode = false;
+  render();
+}
+
+function sentenceHTML(w) {
+  return w.words.map((word, i) => {
+    let html = `<span class="w">${word}`;
+    if (i < w.words.length - 1) {
+      html += `<button class="gap" data-i="${i}" aria-label="Пропуск после слова «${word}»" onclick="toggle(${i})"></button>`;
+    }
+    return html + "</span> ";
+  }).join("");
+}
+
+function render() {
+  if (idx >= deck.length) { showFinish(); return; }
+  const w = deck[idx];
+  marks = w.ans.map(() => false); checked = false;
+  document.getElementById("prog").style.width = (idx / deck.length * 100) + "%";
+  const badge = isErrorMode ? '<div class="mode-badge">Работа над ошибками</div>' : "";
+  document.getElementById("main").innerHTML = `
+    <div class="card">
+      <div class="top-msg" id="topmsg"></div>
+      ${badge}
+      <div class="counter">${idx + 1} / ${deck.length}</div>
+      <div class="task">Нажми на пропуски, где нужна запятая. Если запятые не нужны — сразу проверяй.</div>
+      <div class="sentence" id="sent">${sentenceHTML(w)}</div>
+      <div class="legend" id="legend">
+        <span><b class="lg-ok">,</b> верно</span><span><b class="lg-miss">,</b> пропущена</span><span><b class="lg-extra">,</b> лишняя</span>
+      </div>
+      <div class="explanation" id="expl">${w.expl}</div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn primary" id="actBtn" onclick="act()">Проверить</button>
+    </div>
+    <div class="kbd-hint">Enter — проверить / дальше</div>`;
+}
+
+function toggle(i) {
+  if (checked) return;
+  marks[i] = !marks[i];
+  const g = document.querySelector(`.gap[data-i="${i}"]`);
+  g.textContent = marks[i] ? "," : "";
+  g.classList.toggle("on", marks[i]);
+}
+
+function act() { checked ? next() : check(); }
+
+function check() {
+  const w = deck[idx];
+  checked = true;
+  let ok = true;
+  w.ans.forEach((need, i) => {
+    const g = document.querySelector(`.gap[data-i="${i}"]`);
+    g.disabled = true;
+    g.classList.remove("on");
+    if (need && marks[i]) { g.textContent = ","; g.classList.add("ok"); }
+    else if (need && !marks[i]) { g.textContent = ","; g.classList.add("miss"); ok = false; }
+    else if (!need && marks[i]) { g.textContent = ","; g.classList.add("extra"); ok = false; }
+  });
+  const top = document.getElementById("topmsg");
+  if (ok) { top.textContent = "МОЛОДЕЦ!"; top.className = "top-msg good show"; }
+  else {
+    top.textContent = "Запомни!"; top.className = "top-msg remind show";
+    document.getElementById("legend").classList.add("show");
+    if (!mistakes.includes(w)) mistakes.push(w);
+  }
+  document.getElementById("expl").classList.add("show");
+  const b = document.getElementById("actBtn");
+  b.textContent = "Следующее →"; b.focus();
+}
+
+function next() { idx++; render(); }
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && deck.length && idx < deck.length && document.getElementById("actBtn")) {
+    if (e.target.classList && e.target.classList.contains("gap")) return;
+    e.preventDefault(); act();
+  }
+});
+
+function showFinish() {
+  document.getElementById("prog").style.width = "100%";
+  const total = deck.length, correct = total - mistakes.length;
+  const list = mistakes.length
+    ? `<div class="mistakes-title">Предложения с ошибками</div>` + mistakes.map(w => `<div class="mistake-item">${w.src}</div>`).join("")
+    : `<div class="all-correct">Все запятые расставлены верно! 🎉</div>`;
+  const errBtn = mistakes.length ? `<button class="btn-errors" onclick="startErrorMode()">Работа над ошибками</button>` : "";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">${mistakes.length ? "📝" : "🏆"}</div>
+      <div class="finish-title">${isErrorMode ? "Работа над ошибками завершена!" : "Тренировка завершена!"}</div>
+      <div class="finish-sub">Без ошибок: ${correct} из ${total}</div>
+      ${list}
+      <div class="btn-row">
+        <button class="btn-restart" onclick="repeatRound()">Повторить эти же предложения</button>
+        <button class="btn-restart" onclick="startScreen()">Начать заново</button>
+        ${errBtn}
+        <a class="btn-restart" href="index.html">На главную</a>
+      </div>
+    </div>`;
+}
+
+let roundSet = [];
+function repeatRound() {
+  deck = shuffle(roundSet);
+  idx = 0; mistakes = [];
+  render();
+}
+
+function startErrorMode() { const errs = [...mistakes]; mistakes = []; deck = shuffle(errs); roundSet = [...deck]; idx = 0; isErrorMode = true; render(); }
+
+startScreen();
+</script>
+</body>
+</html>

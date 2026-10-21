@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Обособление определений и приложений</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center; padding: 2rem 1rem 4rem; position: relative; }
+    .home-link { position: absolute; top: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 700; color: var(--muted);
+      text-decoration: none; padding: 6px 14px; border: 2px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.35rem; }
+    .progress-wrap { width: 100%; max-width: 640px; margin-bottom: 1.5rem; }
+    .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+    .card-wrap { width: 100%; max-width: 640px; }
+    .card, .finish-card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.2rem 2rem 2rem; text-align: center; box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; }
+    .top-msg { font-size: 1.1rem; font-weight: 700; min-height: 30px; margin-bottom: 0.4rem; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.5px; }
+    .top-msg.show { opacity: 1; }
+    .top-msg.good { color: var(--green); }
+    .top-msg.remind { color: var(--red); }
+    .mode-badge { display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--red); background: var(--red-bg);
+      border: 1px solid #f0c4be; border-radius: 99px; padding: 3px 14px; margin-bottom: 0.8rem; }
+    .counter { font-size: 0.78rem; color: var(--hint); margin-bottom: 0.6rem; font-weight: 600; letter-spacing: 1px; }
+    .task { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.4rem; }
+
+    .sentence { font-family: var(--serif); font-size: 1.45rem; line-height: 2.3; margin-bottom: 1.6rem; text-align: left; }
+    .w { white-space: nowrap; }
+    .gap { display: inline-block; vertical-align: baseline; width: 1.05em; height: 1.5em; margin: 0 1px; padding: 0;
+      border: 0; border-bottom: 2px dotted var(--border); background: transparent; color: var(--accent);
+      font-family: var(--serif); font-size: 1em; font-weight: 700; line-height: 1.3; cursor: pointer; border-radius: 4px 4px 0 0;
+      transition: background .12s, border-color .12s; }
+    .gap:hover:not(:disabled) { background: var(--accent-bg); border-bottom-color: var(--accent); }
+    .gap:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+    .gap.on { border-bottom-color: var(--accent); }
+    .gap:disabled { cursor: default; border-bottom-color: transparent; }
+    .gap.ok { color: var(--green); background: var(--green-bg); }
+    .gap.miss { color: var(--red); background: var(--red-bg); }
+    .gap.extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .legend { font-size: 0.78rem; color: var(--muted); margin: -0.6rem 0 1.2rem; display: none; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .legend.show { display: flex; }
+    .legend b { font-family: var(--serif); padding: 0 5px; border-radius: 4px; }
+    .lg-ok { color: var(--green); background: var(--green-bg); }
+    .lg-miss { color: var(--red); background: var(--red-bg); }
+    .lg-extra { color: var(--red); background: var(--red-bg); text-decoration: line-through; }
+
+    .explanation { font-size: 0.92rem; color: var(--muted); line-height: 1.75; max-width: 520px; opacity: 0; transition: opacity 0.4s; min-height: 20px; }
+    .explanation.show { opacity: 1; }
+    .explanation b { color: var(--text); }
+    .explanation i { color: var(--text); font-family: var(--serif); }
+    .nav-row { display: flex; justify-content: center; gap: 12px; margin-top: 1.4rem; }
+    .nav-btn, .btn-restart, .btn-errors, .btn-start { padding: 11px 26px; border-radius: 99px; border: 2px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer; text-decoration: none; transition: background .15s, border-color .15s; }
+    .nav-btn:hover, .btn-restart:hover, .btn-start:hover { background: var(--bg); border-color: var(--muted); }
+    .nav-btn.primary, .btn-start.primary { border-color: var(--accent); color: var(--accent); }
+    .nav-btn.primary:hover, .btn-start.primary:hover { background: var(--accent-bg); }
+    .btn-errors { border-color: var(--red); color: var(--red); background: transparent; }
+    .btn-errors:hover { background: var(--red-bg); }
+    .finish-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .finish-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .finish-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.4rem; line-height: 1.6; }
+    .rules { text-align: left; font-size: 0.88rem; line-height: 1.65; color: var(--muted); background: var(--bg); border-radius: 14px; padding: 1rem 1.2rem; margin-bottom: 1.4rem; }
+    .rules b { color: var(--text); }
+    .rules i { font-family: var(--serif); color: var(--text); }
+    .mistakes-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.8rem; }
+    .mistake-item { font-family: var(--serif); font-size: 1rem; margin: 7px 0; text-align: left; }
+    .all-correct { font-size: 0.95rem; color: var(--green); font-weight: 700; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.6rem; }
+    .kbd-hint { font-size: 0.75rem; color: var(--hint); margin-top: 1rem; text-align: center; }
+    @media (max-width: 520px) {
+      .home-link { position: static; align-self: flex-start; margin-bottom: 1rem; }
+      header h1 { font-size: 1.2rem; }
+      .sentence { font-size: 1.2rem; line-height: 2.4; }
+      .gap { width: 1.3em; }
+      .card, .finish-card { padding: 1.8rem 1.1rem 1.5rem; }
+      .kbd-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+      .gap { min-width: 1.05em; width: auto; padding: 0 2px; }
+    .gap s { color: var(--red); margin-right: 2px; }
+  </style>
+</head>
+<body>
+
+<a class="home-link" href="index.html">← На главную</a>
+
+<header>
+  <h1>Обособление определений и приложений</h1>
+  <p>Поставь запятые и тире там, где они нужны</p>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="prog"></div></div></div>
+<div class="card-wrap"><div id="main"></div></div>
+
+<script>
+/*
+  КАК ДОБАВИТЬ ПРЕДЛОЖЕНИЕ:
+  [предложение с правильно расставленными запятыми, пояснение]
+  Запятые в предложении — это правильный ответ. Ученик видит предложение без запятых.
+*/
+const RAW = [
+  ["Река, скованная льдом, молчала до весны.", "Стоит <b>после</b> слова «река», есть <b>зависимые слова</b> (скованная чем? льдом) → выделяется с двух сторон."],
+  ["Мой дедушка, опытный рыбак, знает все тихие заводи.", "Стоит <b>после</b> слова «дедушка», есть <b>зависимые слова</b> (приложение рыбак какой? опытный) → выделяется с двух сторон."],
+  ["Тропинка, ведущая к роднику, заросла травой.", "Стоит <b>после</b> слова «тропинка», есть <b>зависимые слова</b> (ведущая куда? к роднику) → выделяется с двух сторон."],
+  ["Учительница, строгая на вид, оказалась очень доброй.", "Стоит <b>после</b> слова «учительница», есть <b>зависимые слова</b> (строгая на вид) → выделяется с двух сторон."],
+  ["Комната, светлая от солнца, казалась больше.", "Стоит <b>после</b> слова «комната», есть <b>зависимые слова</b> (светлая от чего? от солнца) → выделяется с двух сторон."],
+  ["Анна Сергеевна, наш классный руководитель, раздала дневники.", "Стоит <b>после</b> слова «Анна Сергеевна», есть <b>зависимые слова</b> (приложение руководитель какой? наш классный) → выделяется с двух сторон."],
+  ["Мы встретили Петю, моего старого друга.", "Стоит <b>после</b> слова «Петю», есть <b>зависимые слова</b> (приложение друга какого? моего старого) → выделяется. В конце предложения — одна запятая."],
+  ["На столе стоял кувшин, полный холодного молока.", "Стоит <b>после</b> слова «кувшин», есть <b>зависимые слова</b> (полный чего? молока) → выделяется. В конце предложения — одна запятая."],
+  ["Пушкин, великий русский поэт, родился в Москве.", "Стоит <b>после</b> слова «Пушкин», есть <b>зависимые слова</b> (приложение поэт какой? великий русский) → выделяется с двух сторон."],
+  ["Мы приехали в Казань, столицу Татарстана.", "Стоит <b>после</b> слова «Казань», есть <b>зависимые слова</b> (приложение столицу чего? Татарстана) → выделяется. В конце предложения — одна запятая."],
+  ["Яблоки, крупные и румяные, лежали в корзине.", "Стоит <b>после</b> слова «яблоки», это <b>два однородных определения</b> → выделяются с двух сторон."],
+  ["Ночь, тёплая и тихая, опустилась на город.", "Стоит <b>после</b> слова «ночь», это <b>два однородных определения</b> → выделяются с двух сторон."],
+  ["Небо, чистое и прозрачное, сияло над морем.", "Стоит <b>после</b> слова «небо», это <b>два однородных определения</b> → выделяются с двух сторон."],
+  ["Волны, высокие и шумные, разбивались о берег.", "Стоит <b>после</b> слова «волны», это <b>два однородных определения</b> → выделяются с двух сторон."],
+  ["Голос, громкий и уверенный, раздался из зала.", "Стоит <b>после</b> слова «голос», это <b>два однородных определения</b> → выделяются с двух сторон."],
+  ["Она, счастливая, вбежала в комнату.", "Определяемое слово — <b>личное местоимение</b> «она» → выделяется всегда. Даже одно слово."],
+  ["Мы, ученики девятого класса, готовим спектакль.", "Определяемое слово — <b>личное местоимение</b> «мы» → выделяется всегда."],
+  ["Он, весёлый и загорелый, вернулся из лагеря.", "Определяемое слово — <b>личное местоимение</b> «он» → выделяется всегда."],
+  ["Они, промокшие, грелись у печки.", "Определяемое слово — <b>личное местоимение</b> «они» → выделяется всегда. Даже одно слово."],
+  ["Мы плыли по реке Волге.", "Стоит после слова «реке», но это <b>одно слово</b> без зависимых, «реке» — не местоимение → запятые <b>не нужны</b>."],
+  ["Моя сестра Аня учится в музыкальной школе.", "Стоит после слова «сестра», но это <b>одно слово</b> без зависимых, «сестра» — не местоимение → запятые <b>не нужны</b>."],
+  ["Наш кот Барсик любит спать на подоконнике.", "Стоит после слова «кот», но это <b>одно слово</b> без зависимых, «кот» — не местоимение → запятые <b>не нужны</b>."],
+  ["Город Казань стоит на Волге.", "Стоит после слова «город», но это <b>одно слово</b> без зависимых, «город» — не местоимение → запятые <b>не нужны</b>."],
+  ["Мой друг Петя отлично рисует.", "Стоит после слова «друг», но это <b>одно слово</b> без зависимых, «друг» — не местоимение → запятые <b>не нужны</b>."],
+  ["Довольный своей работой, он отложил кисть.", "Определяемое слово — <b>личное местоимение</b> «он» → выделяется всегда."],
+  ["Взволнованная, она не могла произнести ни слова.", "Определяемое слово — <b>личное местоимение</b> «она» → выделяется всегда."],
+  ["Опытный пловец, он легко переплыл реку.", "Определяемое слово — <b>личное местоимение</b> «он» → выделяется всегда. Здесь это приложение «пловец»."],
+  ["Голодные, котята громко пищали.", "Стоит <b>перед</b> словом, но есть значение <b>причины</b>: котята пищали, <i>так как были голодные</i> → выделяется."],
+  ["Усталый после работы, отец рано лёг спать.", "Стоит <b>перед</b> словом, но есть значение <b>причины</b>: отец лёг спать, <i>так как устал</i> → выделяется."],
+  ["Испуганный громом, малыш заплакал.", "Стоит <b>перед</b> словом, но есть значение <b>причины</b>: малыш заплакал, <i>так как был испуган</i> → выделяется."],
+  ["Добрый по натуре, дедушка никому не отказывал в помощи.", "Стоит <b>перед</b> словом, но есть значение <b>причины</b>: не отказывал, <i>так как был добрый</i> → выделяется."],
+  ["Очень уставшие, ребята всё же дошли до лагеря.", "Стоит <b>перед</b> словом, но есть значение <b>уступки</b>: <i>хотя ребята очень устали</i>, они дошли → выделяется."],
+  ["Покрытый инеем, стоял в саду старый клён.", "Стоит перед словом «клён», но <b>оторвано</b> от него словами «стоял в саду старый» → выделяется."],
+  ["Румяная от мороза, в дом вбежала сестра.", "Стоит перед словом «сестра», но <b>оторвано</b> от него словами «в дом вбежала» → выделяется."],
+  ["Залитое солнцем, расстилалось перед нами поле.", "Стоит перед словом «поле», но <b>оторвано</b> от него словами «расстилалось перед нами» → выделяется."],
+  ["Скованная льдом река молчала до весны.", "Стоит <b>перед</b> словом «река» вплотную, признаков нет → запятые <b>не нужны</b>."],
+  ["Светлая от солнца комната казалась больше.", "Стоит <b>перед</b> словом «комната» вплотную, признаков нет → запятые <b>не нужны</b>."],
+  ["Полный холодного молока кувшин стоял на столе.", "Стоит <b>перед</b> словом «кувшин» вплотную, признаков нет → запятые <b>не нужны</b>."],
+  ["На ветке сидела взъерошенная от холода птица.", "Стоит <b>перед</b> словом «птица» вплотную, признаков нет → запятые <b>не нужны</b>."],
+  ["Мы шли по усыпанной листьями тропинке.", "Стоит <b>перед</b> словом «тропинке» вплотную, признаков нет → запятые <b>не нужны</b>."],
+  ["Сестра, как самая старшая, присматривала за малышами.", "Приложение с <b>как</b>: можно подставить «<i>потому что она</i> самая старшая» → выделяется."],
+  ["Отец, как опытный водитель, ехал очень осторожно.", "Приложение с <b>как</b>: «<i>потому что он</i> опытный водитель» → выделяется."],
+  ["Эту книгу я читал как учебник.", "«Как учебник» = <b>в качестве</b> учебника → запятые <b>не нужны</b>."],
+  ["Москва-река замёрзла в декабре.", "Одно слово-приложение сливается с определяемым словом → пишется через <b>дефис</b>, запятые не нужны."],
+  ["Наша Танюша-хохотушка всех рассмешила.", "Одно слово-приложение после имени → <b>дефис</b>, запятые не нужны."],
+  ["Пришла осень — пора листопада и дождей.", "Приложение в конце, можно вставить «<i>а именно</i>» → <b>тире</b>."],
+  ["На столе лежал мой подарок — новая книга.", "Приложение в конце, можно вставить «<i>а именно</i>» → <b>тире</b>."],
+  ["Я больше всего люблю одно время года — зиму.", "Приложение в конце, можно вставить «<i>а именно</i>» → <b>тире</b>."]
+];
+
+const SIGNS = ["", ",", "—"];
+function parse(sentence) {
+  const words = [], ans = [];
+  sentence.split(" ").forEach(t => {
+    if (t === "—") { ans[ans.length - 1] = "—"; return; }
+    let sign = "";
+    if (t.length > 1 && /,$/.test(t)) { sign = ","; t = t.slice(0, -1); }
+    words.push(t); ans.push(sign);
+  });
+  ans.pop();
+  return { words, ans };
+}
+const SOURCE = RAW.map(([s, expl]) => Object.assign({ src: s, expl }, parse(s)));
+
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+let deck = [], idx = 0, mistakes = [], marks = [], checked = false, isErrorMode = false;
+
+function startScreen() {
+  document.getElementById("prog").style.width = "0%";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">✍️</div>
+      <div class="finish-title" style="color:var(--text)">Как это работает</div>
+      <div class="rules">Между словами есть пропуски. <b>Нажми на пропуск</b>: первый раз — запятая, второй — <b>тире</b>, третий — убрать. Если знаки не нужны — сразу нажимай <b>«Проверить»</b>.<br><br>Найди определение или приложение и слово, к которому оно относится.<br>• <b>После слова</b> выделяется, если есть зависимые слова, два-три однородных определения или слово — личное местоимение: <i>Яблоки, крупные и румяные, …</i> Одно слово — не выделяется: <i>по реке Волге.</i><br>• <b>Перед словом</b> выделяется, если слово — личное местоимение, есть причина или уступка, или определение оторвано: <i>Голодные, котята пищали.</i><br>• <b>Как</b> = «потому что» → запятые; «в качестве» → нет.<br>• Одно слово-приложение после имени — <b>дефис</b>: <i>Москва-река.</i> Приложение в конце с «а именно» — <b>тире</b>.</div>
+      <div class="btn-row" style="margin-top:0">
+        <button class="btn-start primary" onclick="begin(20)">20 случайных</button>
+        <button class="btn-start" onclick="begin(0)">Все ${SOURCE.length}</button>
+      </div>
+    </div>`;
+}
+
+function begin(n) {
+  const all = shuffle(SOURCE);
+  deck = n ? all.slice(0, n) : all;
+  roundSet = [...deck];
+  idx = 0; mistakes = []; isErrorMode = false;
+  render();
+}
+
+function sentenceHTML(w) {
+  return w.words.map((word, i) => {
+    let html = `<span class="w">${word}`;
+    if (i < w.words.length - 1) {
+      html += `<button class="gap" data-i="${i}" aria-label="Пропуск после слова «${word}»" onclick="toggle(${i})"></button>`;
+    }
+    return html + "</span> ";
+  }).join("");
+}
+
+function render() {
+  if (idx >= deck.length) { showFinish(); return; }
+  const w = deck[idx];
+  marks = w.ans.map(() => ""); checked = false;
+  document.getElementById("prog").style.width = (idx / deck.length * 100) + "%";
+  const badge = isErrorMode ? '<div class="mode-badge">Работа над ошибками</div>' : "";
+  document.getElementById("main").innerHTML = `
+    <div class="card">
+      <div class="top-msg" id="topmsg"></div>
+      ${badge}
+      <div class="counter">${idx + 1} / ${deck.length}</div>
+      <div class="task">Нажми на пропуск: первый раз — запятая, второй — тире, третий — убрать. Если знаки не нужны — сразу проверяй.</div>
+      <div class="sentence" id="sent">${sentenceHTML(w)}</div>
+      <div class="legend" id="legend">
+        <span><b class="lg-ok">,</b> верно</span><span><b class="lg-miss">,</b> пропущен</span><span><b class="lg-miss"><s>,</s>—</b> не тот знак</span><span><b class="lg-extra">,</b> лишний</span>
+      </div>
+      <div class="explanation" id="expl">${w.expl}</div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn primary" id="actBtn" onclick="act()">Проверить</button>
+    </div>
+    <div class="kbd-hint">Enter — проверить / дальше</div>`;
+}
+
+function toggle(i) {
+  if (checked) return;
+  marks[i] = SIGNS[(SIGNS.indexOf(marks[i]) + 1) % SIGNS.length];
+  const g = document.querySelector(`.gap[data-i="${i}"]`);
+  g.textContent = marks[i];
+  g.classList.toggle("on", !!marks[i]);
+}
+
+function act() { checked ? next() : check(); }
+
+function check() {
+  const w = deck[idx];
+  checked = true;
+  let ok = true;
+  w.ans.forEach((need, i) => {
+    const g = document.querySelector(`.gap[data-i="${i}"]`);
+    g.disabled = true;
+    g.classList.remove("on");
+    const got = marks[i];
+    if (need && got === need) { g.textContent = need; g.classList.add("ok"); }
+    else if (need && !got) { g.textContent = need; g.classList.add("miss"); ok = false; }
+    else if (!need && got) { g.textContent = got; g.classList.add("extra"); ok = false; }
+    else if (need && got !== need) { g.innerHTML = `<s>${got}</s>${need}`; g.classList.add("miss"); ok = false; }
+  });
+  const top = document.getElementById("topmsg");
+  if (ok) { top.textContent = "МОЛОДЕЦ!"; top.className = "top-msg good show"; }
+  else {
+    top.textContent = "Запомни!"; top.className = "top-msg remind show";
+    document.getElementById("legend").classList.add("show");
+    if (!mistakes.includes(w)) mistakes.push(w);
+  }
+  document.getElementById("expl").classList.add("show");
+  const b = document.getElementById("actBtn");
+  b.textContent = "Следующее →"; b.focus();
+}
+
+function next() { idx++; render(); }
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && deck.length && idx < deck.length && document.getElementById("actBtn")) {
+    if (e.target.classList && e.target.classList.contains("gap")) return;
+    e.preventDefault(); act();
+  }
+});
+
+function showFinish() {
+  document.getElementById("prog").style.width = "100%";
+  const total = deck.length, correct = total - mistakes.length;
+  const list = mistakes.length
+    ? `<div class="mistakes-title">Предложения с ошибками</div>` + mistakes.map(w => `<div class="mistake-item">${w.src}</div>`).join("")
+    : `<div class="all-correct">Все знаки расставлены верно! 🎉</div>`;
+  const errBtn = mistakes.length ? `<button class="btn-errors" onclick="startErrorMode()">Работа над ошибками</button>` : "";
+  document.getElementById("main").innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">${mistakes.length ? "📝" : "🏆"}</div>
+      <div class="finish-title">${isErrorMode ? "Работа над ошибками завершена!" : "Тренировка завершена!"}</div>
+      <div class="finish-sub">Без ошибок: ${correct} из ${total}</div>
+      ${list}
+      <div class="btn-row">
+        <button class="btn-restart" onclick="repeatRound()">Повторить эти же предложения</button>
+        <button class="btn-restart" onclick="startScreen()">Начать заново</button>
+        ${errBtn}
+        <a class="btn-restart" href="index.html">На главную</a>
+      </div>
+    </div>`;
+}
+
+let roundSet = [];
+function repeatRound() {
+  deck = shuffle(roundSet);
+  idx = 0; mistakes = [];
+  render();
+}
+
+function startErrorMode() { const errs = [...mistakes]; mistakes = []; deck = shuffle(errs); roundSet = [...deck]; idx = 0; isErrorMode = true; render(); }
+
+startScreen();
+</script>
+</body>
+</html>
