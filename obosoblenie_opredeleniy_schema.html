@@ -601,6 +601,12 @@
   .info3 .k { font-weight: 700; }
   .tire { padding: 0 3px; border-radius: 4px; background: var(--lime); font-weight: 800; font-style: normal; }
   @media screen { body.stacked .info3 { display: block; } body.stacked .info3 > div + div { margin-top: 10px; } }
+  .head-right { flex: none; display: flex; align-items: center; gap: 10px; }
+  .home-link { padding: 6px 14px; border-radius: 999px; border: 2px solid var(--rule); color: var(--ink-soft); font-weight: 600; font-size: 13.5px; text-decoration: none; }
+  .home-link:hover { border-color: var(--ink); color: var(--ink); }
+  body.stacked .head-right { margin-top: 12px; flex-wrap: wrap; }
+  body.stacked .head-right .modes { margin-top: 0; }
+  @media print { .home-link { display: none !important; } }
 </style>
 </head>
 <body data-mode="walk">
@@ -608,10 +614,13 @@
 <main class="sheet" id="sheet">
   <header>
     <h1>Обособление определений и приложений</h1>
+    <div class="head-right">
+    <a class="home-link" href="index.html">← Главная</a>
     <div class="modes" role="group" aria-label="Режим">
       <button type="button" data-mode="walk" aria-pressed="true">По шагам</button>
       <button type="button" data-mode="train" aria-pressed="false">Тренировка</button>
       <button type="button" data-mode="all" aria-pressed="false">Вся схема</button>
+    </div>
     </div>
   </header>
   <div class="band">
@@ -700,7 +709,7 @@
     { r: "{Уставший после смены}§ папа всё же согласился поиграть с нами.", w: "папа", a1: "no", a2: "yes", sp: "Уступка: хотя папа устал, он согласился." },
     { r: "{Довольная результатом}§ она улыбнулась.", w: "она", a1: "no", a2: "yes", sp: "Определяемое слово — личное местоимение «она»." },
     { r: "{Промокший до нитки}§ в дом вошёл почтальон.", w: "почтальон", a1: "no", a2: "yes", sp: "Определение оторвано от слова «почтальон» словами «в дом вошёл»." },
-    { r: "{Размытая весенними дождями} дорога стала непроходимой.", w: "дорога", a1: "no", a2: "no", nosp: "Причины и уступки нет, «дорога» — не местоимение, определение стоит вплотную." },
+    { r: "{Размытая весенними дождями} дорога петляла между холмами.", w: "дорога", a1: "no", a2: "no", nosp: "Причины и уступки нет, «дорога» — не местоимение, определение стоит вплотную." },
     { r: "Мы шли по {засыпанной листьями} аллее.", w: "аллее", a1: "no", a2: "no", nosp: "Причины и уступки нет, «аллее» — не местоимение, определение стоит вплотную." }
   ];
   ITEMS.forEach(function (it) {
