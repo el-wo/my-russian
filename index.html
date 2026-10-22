@@ -139,6 +139,34 @@
     .al .hl-v { background: var(--violet-wash); padding: 0 3px; border-radius: 4px; }
     .al .hl-l { background: var(--lime); padding: 0 3px; border-radius: 4px; }
     .al .u-obst, .al .u-def, .al .u-pred { text-decoration-color: var(--ink); }
+    /* вкладки внутри теории (без скриптов: радиокнопки + подписи) */
+    .al-tabs > input { position: absolute; opacity: 0; pointer-events: none; }
+    .al-tabbar { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+    .al-tabbar label { padding: 6px 16px; border: 2px solid var(--ink); border-radius: 999px; font-weight: 700; font-size: 14px; cursor: pointer; background: #fff; }
+    .al-tabbar label:hover { background: var(--violet-wash); }
+    .al-panel { display: none; margin-top: 18px; }
+    #sl-t0:checked ~ .al-tabbar label[for="sl-t0"], #sl-t1:checked ~ .al-tabbar label[for="sl-t1"],
+    #sl-t2:checked ~ .al-tabbar label[for="sl-t2"], #sl-t3:checked ~ .al-tabbar label[for="sl-t3"] { background: var(--ink); color: #fff; }
+    #sl-t0:focus-visible ~ .al-tabbar label[for="sl-t0"], #sl-t1:focus-visible ~ .al-tabbar label[for="sl-t1"],
+    #sl-t2:focus-visible ~ .al-tabbar label[for="sl-t2"], #sl-t3:focus-visible ~ .al-tabbar label[for="sl-t3"] { outline: 3px solid var(--violet); outline-offset: 2px; }
+    #sl-t0:checked ~ .al-panels .sl-p0, #sl-t1:checked ~ .al-panels .sl-p1,
+    #sl-t2:checked ~ .al-panels .sl-p2, #sl-t3:checked ~ .al-panels .sl-p3 { display: block; }
+    .al-cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+    .al-cmp > div { border-radius: 14px; padding: 10px 14px; font-size: 13.5px; }
+    .al-cmp .self { background: var(--desk); } .al-cmp .serv { background: var(--violet-wash); border: 2px solid var(--ink); }
+    .al-cmp h6 { margin: 0 0 6px; font-size: 15px; }
+    .al-cmp ul { margin: 0; padding-left: 1.1em; } .al-cmp li { margin: 3px 0; }
+    .al-more { display: inline-block; margin-top: 8px; padding: 4px 12px; border-radius: 999px; background: #fff; border: 2px solid var(--ink); font-weight: 700; font-size: 13px; cursor: pointer; }
+    .al-more:hover { background: var(--ink); color: #fff; }
+    .al-kinds { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .al-kinds.two { grid-template-columns: 1fr 1fr; }
+    .al-kinds > div { background: var(--desk); border-radius: 12px; padding: 8px 11px; font-size: 13px; }
+    .al-kinds b { display: block; }
+    .al-kinds i { color: var(--ink); }
+    .al .sl-ex { display: block; margin-top: 3px; color: var(--ink-soft); }
+    .al .zero-m { color: var(--ink-soft); font-style: normal; font-size: 12px; }
+    .al-tabs .al-sig span { display: block; }
+    @media (max-width: 760px) { .al-cmp, .al-kinds, .al-kinds.two { grid-template-columns: 1fr; } .al-tabs .al-q { grid-column: auto !important; } .al-tabs .al-roles { grid-template-columns: 1fr !important; } }
     @media (max-width: 760px) {
       .al-ladder { grid-template-columns: 1fr; }
       .al-next { width: 2px; height: 26px; margin: 0 0 0 24px; }
@@ -342,7 +370,247 @@ const PARTS = [
       file: "trenazher_ne_ni_narechiya.html",
       algo: "ne_ni_narechiya_schema.html" }
   ]},
-  { id: "sluzh", name: "Служебные части речи", sets: [] },
+  { id: "sluzh", name: "Служебные части речи",
+    theory: `
+      <div class="al al-tabs">
+        <div class="al-band"><b>Служебные части речи</b> сами ничего не называют — они работают на другие слова: связывают их, строят их формы или добавляют оттенок смысла.</div>
+
+        <input type="radio" name="sl-tab" id="sl-t0" checked>
+        <input type="radio" name="sl-tab" id="sl-t1">
+        <input type="radio" name="sl-tab" id="sl-t2">
+        <input type="radio" name="sl-tab" id="sl-t3">
+        <div class="al-tabbar">
+          <label for="sl-t0">Обзор</label><label for="sl-t1">Предлог</label><label for="sl-t2">Союз</label><label for="sl-t3">Частица</label>
+        </div>
+
+        <div class="al-panels">
+
+        <!-- ===== ОБЗОР ===== -->
+        <div class="al-panel sl-p0">
+          <div class="al-cmp">
+            <div class="self"><h6>Самостоятельные</h6>
+              <ul>
+                <li><b>называют</b> предмет, признак, количество, действие (<i>дом, синий, пять, бежать</i>) или <b>указывают</b> на них (<i>он, такой, столько</i>);</li>
+                <li>многие <b>изменяются</b>: <i>дом — дома, бегу — бежал</i>;</li>
+                <li>сами бывают <b>членами предложения</b>.</li>
+              </ul></div>
+            <div class="serv"><h6>Служебные</h6>
+              <ul>
+                <li><b>лексического значения нет</b> — без «хозяина» слово ничего не сообщает: <i>на, и, бы</i>;</li>
+                <li><b>не изменяются</b>, поэтому у них нет непостоянных признаков;</li>
+                <li><b>отдельным членом предложения не бывают</b>.</li>
+              </ul></div>
+          </div>
+
+          <h5 class="al-h">Три служебные части речи</h5>
+          <div class="al-roles">
+            <div class="al-v lime"><span class="al-mark">предлог</span>
+              <p>Связывает слова <b>внутри словосочетания</b> и показывает их отношения.</p>
+              <p><i>лежать <b>под</b> столом, чашка <b>с</b> блюдцем</i></p>
+              <label class="al-more" for="sl-t1">Подробнее →</label></div>
+            <div class="al-v violet"><span class="al-mark">союз</span>
+              <p>Соединяет <b>однородные члены</b> или <b>части сложного предложения</b>.</p>
+              <p><i>чай <b>или</b> кофе; Звонок прозвенел, <b>и</b> урок начался.</i></p>
+              <label class="al-more" for="sl-t2">Подробнее →</label></div>
+            <div class="al-v desk"><span class="al-mark">частица</span>
+              <p><b>Строит форму</b> слова или добавляет <b>оттенок</b> смысла и чувства.</p>
+              <p><i>сказал <b>бы</b>; <b>Неужели</b> зима?</i></p>
+              <label class="al-more" for="sl-t3">Подробнее →</label></div>
+          </div>
+
+          <div class="al-trap">
+            <h5>Не путай</h5>
+            <div><b>Междометия</b> (<i>ах, ой, ура, тсс</i>) — не служебная часть речи. Они выражают чувства и побуждения, но ничего не связывают и форм не строят — это особая группа слов.</div>
+          </div>
+        </div>
+
+        <!-- ===== ПРЕДЛОГ ===== -->
+        <div class="al-panel sl-p1">
+          <div class="al-band" style="font-size:15px"><b>Предлог</b> — служебная часть речи, которая связывает существительное или местоимение с другим словом и показывает, <b>в каких они отношениях</b>: где, куда, когда, почему, зачем.</div>
+
+          <div class="al-ladder">
+            <div class="al-q"><span class="al-num">1</span>
+              <h5>С каким словом стоит?</h5>
+              <ul class="al-sig">
+                <li><b>с существительным</b><span><i>подойти <u>к</u> окну</i> — к чему? (Д. п.)</span></li>
+                <li><b>с местоимением</b><span><i>думать <u>о</u> ней</i> — о ком? (П. п.)</span></li>
+                <li><b>с числительным</b><span><i>разделить <u>на</u> три</i></span></li>
+              </ul>
+              <div class="al-but">Предлог требует от слова <b>определённого падежа</b>; без предлога бывает только именительный.</div>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q"><span class="al-num">2</span>
+              <h5>Какие отношения выражает?</h5>
+              <div class="al-qs">
+                <span>место <i>в, на, под, у, около</i></span><span>направление <i>к, из, от, через</i></span>
+                <span>время <i>до, после, в течение</i></span><span>причина <i>из-за, благодаря, вследствие</i></span>
+                <span>цель <i>для, ради</i></span><span>образ действия <i>с радостью, без труда</i></span>
+              </div>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q"><span class="al-num">3</span>
+              <h5>Откуда взялся?</h5>
+              <ul class="al-sig">
+                <li><b>непроизводные</b> — исконные<span><i>в, на, с, к, у, о, по, за, из, до, без, для, над, под, через</i></span></li>
+                <li><b>производные</b> — из других частей речи<span>из наречий: <i>около, вдоль, навстречу</i>; из существительных: <i>в течение, ввиду, насчёт</i>; из деепричастий: <i>благодаря, спустя</i></span></li>
+              </ul>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q"><span class="al-num">4</span>
+              <h5>Из скольких слов?</h5>
+              <ul class="al-sig">
+                <li><b>простые</b> — одно слово<span><i>в, около, вследствие</i></span></li>
+                <li><b>составные</b> — несколько слов<span><i>в течение, несмотря на, в связи с, по сравнению с</i></span></li>
+              </ul>
+            </div>
+          </div>
+
+          <h5 class="al-h">Членом предложения не бывает — входит в него вместе со своим словом</h5>
+          <div class="al-roles">
+            <div class="al-v lime"><span class="al-mark">обстоятельство</span>
+              <p><i>Лодка проплыла <span class="u-obst">под мостом</span>.</i></p>
+              <p class="al-note">проплыла <b>где?</b> под мостом</p></div>
+            <div class="al-v violet"><span class="al-mark">определение</span>
+              <p><i>Мне подарили шарф <span class="u-def">в клетку</span>.</i></p>
+              <p class="al-note">шарф <b>какой?</b> в клетку</p></div>
+            <div class="al-v desk"><span class="al-mark">дополнение</span>
+              <p><i>Мы долго спорили <span class="u-pred">о книге</span>.</i></p>
+              <p class="al-note">спорили <b>о чём?</b> о книге</p></div>
+          </div>
+
+          <div class="al-trap">
+            <h5>Ловушки</h5>
+            <div><b>Предлог или приставка?</b>
+              <p>Предлог пишется отдельно, между ним и словом можно вставить другое слово: <i>в (старый) дом, на (высокую) гору</i>. Приставка — часть слова: <i><span class="hl-v">в</span>бежал, <span class="hl-v">на</span>писал</i>.</p>
+              <b style="display:block;margin-top:8px">Производный предлог или самостоятельное слово?</b>
+              <p><i>Ждал <span class="hl-l">в течение</span> часа</i> (= во время часа) — предлог. <i>Попали <span class="hl-v">в течение</span> реки</i> (в быстрое течение) — существительное с предлогом. Проверка: вставь определение или задай вопрос к слову.</p>
+              <p><b>Запомни написание:</b> <i>в течение, в продолжение, в заключение</i> — на конце <b>-е</b>; <i>вследствие, ввиду, насчёт, навстречу</i> — слитно; <i>в виде, в связи с</i> — раздельно.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== СОЮЗ ===== -->
+        <div class="al-panel sl-p2">
+          <div class="al-band" style="font-size:15px"><b>Союз</b> — служебная часть речи, которая <b>соединяет</b> однородные члены предложения или части сложного предложения и показывает, <b>какой смысл</b> у этой связи.</div>
+
+          <div class="al-ladder">
+            <div class="al-q"><span class="al-num">1</span>
+              <h5>Что соединяет?</h5>
+              <ul class="al-sig">
+                <li><b>однородные члены</b><span><i>грибы <u>и</u> ягоды; не сладкий, <u>а</u> кислый</i></span></li>
+                <li><b>части сложного предложения</b><span><i>Стемнело, <u>и</u> мы пошли домой. Я знал, <u>что</u> ты придёшь.</i></span></li>
+              </ul>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q"><span class="al-num">2</span>
+              <h5>Части равны?</h5>
+              <ul class="al-sig">
+                <li><b>да → сочинительный</b><span><i>и, а, но, или, либо, да, однако, зато</i></span></li>
+                <li><b>нет → подчинительный</b><span>присоединяет придаточную часть: <i>что, чтобы, когда, если, потому что, хотя, как будто</i></span></li>
+              </ul>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q"><span class="al-num">3</span>
+              <h5>Какой смысл?</h5>
+              <div class="al-qs">
+                <span>соединение <i>и, да, ни…ни</i></span><span>противопоставление <i>а, но, однако, зато</i></span>
+                <span>разделение <i>или, либо, то…то</i></span><span>время <i>когда, пока</i></span>
+                <span>причина <i>потому что, так как</i></span><span>условие <i>если, раз</i></span>
+                <span>цель <i>чтобы</i></span><span>уступка <i>хотя</i></span><span>сравнение <i>как, будто</i></span>
+              </div>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q"><span class="al-num">4</span>
+              <h5>Как устроен?</h5>
+              <ul class="al-sig">
+                <li><b>простой / составной</b><span><i>и, что</i> / <i>потому что, несмотря на то что</i></span></li>
+                <li><b>одиночный</b><span><i>гроза и ливень</i></span></li>
+                <li><b>повторяющийся</b><span><i><u>и</u> гроза, <u>и</u> ливень; <u>то</u> снег, <u>то</u> дождь</i></span></li>
+                <li><b>двойной</b><span><i><u>не только</u> умный, <u>но и</u> добрый</i></span></li>
+              </ul>
+            </div>
+          </div>
+
+          <h5 class="al-h">Членом предложения не бывает</h5>
+          <div class="al-roles" style="grid-template-columns:1fr">
+            <div class="al-v desk"><p style="margin:0"><i><span class="u-obst" style="text-decoration:underline">Брат</span> <span style="text-decoration:underline double">читал</span>, <b>а</b> <span style="text-decoration:underline">сестра</span> <span style="text-decoration:underline double">рисовала</span>.</i></p>
+              <p class="al-note">Союз <b>а</b> не подчёркивается: он только связывает две части и показывает противопоставление.</p></div>
+          </div>
+
+          <div class="al-trap">
+            <h5>Ловушки</h5>
+            <div><b>Союз или союзное слово?</b>
+              <p><i>Я знаю, <span class="hl-l">что</span> он вернулся</i> — союз: вопрос к нему не задать, ударения нет, членом предложения не является. <i>Я знаю, <span class="hl-v">что</span> он принёс</i> — союзное слово (= <i>какую вещь</i>): на него падает ударение, это дополнение. Союзные слова — <i>который, какой, чей, где, куда, почему</i> — всегда члены предложения.</p>
+              <b style="display:block;margin-top:8px">Союз или местоимение (наречие) с частицей?</b>
+              <p><i>Я <span class="hl-l">тоже</span> пойду</i> (= и я) — союз, слитно; <i>сделаю <span class="hl-v">то же</span>, что и ты</i> — раздельно. <i>Пришёл, <span class="hl-l">чтобы</span> помочь</i> — союз; <i><span class="hl-v">Что бы</span> ни случилось</i> — местоимение с частицей.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== ЧАСТИЦА ===== -->
+        <div class="al-panel sl-p3">
+          <div class="al-band" style="font-size:15px"><b>Частица</b> — служебная часть речи, которая <b>строит формы</b> слов или добавляет к слову и ко всему предложению <b>оттенок смысла и чувства</b>.</div>
+
+          <div class="al-ladder">
+            <div class="al-q"><span class="al-num">1</span>
+              <h5>Строит форму глагола?</h5>
+              <ul class="al-sig">
+                <li><b>бы (б)</b> — условное наклонение<span><i>поехал <u>бы</u>, помог <u>бы</u></i></span></li>
+                <li><b>пусть, пускай, да, давай(те)</b> — повелительное<span><i><u>пусть</u> поёт, <u>да</u> будет свет, <u>давайте</u> начнём</i></span></li>
+              </ul>
+              <div class="al-but">Это <b>формообразующие</b> частицы.</div>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q"><span class="al-num">2</span>
+              <h5>Выражает отрицание?</h5>
+              <ul class="al-sig">
+                <li><b>не</b> — отрицает<span><i><u>не</u> успел, <u>не</u> мой</i></span></li>
+                <li><b>ни</b> — усиливает отрицание<span><i>на небе <u>ни</u> облачка</i></span></li>
+              </ul>
+              <div class="al-but"><b>Но:</b> два НЕ дают утверждение: <i>не мог не прийти</i> = обязательно пришёл.</div>
+            </div>
+            <div class="al-next" aria-hidden="true"></div>
+            <div class="al-q" style="grid-column: span 3"><span class="al-num">3</span>
+              <h5>Какой оттенок добавляет?</h5>
+              <div class="al-qs">
+                <span>вопрос <i>ли, разве, неужели</i></span><span>восклицание <i>что за, как</i></span>
+                <span>указание <i>вот, вон</i></span><span>уточнение <i>именно, как раз, точно</i></span>
+                <span>выделение, ограничение <i>только, лишь, даже</i></span><span>усиление <i>же, ведь, уж</i></span>
+                <span>сомнение <i>вряд ли, едва ли</i></span><span>смягчение просьбы <i>-ка</i></span>
+              </div>
+              <div class="al-but">Это <b>смысловые</b> (модальные) частицы.</div>
+            </div>
+          </div>
+
+          <h5 class="al-h">Член предложения или нет?</h5>
+          <div class="al-roles" style="grid-template-columns:1fr 1fr">
+            <div class="al-v lime"><span class="al-mark">часть сказуемого</span><small>формообразующие</small>
+              <p><i>Я <span class="u-pred" style="text-decoration:underline double">поехал бы</span> с вами.</i> <i><span class="u-pred" style="text-decoration:underline double">Пусть</span> дети <span class="u-pred" style="text-decoration:underline double">отдохнут</span>.</i></p>
+              <p class="al-note">частица входит в сказуемое, потому что строит форму глагола</p></div>
+            <div class="al-v desk"><span class="al-mark">не член предложения</span><small>смысловые</small>
+              <p><i><b>Неужели</b> ты забыл? Как <b>же</b> так вышло?</i></p>
+              <p class="al-note">частицы не подчёркиваются: они только добавляют оттенок</p></div>
+          </div>
+
+          <div class="al-trap">
+            <h5>Правописание</h5>
+            <div>
+              <p><b>Раздельно:</b> <i>бы, ли, же</i> — <i>сделал бы, знаешь ли, он же</i>.</p>
+              <p><b>Через дефис:</b> <i>-то, -ка, -де, -таки</i> — <i>ты-то, подожди-ка, всё-таки</i>. <i>-таки</i> пишется через дефис после глаголов, наречий и частиц: <i>добился-таки, опять-таки</i>.</p>
+              <p><b>НЕ и НИ</b> — частицы, их написание с разными частями речи разобрано в разделе «Орфограмма во всех частях речи».</p>
+            </div>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    `,
+    sets: [
+    { title: "Производные предлоги: слитно или раздельно", ortho: "slit",
+      desc: "Предлог или существительное (деепричастие) с предлогом; список слитных предлогов; -Е на конце.",
+      ex: "вследствие, насчёт, несмотря на; в течение, в связи с; в течении реки",
+      algo: "proizvodnye_predlogi_schema.html" }
+  ]},
   { id: "tests", name: "Проверочные задания", kind: "test",
     note: "Для входа в проверочное задание нужен личный код из шести цифр — его выдаёт учитель. Результат сохраняется после нажатия «Завершить».",
     sets: [
