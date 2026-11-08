@@ -151,6 +151,19 @@
     #sl-t2:focus-visible ~ .al-tabbar label[for="sl-t2"], #sl-t3:focus-visible ~ .al-tabbar label[for="sl-t3"] { outline: 3px solid var(--violet); outline-offset: 2px; }
     #sl-t0:checked ~ .al-panels .sl-p0, #sl-t1:checked ~ .al-panels .sl-p1,
     #sl-t2:checked ~ .al-panels .sl-p2, #sl-t3:checked ~ .al-panels .sl-p3 { display: block; }
+    #pr-t0:checked ~ .al-tabbar label[for="pr-t0"], #pr-t1:checked ~ .al-tabbar label[for="pr-t1"],
+    #pr-t2:checked ~ .al-tabbar label[for="pr-t2"] { background: var(--ink); color: #fff; }
+    #pr-t0:focus-visible ~ .al-tabbar label[for="pr-t0"], #pr-t1:focus-visible ~ .al-tabbar label[for="pr-t1"],
+    #pr-t2:focus-visible ~ .al-tabbar label[for="pr-t2"] { outline: 3px solid var(--violet); outline-offset: 2px; }
+    #pr-t0:checked ~ .al-panels .pr-p0, #pr-t1:checked ~ .al-panels .pr-p1,
+    #pr-t2:checked ~ .al-panels .pr-p2 { display: block; }
+    .al-sfx { font-weight: 800; padding: 0 3px; border-radius: 4px; background: var(--lime); font-style: normal; }
+    .al-tbl { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 8px; font-size: 13.5px; }
+    .al-tbl th, .al-tbl td { padding: 7px 10px; text-align: left; vertical-align: top; border-top: 1px solid var(--rule); }
+    .al-tbl th { font-size: 13px; color: var(--ink-soft); border-top: 0; }
+    .al-tbl td { width: 50%; line-height: 1.7; }
+    .al-warn { margin-top: 12px; padding: 9px 13px; border-radius: 12px; background: var(--err-wash, #fdecea); font-size: 13.5px; }
+    .al-warn b:first-child { color: #a3231a; }
     .al-cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
     .al-cmp > div { border-radius: 14px; padding: 10px 14px; font-size: 13.5px; }
     .al-cmp .self { background: var(--desk); } .al-cmp .serv { background: var(--violet-wash); border: 2px solid var(--ink); }
@@ -248,12 +261,7 @@
 */
 const PARTS = [
   { id: "sush",  name: "Существительное", sets: [] },
-  { id: "pril",  name: "Прилагательное",  sets: [
-    { title: "Н и НН в прилагательных и причастиях", ortho: "nn",
-      desc: "Карточки: от существительного или от глагола, приставки, зависимые слова, вид глагола (купленный — варёный), краткая форма, слова-исключения.",
-      ex: "кожаный, стеклянный, жареный, купленный, раненый",
-      file: "flashcards_n_nn.html" }
-  ]},
+  { id: "pril",  name: "Прилагательное",  sets: [] },
   { id: "chisl", name: "Числительное",    sets: [] },
   { id: "mest",  name: "Местоимение",     sets: [] },
   { id: "glag",  name: "Глагол", sets: [
@@ -268,12 +276,128 @@ const PARTS = [
       file: "trenazher_y_i_posle_pristavok.html",
       algo: "y_i_posle_pristavok_schema.html" }
   ]},
-  { id: "prich", name: "Причастие",       sets: [
-    { title: "Н и НН в прилагательных и причастиях", ortho: "nn",
-      desc: "Карточки: от существительного или от глагола, приставки, зависимые слова, вид глагола (купленный — варёный), краткая форма, слова-исключения.",
-      ex: "кожаный, стеклянный, жареный, купленный, раненый",
-      file: "flashcards_n_nn.html" }
-  ]},
+  { id: "prich", name: "Причастие",
+    theory: `
+      <div class="al al-tabs">
+        <div class="al-band"><b>Причастие</b> — особая группа слов, которые образуются от глагола. Оно называет <b>признак предмета по действию</b> и отвечает на вопросы <b>какой? что делающий? что сделавший?</b> — <span style="font-family:var(--serif,Georgia,serif);font-style:italic">летящая (что делающая?) птица, дочитавший (что сделавший?) книгу ученик.</span></div>
+
+        <input type="radio" name="pr-tab" id="pr-t0" checked>
+        <input type="radio" name="pr-tab" id="pr-t1">
+        <input type="radio" name="pr-tab" id="pr-t2">
+        <div class="al-tabbar">
+          <label for="pr-t0">Что это за слово</label><label for="pr-t1">Действительные и страдательные</label><label for="pr-t2">Склонение и «двойники»</label>
+        </div>
+
+        <div class="al-panels">
+
+        <!-- ===== ЧТО ЭТО ===== -->
+        <div class="al-panel pr-p0">
+          <div class="al-trap" style="margin-top:0">
+            <h5>Кто такое причастие?</h5>
+            <div>Учёные спорят: одни называют его <b>особой формой глагола</b> (оно от глагола образуется и берёт его признаки), другие — <b>самостоятельной частью речи</b> (у него своё значение и свои признаки), третьи — <b>особой группой слов</b>, в которой соединились глагол и прилагательное. <b>В наших заданиях считаем причастия особой группой слов.</b></div>
+          </div>
+
+          <h5 class="al-h">Причастие взяло признаки у двух частей речи</h5>
+          <div class="al-cmp">
+            <div class="self"><h6>От глагола</h6>
+              <ul>
+                <li><b>время</b> — только настоящее и прошедшее: <i>читающий</i> (наст.), <i>читавший</i> (прош.);</li>
+                <li><b>вид</b>: <i>рисующий</i> (от <i>рисовать</i>, несов.), <i>нарисовавший</i> (от <i>нарисовать</i>, сов.);</li>
+                <li><b>возвратность</b> — только у действительных: <i>умывающийся</i> (на конце <i>-ся</i>).</li>
+              </ul></div>
+            <div class="serv"><h6>От прилагательного</h6>
+              <ul>
+                <li><b>согласуется</b> с существительным и отвечает на <b>какой?</b>: <i>ручей (какой?) бегущий</i>;</li>
+                <li><b>род</b>: <i>построенный, построенная, построенное</i>;</li>
+                <li><b>число</b>: <i>забытый — забытые</i>;</li>
+                <li><b>падеж</b>: <i>о прочитанной книге</i> (П. п.), <i>с поющими птицами</i> (Т. п.);</li>
+                <li><b>полная и краткая форма</b> — только у страдательных: <i>написанный — написан</i>.</li>
+              </ul></div>
+          </div>
+
+          <h5 class="al-h">Каким членом предложения бывает</h5>
+          <div class="al-roles" style="grid-template-columns:1fr 1fr">
+            <div class="al-v lime"><span class="al-mark">определение</span><small>полная форма</small>
+              <p><i><span class="u-def">Упавшие</span> листья шуршали под ногами.</i></p>
+              <p class="al-note">листья (какие?) упавшие</p></div>
+            <div class="al-v violet"><span class="al-mark">сказуемое</span><small>краткая форма</small>
+              <p><i>Окно <span class="u-pred" style="text-decoration:underline double">было разбито</span> мячом.</i></p>
+              <p class="al-note">окно (каково?) разбито</p></div>
+          </div>
+        </div>
+
+        <!-- ===== РАЗРЯДЫ ===== -->
+        <div class="al-panel pr-p1">
+          <div class="al-roles" style="grid-template-columns:1fr 1fr;margin-top:0">
+            <div class="al-v lime"><span class="al-mark">действительные</span>
+              <p>Предмет <b>сам делает</b> действие.</p>
+              <p><i>поливающий цветы садовник</i> → садовник поливает;<br><i>испёкшая пирог бабушка</i> → бабушка испекла.</p></div>
+            <div class="al-v violet"><span class="al-mark">страдательные</span>
+              <p>Действие <b>совершают над</b> предметом.</p>
+              <p><i>политые садовником цветы</i> → цветы, которые полил садовник;<br><i>испечённый бабушкой пирог</i> → пирог, который испекла бабушка.</p></div>
+          </div>
+
+          <h5 class="al-h">Суффиксы действительных причастий</h5>
+          <table class="al-tbl">
+            <tr><th>Настоящее время — от основы настоящего времени</th><th>Прошедшее время — от основы инфинитива</th></tr>
+            <tr><td>I спряжение — <span class="al-sfx">-ущ-, -ющ-</span>: <i>пиш<b>ут</b> → пиш<b>ущ</b>ий, игра<b>ют</b> → игра<b>ющ</b>ий</i><br>
+              II спряжение — <span class="al-sfx">-ащ-, -ящ-</span>: <i>крич<b>ат</b> → крич<b>ащ</b>ий, сто<b>ят</b> → сто<b>ящ</b>ий</i></td>
+              <td><span class="al-sfx">-вш-, -ш-</span>: <i>рисова<b>ть</b> → рисова<b>вш</b>ий, нес<b>ти</b> → нёс<b>ш</b>ий</i></td></tr>
+          </table>
+
+          <h5 class="al-h">Суффиксы страдательных причастий</h5>
+          <table class="al-tbl">
+            <tr><th>Настоящее время — от основы настоящего времени</th><th>Прошедшее время — от основы инфинитива</th></tr>
+            <tr><td>I спряжение — <span class="al-sfx">-ем-</span>: <i>чита<b>ет</b> → чита<b>ем</b>ый</i><br>
+              II спряжение — <span class="al-sfx">-им-</span>: <i>люб<b>ит</b> → люб<b>им</b>ый</i></td>
+              <td>от глаголов на <b>-ить</b> — <span class="al-sfx">-енн- (-ённ-)</span>: <i>реш<b>ить</b> → реш<b>ённ</b>ый, покрас<b>ить</b> → покраш<b>енн</b>ый</i><br>
+              от остальных — <span class="al-sfx">-нн-, -т-</span>: <i>потеря<b>ть</b> → потеря<b>нн</b>ый, забы<b>ть</b> → забы<b>т</b>ый</i></td></tr>
+          </table>
+
+          <h5 class="al-h">Краткая форма — только у страдательных</h5>
+          <div class="al-roles" style="grid-template-columns:1fr">
+            <div class="al-v desk">
+              <p style="margin:0">Отвечает на вопрос <b>каков?</b>, пишется с <b>одной Н</b> и в предложении всегда бывает <b>сказуемым</b>:</p>
+              <p><i>решённая — реше<b>н</b>а, уважаемые — уважаем<b>ы</b>, закрытое — закрыт<b>о</b>.</i> <i>Задача <span class="u-pred" style="text-decoration:underline double">решена</span> верно.</i></p></div>
+          </div>
+        </div>
+
+        <!-- ===== СКЛОНЕНИЕ И ДВОЙНИКИ ===== -->
+        <div class="al-panel pr-p2">
+          <h5 class="al-h" style="margin-top:0">Склонение: как у прилагательных</h5>
+          <div class="al-roles" style="grid-template-columns:1fr">
+            <div class="al-v desk">
+              <p style="margin:0">Полное причастие изменяется по <b>родам, числам и падежам</b>, окончания — как у прилагательных. Род, число и падеж берутся <b>у слова, к которому причастие относится</b>:</p>
+              <p><i>песн<b>я</b> (какая?) спет<b>ая</b> — о песн<b>е</b> (какой?) спет<b>ой</b> — песн<b>ей</b> (какой?) спет<b>ой</b>.</i></p>
+              <p class="al-note"><i>За ночь выросшим (каким?) грибом</i>: <i>грибом</i> — Т. п., ед. ч., м. р. → причастие в той же форме.</p></div>
+          </div>
+          <div class="al-warn"><b>Обрати внимание!</b> У <b>кратких</b> причастий падежа нет, а во <b>множественном числе</b> род не определяется.</div>
+
+          <h5 class="al-h">Причастие или прилагательное?</h5>
+          <div class="al-roles" style="grid-template-columns:1fr 1fr">
+            <div class="al-v lime"><span class="al-mark">прилагательное</span>
+              <p>Признак <b>постоянный</b>.</p>
+              <p><i>горючее вещество</i> — может гореть всегда</p></div>
+            <div class="al-v violet"><span class="al-mark">причастие</span>
+              <p>Признак <b>меняется во времени</b>, это действие.</p>
+              <p><i>горящее полено</i> — горит сейчас</p></div>
+          </div>
+
+          <div class="al-trap">
+            <h5>Как отличить отглагольное прилагательное от причастия</h5>
+            <div>
+              <p><b>1. Приставка.</b> У отглагольного прилагательного приставки обычно нет (кроме НЕ-). Добавь приставку — получится причастие: <i>жаре<span class="hl-l">н</span>ая картошка</i> — прил.; <i><span class="hl-v">под</span>жаре<b>нн</b>ая картошка</i> — прич.</p>
+              <p><b>2. Зависимое слово.</b> У прилагательного его нет. Появилось хоть одно — это причастие: <i>варёная морковь</i> — прил.; <i>варе<b>нн</b>ая <span class="hl-v">в кастрюле</span> морковь</i> — прич.</p>
+              <p><b>3. Замена.</b> Прилагательное можно заменить обычным (не отглагольным) прилагательным, краткое причастие — глаголом. Рядом с прилагательным часто стоит однородное прилагательное: <i>Её речь была <span class="hl-l">взволнованна</span> и искренна</i> (= тревожна; рядом однородное прилагательное) — прил.; <i>Мама <span class="hl-v">взволнована</span> письмом</i> (= письмо её взволновало) — прич.</p>
+            </div>
+          </div>
+          <div class="al-warn"><b>Обрати внимание!</b> Это важно для Н и НН в кратких формах: в <b>кратком причастии всегда Н</b>, в <b>кратком прилагательном</b> — столько Н, сколько в полной форме: <i>Обида была сдержа<b>н</b>а усилием воли</i> (прич.) — <i>Её движения сдержа<b>нн</b>ы и плавны</i> (прил.).</div>
+        </div>
+
+        </div>
+      </div>
+    `,
+    sets: [] },
   { id: "deepr", name: "Деепричастие", sets: [
     { title: "Образование деепричастий",
       desc: "Несовершенный и совершенный вид, глаголы без деепричастий, двойные варианты, старые формы во фразеологизмах.",
@@ -650,15 +774,7 @@ const PARTS = [
     { title: "НЕ с наречиями",
       desc: "Слитно и раздельно, НЕ — приставка или часть корня, синонимы без НЕ, поиск ошибок, фразеологизмы. 10 заданий.",
       ex: "небрежно, далеко не удачно, не по-честному",
-      file: "test_ne_narechiya.html" },
-    { title: "Н и НН в существительных, прилагательных и наречиях",
-      desc: "Суффиксы -ан-/-ян-/-ин-, -онн-/-енн-, основа на Н, существительные и наречия, исключения, маршрут и кроссворд. 10 заданий.",
-      ex: "оловянный, утренник, искренне, избранник",
-      file: "test_n_nn.html" },
-    { title: "Уточняющие члены предложения",
-      desc: "Уточняющие обстоятельства и определения, запятые при них, отличие от других обособленных членов, виды простого предложения. 10 заданий.",
-      ex: "вдали, над полосой леса; огромные, до пяти метров",
-      file: "test_utochnyayushchie.html" }
+      file: "test_ne_narechiya.html" }
   ]}
 ];
 
@@ -678,7 +794,6 @@ const ORTHO = [
     desc: "Суффиксы прилагательных, полные и краткие причастия, отглагольные прилагательные, наречия и существительные.",
     ex: "серебряный, жареный — жаренный на масле, туманно, гостиная",
     algo: "n_nn_pril_prich_schema.html", algoTitle: "Алгоритм: прилагательные и причастия",
-    file: "flashcards_n_nn.html",
     parts: ["pril","prich","narech","sush"] },
   { id: "oyo", title: "О — Ё (Е) после шипящих и Ц",
     desc: "В корнях, суффиксах и окончаниях существительных, прилагательных, наречий; в глаголах и отглагольных формах.",
