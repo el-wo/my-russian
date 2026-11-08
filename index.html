@@ -164,6 +164,13 @@
     .al-tbl td { width: 50%; line-height: 1.7; }
     .al-warn { margin-top: 12px; padding: 9px 13px; border-radius: 12px; background: var(--err-wash, #fdecea); font-size: 13.5px; }
     .al-warn b:first-child { color: #a3231a; }
+    #dp-t0:checked ~ .al-tabbar label[for="dp-t0"], #dp-t1:checked ~ .al-tabbar label[for="dp-t1"],
+    #dp-t2:checked ~ .al-tabbar label[for="dp-t2"] { background: var(--ink); color: #fff; }
+    #dp-t0:focus-visible ~ .al-tabbar label[for="dp-t0"], #dp-t1:focus-visible ~ .al-tabbar label[for="dp-t1"],
+    #dp-t2:focus-visible ~ .al-tabbar label[for="dp-t2"] { outline: 3px solid var(--violet); outline-offset: 2px; }
+    #dp-t0:checked ~ .al-panels .dp-p0, #dp-t1:checked ~ .al-panels .dp-p1,
+    #dp-t2:checked ~ .al-panels .dp-p2 { display: block; }
+    .al-tbl.three td { width: 41%; } .al-tbl.three td:first-child { width: 18%; }
     .al-cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
     .al-cmp > div { border-radius: 14px; padding: 10px 14px; font-size: 13.5px; }
     .al-cmp .self { background: var(--desk); } .al-cmp .serv { background: var(--violet-wash); border: 2px solid var(--ink); }
@@ -408,7 +415,120 @@ const PARTS = [
       ex: "кожаный, стеклянный, жареный, купленный, раненый",
       file: "flashcards_n_nn.html" }
   ]},
-  { id: "deepr", name: "Деепричастие", sets: [
+  { id: "deepr", name: "Деепричастие",
+    theory: `
+      <div class="al al-tabs">
+        <div class="al-band"><b>Деепричастие</b> — особая группа слов, которые называют <b>добавочное действие</b> при основном. Отвечает на вопросы <b>что делая? что сделав?</b>, а также <b>как? когда? почему?</b> — <span style="font-family:var(--serif,Georgia,serif);font-style:italic">Мама готовила обед, напевая (что делая?) песенку.</span></div>
+
+        <input type="radio" name="dp-tab" id="dp-t0" checked>
+        <input type="radio" name="dp-tab" id="dp-t1">
+        <input type="radio" name="dp-tab" id="dp-t2">
+        <div class="al-tabbar">
+          <label for="dp-t0">Что это за слово</label><label for="dp-t1">Вид и суффиксы</label><label for="dp-t2">Особые случаи</label>
+        </div>
+
+        <div class="al-panels">
+
+        <!-- ===== ЧТО ЭТО ===== -->
+        <div class="al-panel dp-p0">
+          <div class="al-roles" style="grid-template-columns:1fr 1fr;margin-top:0">
+            <div class="al-v desk"><span class="al-mark">основное действие</span>
+              <p><i>Брат <b>шёл</b> по улице, разглядывая витрины.</i></p>
+              <p class="al-note">сказуемое — то, что делает брат</p></div>
+            <div class="al-v lime"><span class="al-mark">добавочное действие</span>
+              <p><i>Брат шёл по улице, <b>разглядывая</b> витрины.</i></p>
+              <p class="al-note">шёл (что делая?) разглядывая — деепричастие</p></div>
+          </div>
+
+          <div class="al-trap">
+            <h5>Кто такое деепричастие?</h5>
+            <div>Мнения учёных расходятся: одни считают его <b>самостоятельной частью речи</b> (у него своё значение и свои признаки), другие — <b>особой формой глагола</b> (оно образуется от глагола), третьи — <b>особой группой слов</b>, в которой соединились глагол и наречие. <b>В наших заданиях считаем деепричастия особой группой слов.</b></div>
+          </div>
+
+          <h5 class="al-h">Деепричастие взяло признаки у двух частей речи</h5>
+          <div class="al-cmp">
+            <div class="self"><h6>От глагола</h6>
+              <ul>
+                <li><b>вид</b>: <i>рисуя</i> (от <i>рисовать</i>, несов.) — <i>нарисовав</i> (от <i>нарисовать</i>, сов.);</li>
+                <li><b>возвратность</b>: <i>смеясь</i> (от <i>смеяться</i>, возвр.) — <i>написав</i> (от <i>написать</i>, невозвр.).</li>
+              </ul></div>
+            <div class="serv"><h6>От наречия</h6>
+              <ul>
+                <li><b>не изменяется</b> — ни по родам, ни по числам, ни по падежам;</li>
+                <li><b>окончания нет</b>: <i>рису-я, нарисова-в</i> — это суффиксы.</li>
+              </ul></div>
+          </div>
+
+          <h5 class="al-h">В предложении — обстоятельство</h5>
+          <div class="al-roles" style="grid-template-columns:1fr 1fr">
+            <div class="al-v lime"><span class="al-mark">что делая? как?</span>
+              <p><i>Ученик отвечал у доски, <span class="u-obst">волнуясь</span>.</i></p></div>
+            <div class="al-v violet"><span class="al-mark">что сделав? когда?</span>
+              <p><i><span class="u-obst">Закончив</span> уроки, сестра пошла гулять.</i></p></div>
+          </div>
+        </div>
+
+        <!-- ===== ВИД И СУФФИКСЫ ===== -->
+        <div class="al-panel dp-p1">
+          <table class="al-tbl three" style="margin-top:0">
+            <tr><th></th><th>Несовершенный вид</th><th>Совершенный вид</th></tr>
+            <tr><td><b>Вопрос</b></td><td><i>что делая?</i></td><td><i>что сделав?</i></td></tr>
+            <tr><td><b>Значение</b></td><td>действие идёт <b>одновременно</b> с основным: <i>Сестра читала, лёжа на диване</i> (читала и лежала в одно время)</td>
+              <td>действие произошло <b>раньше</b> основного: <i>Позавтракав, мы отправились в путь</i> (сначала позавтракали)</td></tr>
+            <tr><td><b>Образуется</b></td><td>от основы <b>настоящего времени</b> + <span class="al-sfx">-а</span> (после шипящих) или <span class="al-sfx">-я</span></td>
+              <td>от основы <b>прошедшего времени</b> + <span class="al-sfx">-в, -вши</span> (основа на гласный) или <span class="al-sfx">-ши</span> (на согласный)</td></tr>
+            <tr><td><b>Примеры</b></td><td><i>кричать — крич<b>ат</b> — крич<b>а</b><br>рисовать — рису<b>ют</b> — рису<b>я</b><br>одеваться — одева<b>ют</b>ся — одева<b>я</b>сь</i></td>
+              <td><i>написать — написа<b>л</b> — написа<b>в</b><br>вернуться — верну<b>л</b>ся — верну<b>вши</b>сь<br>лечь — лё<b>г</b> — лёг<b>ши</b></i></td></tr>
+            <tr><td><b>Исключения</b></td><td><i>узнавать — узнав<b>а</b>я, вставать — встав<b>а</b>я</i> (суффикс -ва- остаётся); <i>быть — буд<b>учи</b></i></td>
+              <td>с <b>-я</b> от глаголов на <b>-ти</b>: <i>войти — войд<b>я</b>, принести — принес<b>я</b>, перевезти — перевез<b>я</b></i>; <i>учесть — учт<b>я</b></i></td></tr>
+          </table>
+
+          <div class="al-warn"><b>Обрати внимание!</b> У возвратных глаголов <b>-ся</b> в деепричастии превращается в <b>-сь</b>: <i>оглянуться — оглянувши<b>сь</b>, смеяться — смеяс<b>ь</b>.</i></div>
+
+          <h5 class="al-h">Как определить вид: образец рассуждения</h5>
+          <div class="al-roles" style="grid-template-columns:1fr 1fr">
+            <div class="al-v lime"><span class="al-mark">несовершенный</span>
+              <p><i>рисуя</i> (что делая?) — от глагола <i>рисовать</i> (что делать?), основа настоящего времени <i>рису-ют</i> + суффикс <b>-я</b> → <b>несовершенный вид</b>.</p></div>
+            <div class="al-v violet"><span class="al-mark">совершенный</span>
+              <p><i>вернувшись</i> (что сделав?) — от глагола <i>вернуться</i> (что сделать?), основа прошедшего времени <i>верну-л-ся</i> + суффикс <b>-вши</b> + <b>-сь</b> → <b>совершенный вид</b>.</p></div>
+          </div>
+        </div>
+
+        <!-- ===== ОСОБЫЕ СЛУЧАИ ===== -->
+        <div class="al-panel dp-p2">
+          <h5 class="al-h" style="margin-top:0">Деепричастий несовершенного вида нет</h5>
+          <div class="al-kinds two">
+            <div><b>у глаголов на -нуть</b><i>сохнуть, слепнуть, чахнуть</i></div>
+            <div><b>у глаголов на -чь</b><i>течь, сечь, волочь</i></div>
+            <div><b>у односложных глаголов</b><i>бить, вить, рвать, ткать, спать</i></div>
+            <div><b>у глаголов I спр. с беглым -а-</b><i>писать — пишу, мазать — мажу, чесать — чешу</i></div>
+          </div>
+
+          <h5 class="al-h">Суффикс -вши</h5>
+          <div class="al-roles" style="grid-template-columns:1fr 1fr">
+            <div class="al-v lime"><span class="al-mark">норма</span>
+              <p>Только у <b>возвратных</b> глаголов совершенного вида: <i>засмеяться — засмея<b>вши</b>сь, оглянуться — огляну<b>вши</b>сь.</i></p></div>
+            <div class="al-v desk"><span class="al-mark">устарело</span>
+              <p>У остальных глаголов форма на -вши — книжная, старинная или просторечная: <i>пое<b>вши</b>, бы<b>вши</b>.</i> В своей речи пиши <i>поев</i>.</p></div>
+          </div>
+
+          <h5 class="al-h">Два варианта у одного глагола</h5>
+          <div class="al-roles" style="grid-template-columns:1fr">
+            <div class="al-v desk"><p style="margin:0">У некоторых глаголов на <b>-нуть</b> правильны обе формы: <i>озябнуть — озябну<b>в</b> и озяб<b>ши</b>, привыкнуть — привыкну<b>в</b> и привык<b>ши</b>.</i></p></div>
+          </div>
+
+          <h5 class="al-h">Суффикс -учи (-ючи)</h5>
+          <div class="al-roles" style="grid-template-columns:1fr">
+            <div class="al-v violet">
+              <p style="margin:0">Старинный суффикс несовершенного вида. Сегодня он живёт в фольклоре, в книгах и в устойчивых выражениях: <i>жить припева<b>ючи</b>, справиться игра<b>ючи</b>.</i></p>
+              <p class="al-note">В современном литературном языке осталось одно такое деепричастие — <b>будучи</b>: <i>Будучи в Москве, мы побывали в Третьяковской галерее.</i></p></div>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    `,
+    sets: [
     { title: "Образование деепричастий",
       desc: "Несовершенный и совершенный вид, глаголы без деепричастий, двойные варианты, старые формы во фразеологизмах.",
       ex: "читая, прочитав, войдя; мажа ✗, сломя голову",
