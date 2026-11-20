@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лестница заданий — придаточные определительные</title>
+<style>
+:root{--ink:#22201d;--muted:#6b665f;--line:#e4dfd7;--bg:#efebe5;--deep:#1f2747;
+--l1:#7E8E86;--l1l:#E6EBE7;--l2:#5E7A95;--l2l:#E1E9F1;--l3:#B98D6B;--l3l:#F2E7DC;--l4:#B07A7E;--l4l:#F3E4E4;--l5:#6A4C93;--l5l:#ECE6F4;
+--ok:#2F7A5B;--okl:#E2F1EA;--bad:#B4392A;--badl:#F8E2DE}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PT Serif","Literata",Georgia,"Times New Roman",serif}
+.sans{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:6px 0 18px}
+.icon{width:58px;height:58px;border-radius:16px;background:var(--l5l);color:var(--l5);display:grid;place-items:center;flex:none}
+.icon svg{width:36px;height:36px}
+.kicker{font:700 11px system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--l5)}
+h1{margin:2px 0 0;font-size:29px;line-height:1.12;color:var(--deep)}
+.sub{color:var(--muted);font-style:italic;margin-top:3px}
+.grade{margin-left:auto;background:var(--deep);color:#fff;border-radius:14px;padding:8px 14px;text-align:center;font:800 13px/1.1 system-ui,sans-serif}
+.grade b{display:block;font-size:24px}
+/* ladder */
+.ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;margin:0 0 22px}
+.step{border-radius:14px 14px 6px 6px;color:#fff;padding:10px 10px 12px;text-decoration:none;display:flex;flex-direction:column;justify-content:flex-end;transition:transform .15s;position:relative}
+.step:hover{transform:translateY(-3px)}
+.step .r{font:700 26px "PT Serif",Georgia,serif;line-height:1}
+.step .nm{font:700 12px system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;margin-top:4px}
+.step .dd{font:12px/1.3 system-ui,sans-serif;opacity:.9;margin-top:4px}
+.step .st:empty{display:none}.step .st{position:absolute;top:8px;right:10px;font:700 12px system-ui,sans-serif;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 8px}
+.s1{background:var(--l1);height:110px}.s2{background:var(--l2);height:135px}.s3{background:var(--l3);height:160px}.s4{background:var(--l4);height:185px}.s5{background:var(--l5);height:210px}
+.intro{background:#fff;border-radius:18px;padding:16px 20px;margin-bottom:18px;font-size:16px;line-height:1.55;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.intro b{color:var(--deep)}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+label.f{display:block;font:600 12px system-ui,sans-serif;color:var(--muted);margin-bottom:5px}
+input[type=text],select,textarea{font:16px system-ui,sans-serif;padding:9px 11px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input[type=text],textarea{width:100%}
+textarea{min-height:92px;resize:vertical;line-height:1.5;font-family:"PT Serif",Georgia,serif;font-size:17px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--c,#6A4C93)}
+/* level */
+.level{margin:28px 0 0;scroll-margin-top:10px}
+.lh{display:flex;gap:14px;align-items:stretch;border-radius:18px 18px 0 0;background:var(--c);color:#fff;padding:14px 18px}
+.lh .big{font:700 38px/1 "PT Serif",Georgia,serif;align-self:center;min-width:46px;text-align:center}
+.lh h2{margin:0;font-size:21px}
+.lh .what{font:13.5px/1.45 system-ui,sans-serif;opacity:.95;margin-top:4px}
+.lh .goal{font:700 13px system-ui,sans-serif;background:rgba(255,255,255,.2);border-radius:10px;padding:5px 10px;margin-top:8px;display:inline-block}
+.lb{background:#fff;border-radius:0 0 18px 18px;padding:6px 20px 18px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.task{border-top:1px solid var(--line);padding:16px 0 4px}
+.task:first-child{border-top:0}
+.tt{display:flex;gap:10px;align-items:flex-start}
+.tn{flex:none;font:800 13px system-ui,sans-serif;color:var(--c);background:var(--cl);border-radius:9px;padding:4px 8px;margin-top:2px}
+.tq{font-size:18px;font-weight:700;color:var(--deep);line-height:1.4}
+.ti{font:13px system-ui,sans-serif;color:var(--muted);margin:4px 0 10px 0}
+.verb{font:700 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--c);margin-left:auto;flex:none;padding-top:5px}
+.opts{display:grid;gap:7px}
+.opt{display:flex;align-items:center;gap:11px;padding:10px 13px;border:1.5px solid var(--line);border-radius:13px;cursor:pointer;font-size:17px;line-height:1.4}
+.opt input{width:19px;height:19px;flex:none;margin:0;accent-color:var(--c)}
+.opt.sel{border-color:var(--c);background:var(--cl)}
+.ok{border-color:var(--ok)!important;background:var(--okl)!important}
+.bad{border-color:var(--bad)!important;background:var(--badl)!important}
+.miss{border-color:var(--ok)!important;border-style:dashed!important}
+.mark{margin-left:auto;font:700 12px system-ui,sans-serif;white-space:nowrap}
+.rows{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:1fr minmax(200px,40%);gap:12px;align-items:center;padding:9px 12px;border:1.5px solid var(--line);border-radius:13px;font-size:17px;line-height:1.45}
+.row select{width:100%}
+.inl{font-size:17px;line-height:2.1;padding:8px 12px;border:1.5px solid var(--line);border-radius:13px}
+.inl select{font-size:15px;padding:4px 8px;margin:0 3px}
+.cm{display:grid;gap:8px}
+.cs{font-size:18px;line-height:2;padding:8px 12px;border:1.5px solid var(--line);border-radius:13px}
+.box{display:inline-block;width:1.05em;height:1.15em;vertical-align:-.2em;border:1.5px dashed #b8b0a5;border-radius:5px;cursor:pointer;text-align:center;line-height:1.05em;font-weight:700;color:var(--c);margin:0 1px 0 0;background:#fffdf8}
+.box.on{border-style:solid;border-color:var(--c);background:var(--cl)}
+.box.okb{border:1.5px solid var(--ok);background:var(--okl);color:var(--ok)}
+.box.badb{border:1.5px solid var(--bad);background:var(--badl);color:var(--bad)}
+.open .samp{font:13px system-ui,sans-serif;color:var(--muted);background:#f7f5f1;border-radius:10px;padding:8px 11px;margin-bottom:8px}
+.oitem{margin-bottom:10px}
+.oitem .q{font-size:17px;margin-bottom:6px;line-height:1.45}
+.model{display:none;margin-top:8px;background:var(--cl);border-left:4px solid var(--c);border-radius:10px;padding:9px 12px;font-size:16px;line-height:1.5}
+.model b{font:700 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--c);display:block;margin-bottom:2px}
+.shown .model{display:block}
+.chk{display:grid;gap:5px;margin-top:10px;font:14.5px system-ui,sans-serif}
+.chk label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.chk input{accent-color:var(--c);width:17px;height:17px;margin-top:1px}
+.exp{display:none;margin-top:10px;border-radius:12px;padding:10px 13px;font:14.5px/1.5 system-ui,sans-serif;background:var(--cl);color:#2b2a27}
+.done .exp{display:block}
+.exp .v{font-weight:700;display:block;margin-bottom:2px}
+.exp.good .v{color:var(--ok)}.exp.part .v{color:#9a6a12}.exp.no .v{color:var(--bad)}
+.lf{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.btn{font:700 14.5px system-ui,sans-serif;padding:10px 18px;border-radius:999px;border:1.5px solid var(--c,#1f2747);background:#fff;color:var(--c,#1f2747);cursor:pointer}
+.btn.p{background:var(--c,#1f2747);color:#fff}
+.score{font:700 14px system-ui,sans-serif;color:var(--c)}
+.L1{--c:var(--l1);--cl:var(--l1l)}.L2{--c:var(--l2);--cl:var(--l2l)}.L3{--c:var(--l3);--cl:var(--l3l)}.L4{--c:var(--l4);--cl:var(--l4l)}.L5{--c:var(--l5);--cl:var(--l5l)}
+.memo{background:#fff;border-radius:18px;padding:16px 20px;margin-top:28px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.memo h2{margin:0 0 8px;font-size:20px;color:var(--deep)}
+.memo ul{margin:0;padding-left:20px;font:15px/1.6 system-ui,sans-serif}
+.memo .sch{font-family:"PT Mono",ui-monospace,monospace;background:#f5f2ed;border-radius:6px;padding:1px 6px}
+@media (max-width:700px){.ladder{grid-template-columns:repeat(5,1fr);gap:4px}.step .dd{display:none}.step{padding:8px 6px}.step .nm{font-size:9.5px}.row{grid-template-columns:1fr}.who{grid-template-columns:1fr}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header>
+  <div class="icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 56h12V44h12V32h12V20h12V8"/><path d="M8 56V44M20 44V32M32 32V20M44 20V8"/></svg></div>
+  <div>
+   <div class="kicker">Лестница заданий · по уровням Л. Л. Тимофеевой</div>
+   <h1>Сложноподчинённые предложения с придаточными определительными</h1>
+   <div class="sub">Поднимайся ступенька за ступенькой: от узнавания к самостоятельному применению</div>
+  </div>
+  <div class="grade"><span>класс</span><b>9</b></div>
+ </header>
+
+ <nav class="ladder" id="ladder"></nav>
+
+ <section class="intro">
+  <b>Как работать.</b> Выполни задания уровня и нажми «Проверить уровень». Задания I–IV уровней проверяются автоматически. На V уровне сравни свой ответ с образцом и отметь пункты самопроверки. Не переходи на следующую ступеньку, пока не разберёшься с ошибками на этой.
+  <div class="who"><div><label class="f" for="nm">Имя и первая буква фамилии</label><input type="text" id="nm" placeholder="Например: Анна К."></div><div><label class="f" for="dt">Дата</label><input type="text" id="dt" placeholder="дд.мм"></div></div>
+ </section>
+
+ <div id="levels"></div>
+
+ <section class="memo">
+  <h2>Памятка: придаточное определительное</h2>
+  <ul>
+   <li>Отвечает на вопрос <b>какой?</b> и относится к <b>существительному</b> (реже к местоимению) в главной части.</li>
+   <li>Присоединяется <b>союзными словами</b>: который, какой, чей, что (= который), где, куда, откуда, когда. Союзное слово — член придаточного предложения.</li>
+   <li>Стоит <b>после определяемого слова</b>, может разрывать главную часть. В главной части бывают указательные слова <b>тот, такой</b>.</li>
+   <li>Выделяется <b>запятыми</b>. Если союзное слово стоит не в начале придаточного (<i>окна которого</i>, <i>на берегу которой</i>), запятая ставится перед всем сочетанием.</li>
+   <li><b>Который</b> берёт род и число от определяемого слова, а падеж — от своей роли в придаточном: <i>книга, которую я купил</i>.</li>
+   <li>Схемы: <span class="sch">[ сущ. ], (который …).</span> &nbsp; <span class="sch">[ сущ., (который …), … ].</span></li>
+  </ul>
+ </section>
+</div>
+
+<script>
+const LV=[
+ {id:1,nm:"Нижний",title:"I уровень · Узнаю",what:"Действия на узнавание, распознавание и различение понятий.",goal:"Задача: узнать изучаемое правило среди прочих",tasks:[
+  {type:"multi",verb:"Выбери",q:"Выбери предложения с придаточным определительным.",i:"Несколько верных ответов.",
+   o:["Я увидел дом, в котором прошло моё детство.","Я знаю, что ты придёшь.","Мы приехали в город, где родилась бабушка.","Мы остались там, где было тепло.","Наступил день, когда мы отправились в путь.","Когда стемнело, мы вернулись.","Книга, что лежит на столе, принадлежит брату.","Он сказал, что книга лежит на столе."],
+   a:[0,2,4,6],e:"Определительные придаточные отвечают на вопрос <b>какой?</b> и зависят от существительного: дом (какой?), город (какой?), день (какой?), книга (какая?). В остальных предложениях придаточные изъяснительные (<i>знаю что?</i>, <i>сказал что?</i>) или обстоятельственные (<i>остались где?</i>, <i>вернулись когда?</i>)."},
+  {type:"rows",verb:"Соотнеси",q:"Соотнеси понятия и определения.",
+   rows:["Слово в главной части, к которому относится придаточное.","Слово, которое присоединяет придаточное и само является в нём членом предложения.","Слово в главной части (тот, такой), которое указывает на придаточное.","Часть СПП, которая отвечает на вопрос «какой?»."],
+   o:["определяемое слово","союзное слово","указательное слово","придаточное определительное"],a:[0,1,2,3],
+   e:"Запомни разницу: <b>союзное слово</b> (который, где, когда…) — член придаточного, на него можно задать вопрос. <b>Указательное слово</b> стоит в главной части."},
+  {type:"rows",verb:"Сопоставь",q:"Сопоставь схемы и предложения.",
+   rows:["Мы подошли к озеру, которое блестело на солнце.","Озеро, которое блестело на солнце, было глубоким.","Я встретил писателя, чьи книги читал в детстве.","Это парк, где мы гуляли летом."],
+   o:["[ сущ. ], (который …).","[ сущ., (который …), … ].","[ сущ. ], (чей …).","[ сущ. ], (где …)."],a:[0,1,2,3],
+   e:"Во втором предложении придаточное стоит <b>внутри главной части</b> и разрывает её, поэтому выделяется запятыми с двух сторон."}
+ ]},
+ {id:2,nm:"Удовлетво­рительный",title:"II уровень · Вспоминаю",what:"Воспроизведение учебного материала на уровне памяти.",goal:"Задача: воспроизвести учебный материал по памяти",tasks:[
+  {type:"inline",verb:"Назови признаки",q:"Восстанови правило: выбери верные слова.",
+   html:"Придаточное определительное отвечает на вопрос {0}, относится к {1}, присоединяется {2} и на письме {3}. Обычно оно стоит {4}.",
+   sel:[{o:["какой?","где?","что?","почему?"],a:0},{o:["существительному в главной части","глаголу в главной части","всей главной части"],a:0},{o:["союзными словами","подчинительными союзами","сочинительными союзами"],a:0},{o:["выделяется запятыми","не отделяется запятыми","отделяется тире"],a:0},{o:["после определяемого слова","перед главной частью","в любом месте"],a:0}],
+   e:"Придаточное определительное: вопрос <b>какой?</b> → к <b>существительному</b> → <b>союзные слова</b> → <b>запятые</b> → стоит <b>после определяемого слова</b>."},
+  {type:"multi",verb:"Вспомни",q:"Какими словами могут присоединяться придаточные определительные?",i:"Несколько верных ответов.",
+   o:["который","потому что","чей","чтобы","где","если","когда","хотя","что (= который)","откуда"],a:[0,2,4,6,8,9],
+   e:"Придаточные определительные присоединяются <b>союзными словами</b>: который, какой, чей, что, где, куда, откуда, когда. «Потому что», «чтобы», «если», «хотя» — подчинительные союзы других придаточных."},
+  {type:"open",verb:"Приведи пример",q:"Приведи свой пример СПП с придаточным определительным. Запиши к нему схему.",
+   items:[{q:"Мой пример и схема:",model:"Я перечитал письмо, которое пришло из дома. &nbsp;[ сущ. ], (которое …)."}],
+   check:["В предложении две грамматические основы.","Придаточное отвечает на вопрос «какой?» и относится к существительному.","Придаточное присоединяется союзным словом.","Запятые стоят на месте, схема совпадает с предложением."]}
+ ]},
+ {id:3,nm:"Средний",title:"III уровень · Понимаю",what:"Воспроизведение на уровне понимания, описание и анализ.",goal:"Задача: воспроизведение на уровне понимания",tasks:[
+  {type:"rows",verb:"Раздели на группы",q:"Определи вид придаточного. Будь внимателен: одно и то же слово может присоединять разные придаточные.",
+   rows:["Я помню место, где мы встретились.","Я не помню, где мы встретились.","Мы встретились там, где сливаются две реки.","Это было в тот год, когда мы переехали.","Я не знаю, когда мы переедем.","Когда мы переехали, всё изменилось.","Я отыскал письмо, что пришло вчера.","Я надеюсь, что письмо придёт завтра."],
+   o:["определительное","изъяснительное","обстоятельственное"],a:[0,1,2,0,1,2,0,1],
+   e:"Задавай вопрос <b>от главной части</b>. Место (какое?) — определительное; не помню (что?) — изъяснительное; встретились там (где?) — обстоятельственное места. <b>В тот год (какой?)</b> — определительное, хотя есть «когда». <b>Письмо, что пришло</b> = письмо, которое пришло — определительное; <b>надеюсь, что…</b> — изъяснительное, «что» здесь союз."},
+  {type:"rows",verb:"Выдели существенное",q:"Найди определяемое слово в главной части.",
+   rows:["Мы поднялись на холм, с которого открывался вид на реку.","В саду, который посадил дед, созрели яблоки.","Я вспомнил ту минуту, когда впервые увидел море.","Нас встретил человек, чьё лицо показалось знакомым."],
+   opts:[["поднялись","холм","реку"],["саду","созрели","яблоки"],["вспомнил","ту","минуту"],["встретил","нас","человек"]],a:[1,0,2,2],
+   e:"Определяемое слово — <b>существительное</b>, к которому задаём вопрос «какой?»: холм (какой?), сад (какой?), минуту (какую?), человек (какой?). «Ту» — указательное слово, а не определяемое."},
+  {type:"single",verb:"Сравни и сделай вывод",q:"Сравни: «Мальчик, <u>читающий книгу</u>, сидел у окна» и «Мальчик, <u>который читал книгу</u>, сидел у окна». Какой вывод верный?",
+   o:["Это одно и то же: оба предложения сложные.","Обе конструкции отвечают на вопрос «какой?», но причастный оборот — часть простого предложения, а придаточное имеет свою грамматическую основу.","Причастный оборот отвечает на вопрос «что делает?», а придаточное — на вопрос «какой?».","Придаточное не выделяется запятыми, а причастный оборот выделяется."],a:1,
+   e:"Обе конструкции <b>определяют</b> существительное «мальчик». Но в придаточном есть своя основа (<i>который читал</i>), поэтому второе предложение — <b>сложное</b>, а первое — <b>простое</b> с причастным оборотом."}
+ ]},
+ {id:4,nm:"Достаточный",title:"IV уровень · Применяю по образцу",what:"Применение знаний в знакомой ситуации, действия по чётким правилам и алгоритму.",goal:"Задача: подбирать оптимальный способ решения",tasks:[
+  {type:"commas",verb:"Примени правило",q:"Расставь запятые: нажми на окошко, где нужна запятая.",i:"Повторный клик убирает запятую. Некоторые окошки должны остаться пустыми.",
+   s:["Дорога{1} по которой мы шли{1} вела к старой мельнице{0}.","Я люблю{0} те летние вечера{1} когда над рекой{0} стоит туман.","Мы подошли к дому{1} окна которого{0} светились в темноте.","Наконец{0} наступила минута{1} которой мы так долго ждали.","Город{1} в котором вырос мой дед{1} стоит на берегу реки{0}."],
+   e:"Придаточное определительное выделяется запятыми <b>с обеих сторон</b>, если стоит внутри главной части. Если союзное слово стоит не первым (<i>окна которого</i>), запятая ставится <b>перед всем сочетанием</b>, а после «которого» не нужна."},
+  {type:"inline",verb:"Действуй по алгоритму",q:"Вставь нужную форму слова «который».",i:"Алгоритм: род и число — от определяемого слова, падеж — по вопросу в придаточном.",
+   html:"1. Я прочитал книгу, о {0} ты рассказывал.<br>2. Это друзья, с {1} я ездил в лагерь.<br>3. Река, на берегу {2} стоит деревня, очень широкая.<br>4. Мальчик, {3} подарили щенка, сиял от счастья.",
+   sel:[{o:["которой","которую","котором","которая"],a:0},{o:["которыми","которым","которые","которых"],a:0},{o:["которой","которая","которую","котором"],a:0},{o:["которому","который","которого","которым"],a:0}],
+   e:"1) книга — ж. р., рассказывал <b>о чём?</b> → о которой. 2) друзья — мн. ч., ездил <b>с кем?</b> → с которыми. 3) река — ж. р., на берегу <b>чего?</b> → которой. 4) мальчик — м. р., подарили <b>кому?</b> → которому."},
+  {type:"open",verb:"Преобразуй по образцу",q:"Замени причастный оборот придаточным определительным.",samp:"Образец: Лес, окружающий деревню, стал золотым. → Лес, который окружает деревню, стал золотым.",
+   items:[{q:"1. Письмо, полученное вчера, лежало на столе.",model:"Письмо, которое получили вчера, лежало на столе."},{q:"2. Ученики, решившие задачу, подняли руки.",model:"Ученики, которые решили задачу, подняли руки."},{q:"3. Я смотрел на птиц, летящих на юг.",model:"Я смотрел на птиц, которые летели на юг."}],
+   check:["Причастие заменено глаголом, появилась вторая грамматическая основа.","«Который» согласовано с определяемым словом.","Запятые стоят на месте."]},
+  {type:"open",verb:"Обратная задача",q:"Теперь наоборот: замени придаточное причастным оборотом.",
+   items:[{q:"1. Дом, который построил мой прадед, стоит до сих пор.",model:"Дом, построенный моим прадедом, стоит до сих пор."},{q:"2. Девочка, которая сидела у окна, читала стихи.",model:"Девочка, сидевшая у окна, читала стихи."}],
+   check:["Глагол заменён причастием подходящего вида и времени.","Предложение стало простым.","Причастный оборот после определяемого слова выделен запятыми."]}
+ ]},
+ {id:5,nm:"Высокий",title:"V уровень · Создаю",what:"Применение знаний в незнакомых, нестандартных ситуациях; описание, объяснение и преобразование.",goal:"Задача: решать качественно новые задачи",tasks:[
+  {type:"open",verb:"Найди и исправь",q:"Редактор. В каждом предложении есть ошибка. Запиши исправленный вариант и объясни ошибку.",
+   items:[{q:"1. Я познакомился с девочкой, который живёт в соседнем доме.",model:"…с девочкой, <b>которая</b> живёт в соседнем доме. «Который» берёт род от определяемого слова: девочка — ж. р."},{q:"2. На столе лежала книга, которая я купил вчера.",model:"…книга, <b>которую</b> я купил вчера. Падеж — по роли в придаточном: купил (что?) → которую."},{q:"3. Мы подошли к реке на берегу которой, стояла мельница.",model:"Мы подошли к реке<b>,</b> на берегу которой стояла мельница. Запятая — перед всем сочетанием «на берегу которой», а не после «которой»."},{q:"4. Он рассказывал о поездке в деревню, которая была очень весёлой.",model:"Двусмысленность: что было весёлым — поездка или деревня? Например: «Он рассказывал об очень весёлой поездке в деревню». Придаточное должно стоять сразу после того слова, которое оно определяет."}],
+   check:["Я исправил все четыре предложения.","Я объяснил, почему это ошибка, а не просто переписал.","Я заметил, что в 4-м предложении ошибка смысловая, а не грамматическая."]},
+  {type:"open",verb:"Преобразуй",q:"Текст «перегружен» словом «который». Перепиши его так, чтобы «который» встречалось не больше одного раза. Используй другие союзные слова (где, откуда, чей) и причастные обороты.",
+   items:[{q:"Я вырос в доме, который стоял на холме, который был покрыт лесом, который тянулся до самой реки, которая блестела внизу.",model:"Я вырос в доме на холме, покрытом лесом, который тянулся до самой реки, блестевшей внизу. <br><i>или:</i> Я вырос в доме, стоявшем на лесистом холме, откуда был виден блеск реки внизу."}],
+   check:["Смысл текста сохранился.","«Который» осталось не больше одного раза.","Я использовал хотя бы один причастный оборот или другое союзное слово.","Запятые расставлены верно."]},
+  {type:"open",verb:"Создай",q:"Опиши место, которое тебе дорого (4–5 предложений). Используй придаточные определительные с тремя разными союзными словами (например: который, где, когда, чей). Подчеркни в тетради определяемые слова.",
+   items:[{q:"Мой текст:",model:"Есть у бабушки сад, где всё лето пахнет яблоками. Посреди сада стоит скамейка, которую дед сделал своими руками. Я люблю те вечера, когда мы сидим на ней и смотрим на закат. Рядом живёт сосед, чья собака всегда прибегает к нам в гости."}],
+   check:["В тексте 4–5 предложений, он связный.","Есть придаточные определительные с тремя разными союзными словами.","Каждое придаточное стоит после определяемого слова.","Все запятые на месте."]}
+ ]}
+];
+const ladder=document.getElementById('ladder'),levels=document.getElementById('levels');
+LV.forEach(L=>{
+ ladder.insertAdjacentHTML('beforeend',`<a class="step s${L.id}" href="#lv${L.id}"><span class="st" id="st${L.id}"></span><span class="r">${["I","II","III","IV","V"][L.id-1]}</span><span class="nm">${L.nm}</span><span class="dd">${L.title.split("· ")[1]}</span></a>`);
+ const sec=document.createElement('section');sec.className='level L'+L.id;sec.id='lv'+L.id;
+ let h=`<div class="lh"><span class="big">${["I","II","III","IV","V"][L.id-1]}</span><div><h2>${L.title}</h2><div class="what">${L.what}</div><span class="goal">${L.goal}</span></div></div><div class="lb">`;
+ L.tasks.forEach((t,ti)=>{
+  const tid=`t${L.id}_${ti}`;
+  h+=`<div class="task" id="${tid}"><div class="tt"><span class="tn">${L.id}.${ti+1}</span><div class="tq">${t.q}</div><span class="verb">${t.verb}</span></div>`;
+  if(t.i)h+=`<div class="ti">${t.i}</div>`;else h+=`<div class="ti"></div>`;
+  if(t.type==="multi"||t.type==="single"){const ty=t.type==="multi"?"checkbox":"radio";h+=`<div class="opts">`+t.o.map((o,j)=>`<label class="opt"><input type="${ty}" name="${tid}" value="${j}"><span>${o}</span><span class="mark"></span></label>`).join("")+`</div>`;}
+  if(t.type==="rows"){h+=`<div class="rows">`+t.rows.map((r,j)=>{const op=t.opts?t.opts[j]:t.o;return `<div class="row"><span>${r}</span><select data-j="${j}"><option value="">— выбери —</option>${op.map((o,k)=>`<option value="${k}">${o}</option>`).join("")}</select></div>`}).join("")+`</div>`;}
+  if(t.type==="inline"){let k=0;h+=`<div class="inl">`+t.html.replace(/\{(\d)\}/g,(m,n)=>{const s=t.sel[+n];return `<select data-j="${n}"><option value="">…</option>${s.o.map((o,i)=>`<option value="${i}">${o}</option>`).join("")}</select>`})+`</div>`;}
+  if(t.type==="commas"){h+=`<div class="cm">`+t.s.map((s,j)=>`<div class="cs">${j+1}. `+s.replace(/\{([01])\}/g,(m,a)=>`<span class="box" data-a="${a}"></span>`)+`</div>`).join("")+`</div>`;}
+  if(t.type==="open"){h+=`<div class="open">`+(t.samp?`<div class="samp">${t.samp}</div>`:"")+t.items.map(it=>`<div class="oitem"><div class="q">${it.q}</div><textarea placeholder="Пиши здесь…"></textarea><div class="model"><b>Возможный ответ</b>${it.model}</div></div>`).join("")+`<div class="chk">${t.check.map(c=>`<label><input type="checkbox"><span>${c}</span></label>`).join("")}</div></div>`;}
+  h+=`<div class="exp"></div></div>`;
+ });
+ h+=`<div class="lf"><button class="btn p" data-chk="${L.id}">${L.id<5?"Проверить уровень":"Показать образцы"}</button><button class="btn" data-rs="${L.id}">Начать уровень заново</button><span class="score" id="sc${L.id}"></span></div></div>`;
+ sec.innerHTML=h;levels.appendChild(sec);
+});
+document.addEventListener('change',e=>{const l=e.target.closest('.opt');if(l){l.closest('.opts').querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x.querySelector('input').checked))}});
+document.addEventListener('click',e=>{const b=e.target.closest('.box');if(b&&!b.closest('.done')){b.classList.toggle('on');b.textContent=b.classList.contains('on')?',':''}});
+function verdict(got,max){return got===max?['good','Верно!']:(got>0?['part','Частично верно']:['no','Есть ошибки'])}
+function checkLevel(id){
+ const L=LV[id-1];let G=0,M=0;
+ L.tasks.forEach((t,ti)=>{
+  const el=document.getElementById(`t${id}_${ti}`);if(el.classList.contains('done'))return;
+  let got=0,max=0;
+  if(t.type==="multi"||t.type==="single"){
+   const sel=[...el.querySelectorAll('input:checked')].map(x=>+x.value);const A=t.type==="single"?[t.a]:t.a;max=t.type==="single"?1:A.length;
+   el.querySelectorAll('.opt').forEach((l,j)=>{const inA=A.includes(j),s=sel.includes(j);l.classList.remove('sel');
+    if(s&&inA){l.classList.add('ok');l.querySelector('.mark').textContent='✓'}else if(s){l.classList.add('bad');l.querySelector('.mark').textContent='✗'}else if(inA){l.classList.add('miss');l.querySelector('.mark').textContent='верный ответ'}});
+   if(t.type==="single")got=(sel.length===1&&sel[0]===t.a)?1:0;else got=Math.max(0,sel.filter(x=>A.includes(x)).length-sel.filter(x=>!A.includes(x)).length);
+  }
+  if(t.type==="rows"){el.querySelectorAll('select').forEach(s=>{const j=+s.dataset.j;max++;const ok=s.value!==""&&+s.value===t.a[j];if(ok)got++;s.closest('.row').classList.add(ok?'ok':'bad');if(!ok){const op=t.opts?t.opts[j]:t.o;s.insertAdjacentHTML('afterend',`<div class="sans" style="font-size:12.5px;color:var(--ok);margin-top:4px">верно: ${op[t.a[j]]}</div>`)}})}
+  if(t.type==="inline"){el.querySelectorAll('select').forEach(s=>{const j=+s.dataset.j;max++;const ok=s.value!==""&&+s.value===t.sel[j].a;if(ok)got++;s.classList.add(ok?'ok':'bad');if(!ok)s.insertAdjacentHTML('afterend',`<b class="sans" style="color:var(--ok);font-size:14px">→ ${t.sel[j].o[t.sel[j].a]}</b>`)})}
+  if(t.type==="commas"){el.querySelectorAll('.box').forEach(b=>{max++;const need=b.dataset.a==="1",on=b.classList.contains('on');if(need===on){got++;if(need)b.classList.add('okb')}else{b.classList.add('badb');b.textContent=need?',':'×'}})}
+  if(t.type==="open"){el.classList.add('shown')}
+  el.querySelectorAll('input,select,textarea').forEach(x=>{if(!(t.type==="open"&&(x.type==="checkbox"||x.tagName==="TEXTAREA")))x.disabled=true});
+  el.classList.add('done');
+  const ex=el.querySelector('.exp');
+  if(t.type==="open"){ex.className='exp';ex.innerHTML=`<span class="v" style="color:var(--c)">Сравни свой ответ с образцом</span>Отметь пункты самопроверки. Если какой-то пункт не выполнен — исправь свой ответ.`}
+  else{const [c,v]=verdict(got,max);ex.className='exp '+c;ex.innerHTML=`<span class="v">${v} · ${got} из ${max}</span>${t.e}`;G+=got;M+=max;}
+  t.res=[got,max];
+ });
+ const auto=L.tasks.filter(t=>t.type!=="open"&&t.res);const g=auto.reduce((a,t)=>a+t.res[0],0),m=auto.reduce((a,t)=>a+t.res[1],0);
+ if(m){const p=Math.round(g/m*100);document.getElementById('sc'+id).textContent=`Результат уровня: ${g} из ${m} (${p}%)`;document.getElementById('st'+id).textContent=p+'%'}
+ else{document.getElementById('st'+id).textContent='✓'}
+}
+document.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>checkLevel(+b.dataset.chk));
+document.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>{
+ const id=+b.dataset.rs,L=LV[id-1];
+ L.tasks.forEach((t,ti)=>{const el=document.getElementById(`t${id}_${ti}`);t.res=null;
+  el.classList.remove('done','shown');el.querySelector('.exp').innerHTML='';
+  el.querySelectorAll('input,select,textarea').forEach(x=>{x.disabled=false;if(x.type==="checkbox"||x.type==="radio")x.checked=false;else if(x.tagName!=="TEXTAREA")x.value=""});
+  el.querySelectorAll('.ok,.bad,.miss,.sel').forEach(x=>x.classList.remove('ok','bad','miss','sel'));
+  el.querySelectorAll('.mark').forEach(x=>x.textContent='');
+  el.querySelectorAll('.row div.sans,.inl b.sans').forEach(x=>x.remove());
+  el.querySelectorAll('.box').forEach(x=>{x.className='box';x.textContent=''});
+ });
+ document.getElementById('sc'+id).textContent='';document.getElementById('st'+id).textContent='';
+});
+</script>
+</body>
+</html>

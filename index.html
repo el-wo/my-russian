@@ -61,6 +61,8 @@
     .lnk:hover { border-color: var(--accent); color: var(--accent); }
     .lnk.go { border-color: var(--accent); color: var(--accent); }
     .lnk.go:hover { background: var(--accent-bg); }
+    .lnk.prac { border-color: #6A4C93; color: #6A4C93; }
+    .lnk.prac:hover { background: #ECE6F4; }
     .set .foot { gap: 8px; flex-wrap: wrap; }
     .set.soon { box-shadow: none; background: transparent; border-style: dashed; }
     .set.soon h3 { color: var(--muted); }
@@ -1021,6 +1023,10 @@ const PUNCT = [
       ex: "Дом, где я родился, … Я знаю, что он придёт.",
       file: "zapyatye_spp.html",
       algo: "zapyatye_spp_schema.html" },
+    { title: "СПП с придаточными определительными",
+      desc: "Узнать придаточное определительное, союзные слова, запятые, форма слова «который», замена причастным оборотом. Лестница заданий из пяти уровней.",
+      ex: "Дом, в котором прошло моё детство, … Это парк, где мы гуляли летом.",
+      practice: "lestnica_opredelitelnye_9.html" },
     { title: "СПП с несколькими придаточными",
       desc: "Однородное, последовательное и параллельное подчинение; запятая между однородными придаточными с союзом «и».",
       ex: "Я знаю, что он придёт и что всё будет хорошо.",
@@ -1078,13 +1084,14 @@ function renderGroup(p) {
   if (!p.sets.length) {
     body = `<div class="empty-msg">Тренировок по теме «${p.name}» пока нет.<br>Они появятся здесь, когда будут добавлены.</div>`;
   } else {
-    body = `<div class="sets">` + p.sets.map(s => (s.file || s.algo)
+    body = `<div class="sets">` + p.sets.map(s => (s.file || s.algo || s.practice)
       ? `<div class="set">
            <h3>${s.title}</h3><p>${s.desc}</p><div class="ex">${s.ex}</div>
            <div class="foot">
              ${isTest ? '<span class="tag-test">Проверочное</span>' : s.file ? '<span class="tag-ready">Готово</span>' : '<span class="tag-soon">Тренажёр в разработке</span>'}
              <span class="links">
                ${s.algo ? `<a class="lnk algo" href="${s.algo}">Алгоритм</a>` : ""}
+               ${s.practice ? `<a class="lnk prac" href="${s.practice}">Практика</a>` : ""}
                ${s.file ? `<a class="lnk go" href="${s.file}">${isTest ? "Начать" : "Тренажёр"} →</a>` : ""}
              </span>
            </div>
