@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Знаки при цитатах</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+    --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+    --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+    --shadow: 0 4px 24px rgba(60,40,10,0.10);
+    --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+    --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+  }
+  body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh; padding: 1.2rem 16px 4rem; }
+  .wrap { max-width: 780px; margin: 0 auto; }
+  .top-links { display: flex; gap: 8px; flex-wrap: wrap; }
+  .top-links a { display: inline-block; padding: 6px 14px; border-radius: 999px; border: 2px solid var(--border); color: var(--muted);
+    font-weight: 700; font-size: 0.85rem; text-decoration: none; background: var(--surface); }
+  .top-links a:hover { border-color: var(--text); color: var(--text); }
+  header { text-align: center; margin: 0.8rem 0 1.3rem; }
+  header h1 { font-family: var(--serif); font-size: 1.55rem; letter-spacing: -0.5px; }
+  header p { font-size: 0.9rem; color: var(--muted); margin-top: 0.35rem; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 1.6rem 1.5rem; box-shadow: var(--shadow); }
+  .hidden { display: none !important; }
+  .lbl { font-size: 0.78rem; font-weight: 800; color: var(--hint); letter-spacing: 1px; text-transform: uppercase; margin: 0 0 0.6rem; }
+  .how { font-size: 0.95rem; line-height: 1.65; color: #4a4037; background: #f8f4ec; border-radius: 14px; padding: 12px 16px; margin-bottom: 1.3rem; }
+  .how b { color: var(--text); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1.3rem; }
+  .chip { padding: 7px 14px; border-radius: 999px; border: 2px solid var(--border); background: var(--bg); font: 700 0.88rem var(--sans); color: var(--text); cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .chip small { opacity: .7; font-weight: 600; }
+  .btns { display: flex; gap: 10px; flex-wrap: wrap; }
+  .btn { padding: 11px 24px; border-radius: 999px; border: 2px solid var(--border); background: var(--surface); font: 800 0.92rem var(--sans); color: var(--text); cursor: pointer; }
+  .btn:hover { border-color: var(--text); }
+  .btn.main { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.main:hover { background: #4a3fb8; }
+  .btn:focus-visible, .chip:focus-visible, .gap:focus-visible, .cs:focus-visible, .key:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .bar-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; }
+  .bar { flex: 1; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .fill { height: 100%; width: 0; background: var(--green); border-radius: 99px; transition: width .4s; }
+  .cnt { font-size: 0.8rem; font-weight: 800; color: var(--hint); white-space: nowrap; }
+  .link { background: none; border: 0; color: var(--accent); font: 700 0.85rem var(--sans); cursor: pointer; padding: 4px 6px; }
+  .topic { font-size: 0.75rem; font-weight: 800; color: var(--accent); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* предложение */
+  .sent { font: 400 1.22rem/2.3 var(--serif); margin: 0.8rem 0 1rem; }
+  .w { white-space: nowrap; }
+  .gap { display: inline-block; min-width: 16px; height: 1.6em; margin: 0 1px; padding: 0 2px; vertical-align: -0.35em; line-height: 1.6em;
+    border: 0; border-bottom: 2px dotted var(--hint); background: none; font: 700 1.1em var(--serif); color: var(--accent); cursor: pointer; border-radius: 4px 4px 0 0; }
+  .gap:hover { background: var(--accent-bg); }
+  .gap.sel { background: var(--accent-bg); border-bottom: 3px solid var(--accent); }
+  .gap.filled { border-bottom-color: transparent; }
+  .gap.filled.sel { border-bottom-color: var(--accent); }
+  .gap.ok { color: var(--green); border-bottom-color: transparent; }
+  .gap.no { color: var(--red); background: var(--red-bg); border-bottom: 2px solid var(--red); }
+  .gapok { white-space: pre; color: var(--green); font-weight: 700; }
+  .gap.no { cursor: default; }
+  .gap .need { color: var(--green); margin-left: 2px; }
+  .gap s { color: var(--red); }
+  .cs { display: inline-block; min-width: 0.8em; padding: 0 1px; border: 0; border-bottom: 2px dashed var(--accent); background: var(--accent-bg); color: var(--accent);
+    font: 700 1em var(--serif); cursor: pointer; border-radius: 3px; line-height: 1.3; }
+  .cs.ok { background: none; border-bottom-color: transparent; color: var(--green); }
+  .cs.no { background: var(--red-bg); border-bottom-color: var(--red); color: var(--red); }
+  .br { display: block; height: 0; }
+
+  /* клавиатура знаков */
+  .keys { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 12px; background: #f8f4ec; border-radius: 16px; }
+  .key { min-width: 48px; height: 48px; padding: 0 10px; border-radius: 12px; border: 2px solid var(--border); background: #fff; font: 700 1.35rem var(--serif); color: var(--text); cursor: pointer; }
+  .key:hover { border-color: var(--accent); color: var(--accent); }
+  .key.sm { font: 800 0.85rem var(--sans); color: var(--muted); }
+  .keys-note { font-size: .78rem; color: var(--hint); text-align: center; margin-top: .5rem; }
+  .act { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 1.1rem; flex-wrap: wrap; }
+  .expl { margin-top: 1.1rem; padding: 12px 16px; border-radius: 14px; font-size: 0.97rem; line-height: 1.6; }
+  .expl.ok { background: var(--green-bg); }
+  .expl.no { background: var(--red-bg); }
+  .expl .v { font-weight: 800; display: block; margin-bottom: 3px; }
+  .expl.ok .v { color: var(--green); }
+  .expl.no .v { color: var(--red); }
+  .answer { font: 400 1.02rem/1.7 var(--serif); margin-top: 6px; }
+  .answer b { color: var(--green); }
+
+  .fin { text-align: center; }
+  .fin h2 { font: 700 1.4rem var(--serif); margin-bottom: .5rem; }
+  .score { font-size: 2.6rem; font-weight: 800; color: var(--green); }
+  .fin p { color: var(--muted); margin: .3rem 0 1rem; }
+  .weak { text-align: left; max-width: 480px; margin: 0 auto 1.3rem; }
+  .weak li { list-style: none; display: flex; justify-content: space-between; gap: 10px; padding: 6px 0; border-bottom: 1px dashed var(--border); font-size: .95rem; }
+  .weak b { color: var(--red); }
+  .fin .btns { justify-content: center; }
+
+  @media (max-width: 560px) {
+    .panel { padding: 1.2rem 1rem; }
+    .sent { font-size: 1.05rem; line-height: 2.25; }
+    .key { min-width: 40px; height: 44px; font-size: 1.2rem; padding: 0 6px; }
+    .keys { gap: 6px; padding: 10px 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top-links"><a href="index.html">← Главная</a><a href="trenazher_citaty.html">Правила о цитатах</a></div>
+  <header>
+    <h1>Знаки при цитатах</h1>
+    <p>Расставь кавычки и знаки препинания сам</p>
+  </header>
+
+  <section class="panel" id="scrStart">
+    <div class="how">
+      Знаки <b>внутри цитаты</b> уже стоят. Твоя задача — оформить цитату: <b>кавычки, двоеточие, запятая, тире, точка</b>.<br>
+      Нажми на пропуск между словами, затем на нужные знаки по порядку. Буква в рамке — <b>начало цитаты</b>: нажми на неё, чтобы выбрать прописную или строчную.
+    </div>
+    <p class="lbl">Тема</p>
+    <div class="chips" id="topics"></div>
+    <p class="lbl">Сколько предложений</p>
+    <div class="btns">
+      <button class="btn main" data-n="20">20 предложений</button>
+      <button class="btn" data-n="all" id="btnAll">Все</button>
+    </div>
+  </section>
+
+  <section class="hidden" id="scrQ">
+    <div class="bar-row">
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <span class="cnt" id="cnt"></span>
+      <button class="link" id="stop">Завершить</button>
+    </div>
+    <div class="panel">
+      <span class="topic" id="topic"></span>
+      <div class="sent" id="sent"></div>
+      <div class="keys" id="keys">
+        <button class="key" data-k="«">«</button><button class="key" data-k="»">»</button>
+        <button class="key" data-k=":">:</button><button class="key" data-k=",">,</button>
+        <button class="key" data-k="—">—</button><button class="key" data-k=".">.</button>
+        <button class="key" data-k="?">?</button><button class="key" data-k="!">!</button>
+        <button class="key sm" data-k="back">⌫ стереть</button>
+      </div>
+      <p class="keys-note">С клавиатуры: &lt; и &gt; — кавычки, - — тире, Backspace — стереть, ← → — к соседнему пропуску</p>
+      <div class="expl hidden" id="expl"></div>
+      <div class="act">
+        <button class="link" id="reset">Очистить всё</button>
+        <button class="btn main" id="check">Проверить</button>
+        <button class="btn main hidden" id="next">Дальше →</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel fin hidden" id="scrFin">
+    <h2>Тренировка окончена</h2>
+    <div class="score" id="score"></div>
+    <p id="finText"></p>
+    <ul class="weak" id="weak"></ul>
+    <div class="btns">
+      <button class="btn main" id="fErr">Повторить ошибки</button>
+      <button class="btn" id="fAgain">Ещё раз</button>
+      <button class="btn" id="fMenu">К выбору темы</button>
+    </div>
+  </section>
+</div>
+
+<script>
+/* [ ] — знаки, которые ставит ученик; {Б} — буква, у которой ученик выбирает прописную или строчную;
+   | — перенос строки (стихи столбиком); всё остальное дано. */
+const RAW = [
+ ["pr",   "Доктор Астров убеждён[: «] {В} человеке должно быть всё прекрасно: и лицо, и одежда, и душа, и мысли[».]"],
+ ["pr",   "Чацкий отвечает Фамусову[: «] {С}лужить бы рад, прислуживаться тошно[».]"],
+ ["pr",   "Катерина спрашивает Варвару[: «] {О}тчего люди не летают так, как птицы?[»]"],
+ ["pr",   "Роман «Анна Каренина» открывается фразой[: «] {В}се счастливые семьи похожи друг на друга, каждая несчастливая семья несчастлива по-своему[».]"],
+ ["pr",   "Лермонтов пишет в предисловии к роману[: «] {Д}овольно людей кормили сластями; у них от этого испортился желудок: нужны горькие лекарства, едкие истины[».]"],
+ ["pr",   "Тарас говорит сыну[: «] {Я} тебя породил, я тебя и убью![»]"],
+ ["pr",   "Кулигин говорит Борису[: «] {Ж}естокие нравы, сударь, в нашем городе, жестокие![»]"],
+ ["pr",   "Гринёв восклицает[: «] {Н}е приведи бог видеть русский бунт, бессмысленный и беспощадный![»]"],
+ ["pr",   "Базаров заявляет[: «] {Я} ничьих мнений не разделяю; я имею свои[».]"],
+
+ ["pr2",  "[«]{Б}ереги честь смолоду[», —] гласит эпиграф к «Капитанской дочке»[.]"],
+ ["pr2",  "[«]{Я} тебя породил, я тебя и убью![» —] говорит Тарас Андрию[.]"],
+ ["pr2",  "[«]{С}частливые часов не наблюдают[», —] замечает Софья[.]"],
+ ["pr2",  "[«]{М}ороз и солнце; день чудесный![» —] так начинается стихотворение Пушкина «Зимнее утро»[.]"],
+ ["pr2",  "[«]{Р}усь, куда ж несёшься ты?[» —] этот вопрос Гоголя до сих пор звучит без ответа[.]"],
+ ["pr2",  "[«]{К}раткость — сестра таланта[», —] писал Чехов[.]"],
+ ["pr2",  "[«]{Н}ет величия там, где нет простоты, добра и правды[», —] утверждает Толстой[.]"],
+ ["pr2",  "[«]{Н}е приведи бог видеть русский бунт, бессмысленный и беспощадный![» —] восклицает Гринёв[.]"],
+
+ ["part", "Базаров заявляет[,] что [«]{п}рирода не храм, а мастерская, и человек в ней работник[».]"],
+ ["part", "Чехов писал[,] что [«]{к}раткость — сестра таланта[».]"],
+ ["part", "Толстой утверждает[,] что [«]{н}ет величия там, где нет простоты, добра и правды[».]"],
+ ["part", "Лермонтов признаётся[,] что людям [«]{н}ужны горькие лекарства, едкие истины[».]"],
+ ["part", "Онегин представлен читателю как [«]{д}обрый мой приятель[».]"],
+ ["part", "Вспоминая слова Чацкого [«]{с}лужить бы рад, прислуживаться тошно[»,] многие задумываются о своей карьере[.]"],
+ ["part", "Гоголь пишет[,] что Русь не даёт ответа на вопрос [«]{к}уда ж несёшься ты?[».]"],
+ ["part", "Учитель напомнил[,] что [«]{к}нига — лучший друг человека![».]"],
+ ["part", "Бабушка любит повторять[,] что [«]{с}частье приходит к тем, кто умеет ждать…[».]"],
+ ["part", "Пушкин устами Гринёва предупреждает[,] что [«]{н}е приведи бог видеть русский бунт, бессмысленный и беспощадный![».]"],
+
+ ["vv",   "По словам Чехова[, «] {к}раткость — сестра таланта[».]"],
+ ["vv",   "По мнению Базарова[, «] {п}рирода не храм, а мастерская, и человек в ней работник[».]"],
+ ["vv",   "По убеждению Толстого[, «] {н}ет величия там, где нет простоты, добра и правды[».]"],
+ ["vv",   "По словам Чацкого[, «] {с}лужить бы рад, прислуживаться тошно[».]"],
+ ["vv",   "По словам Кулигина[, «] {ж}естокие нравы, сударь, в нашем городе, жестокие![».]"],
+
+ ["dots", "Тургенев обращается к родному языку[: «] …{т}ы один мне поддержка и опора, о великий, могучий, правдивый и свободный русский язык![»]"],
+ ["dots", "Чехов пишет[: «] {Н}адо, чтобы за дверью каждого довольного, счастливого человека стоял кто-нибудь с молоточком…[»]"],
+ ["dots", "Лермонтов пишет[: «] {Д}овольно людей кормили сластями… нужны горькие лекарства, едкие истины[».]"],
+ ["dots", "[«]…{Т}ы один мне поддержка и опора…[» —] пишет Тургенев о русском языке[.]"],
+ ["dots", "Раскольников мучительно решает вопрос[: «] {Т}варь ли я дрожащая или право имею…[»]"],
+ ["dots", "Астров говорит[: «] {В} человеке должно быть всё прекрасно… и душа, и мысли[».]"],
+
+ ["poemL","Тютчев утверждает[: «] {У}мом Россию не понять, / Аршином общим не измерить[».]"],
+ ["poemL","Стихотворение начинается вопросом[: «] {С}кажи-ка, дядя, ведь недаром / Москва, спалённая пожаром, / Французу отдана?[»]"],
+ ["poemL","Поэт признаётся[: «] {Н}е жалею, не зову, не плачу, / Всё пройдёт, как с белых яблонь дым[».]"],
+ ["poemL","Пушкин иронично замечает[,] что [«]{м}ы все учились понемногу / Чему-нибудь и как-нибудь[».]"],
+ ["poemL","Стихотворение Блока начинается строками[: «] {Н}очь, улица, фонарь, аптека, / Бессмысленный и тусклый свет[».]"],
+ ["poemL","Лирический герой Фета начинает так[: «] {Я} пришёл к тебе с приветом, / Рассказать, что солнце встало…[»]"],
+
+ ["poemC","Лирический герой вспоминает встречу[:] | Я помню чудное мгновенье: | Передо мной явилась ты…"],
+ ["poemC","Поэтом можешь ты не быть, | Но гражданином быть обязан[ —] | эти строки Некрасова знает каждый школьник[.]"],
+ ["poemC","Тютчев выразил это так[:] | Умом Россию не понять, | Аршином общим не измерить: | У ней особенная стать — | В Россию можно только верить[.]"],
+ ["poemC","Пушкин начинает роман строками[:] | Мой дядя самых честных правил, | Когда не в шутку занемог, | Он уважать себя заставил | И лучше выдумать не мог[.]"]
+];
+
+const TOPICS = {
+  pr:    "Автор впереди",
+  pr2:   "Цитата впереди",
+  part:  "Часть предложения",
+  vv:    "После вводных слов",
+  dots:  "Многоточие",
+  poemL: "Стихи в строку",
+  poemC: "Стихи столбиком"
+};
+const EXPL = {
+  pr:    "Цитата — целое предложение после слов пишущего: <b>двоеточие, кавычки, прописная</b>. Точка ставится <b>после</b> кавычек; если цитата кончается ? или !, после кавычек ничего не ставим.",
+  pr2:   "Цитата стоит впереди: начинается с <b>прописной</b>, после кавычек — <b>запятая и тире</b>; если цитата кончается ? ! или …, — <b>только тире</b>.",
+  part:  "Цитата — часть твоего предложения: <b>только кавычки</b>, <b>строчная</b> буква, двоеточия нет. В конце — <b>точка после кавычек</b>, даже если внутри стоит ? ! или …",
+  vv:    "После вводных слов (<i>по словам, по мнению…</i>) — <b>запятая</b>, цитата со <b>строчной</b>. Точка — после кавычек, даже если внутри ! или ?",
+  dots:  "Многоточие отмечает пропуск. Цитата открывается многоточием после двоеточия — <b>строчная</b>; в начале предложения — <b>прописная</b>. Кончается многоточием и стоит отдельным предложением — после кавычек <b>ничего</b> не ставим; многоточие в середине — точка после кавычек.",
+  poemL: "Стихи <b>в строку</b> — в кавычках, как проза. Косая черта и прописная буква после неё сохраняются.",
+  poemC: "Стихи <b>столбиком</b> — <b>без кавычек</b>. Перед ними двоеточие; если после стихов текст продолжается — <b>тире</b>; в конце — знак, который закрывает всё предложение."
+};
+const $ = id => document.getElementById(id);
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+const norm = s => s.replace(/\s+/g, "");
+
+/* разбор строки: слова + пропуски между ними */
+function parse(t, src) {
+  const words = [], gaps = [{ ans: "", br: false }];
+  let cur = null;
+  const re = /\[([^\]]*)\]|\{(.)\}|(\|)|(\s+)|([^\s\[\{|]+)/g; let m;
+  const close = () => { if (cur) { words.push(cur); gaps.push({ ans: "", br: false }); cur = null; } };
+  while ((m = re.exec(src))) {
+    if (m[1] !== undefined) { close(); gaps[gaps.length - 1].ans += m[1]; }
+    else if (m[3]) { close(); gaps[gaps.length - 1].br = true; }
+    else if (m[4]) { close(); }
+    else { if (!cur) cur = []; if (m[2]) cur.push({ cs: m[2] }); else cur.push({ t: m[5] }); }
+  }
+  close();
+  gaps.forEach(g => g.ans = norm(g.ans));
+  return { t, words, gaps, src };
+}
+const ITEMS = RAW.map(r => parse(r[0], r[1]));
+function answerHTML(it) {
+  const n = it.words.length;
+  const gt = i => {
+    const a = it.gaps[i].ans;
+    if (!a) return (i > 0 && i < n) ? (it.gaps[i].br ? "" : " ") : "";
+    let t = spaced(a);
+    if (i > 0 && /^[«—]/.test(a)) t = " " + t;
+    if (i < n && !/«$/.test(a) && !it.gaps[i].br) t = t + " ";
+    return `<b>${t}</b>`;
+  };
+  return it.words.map((w, i) => gt(i) + (it.gaps[i].br ? "<br>" : "") +
+    w.map(p => p.cs ? `<b>${p.cs}</b>` : p.t).join("")).join("") + gt(n);
+}
+/* красивые пробелы вокруг знаков */
+function spaced(s) {
+  return s.replace(/—/g, " — ").replace(/:/g, ": ").replace(/,/g, ", ").replace(/«/g, " «").replace(/\s+/g, " ").trim();
+}
+
+/* старт */
+let topic = "all";
+function pool() { return ITEMS.filter(i => topic === "all" || i.t === topic); }
+function renderTopics() {
+  $("topics").innerHTML = `<button class="chip" data-t="all" aria-pressed="${topic === "all"}">Все темы <small>${ITEMS.length}</small></button>` +
+    Object.keys(TOPICS).map(k => `<button class="chip" data-t="${k}" aria-pressed="${topic === k}">${TOPICS[k]} <small>${ITEMS.filter(i => i.t === k).length}</small></button>`).join("");
+  $("btnAll").textContent = "Все (" + pool().length + ")";
+}
+$("topics").onclick = e => { const b = e.target.closest(".chip"); if (b) { topic = b.dataset.t; renderTopics(); } };
+document.querySelectorAll("#scrStart .btn").forEach(b => b.onclick = () => {
+  const p = shuffle(pool()); lastSet = b.dataset.n === "all" ? p : p.slice(0, 20); start(lastSet);
+});
+function show(id) { ["scrStart", "scrQ", "scrFin"].forEach(s => $(s).classList.toggle("hidden", s !== id)); window.scrollTo(0, 0); }
+
+/* тренировка */
+let lastSet = [], queue = [], pos = 0, right = 0, wrongItems = [], cur = null, fills = [], cases = [], sel = 0, checked = false;
+function start(set) { queue = set; pos = 0; right = 0; wrongItems = []; show("scrQ"); load(); }
+function load() {
+  if (pos >= queue.length) return finish();
+  cur = queue[pos]; checked = false;
+  fills = cur.gaps.map(() => []);
+  cases = []; cur.words.forEach(w => w.forEach(p => { if (p.cs) cases.push(false); }));
+  sel = 0;
+  $("cnt").textContent = `${pos + 1} / ${queue.length}`;
+  $("fill").style.width = (pos / queue.length * 100) + "%";
+  $("topic").textContent = TOPICS[cur.t];
+  $("expl").classList.add("hidden");
+  $("check").classList.remove("hidden"); $("next").classList.add("hidden"); $("reset").classList.remove("hidden");
+  $("keys").classList.remove("hidden");
+  draw();
+}
+function draw() {
+  let ci = 0, html = "";
+  const gapHTML = i => {
+    const f = fills[i].join(""), g = cur.gaps[i];
+    let cls = "gap", inner = spaced(f) || "&nbsp;";
+    if (f) cls += " filled";
+    if (!checked && i === sel) cls += " sel";
+    if (checked) {
+      const ok = norm(f) === g.ans;
+      const n = cur.words.length, mid = i > 0 && i < n && !g.br;
+      if (ok) {
+        if (!g.ans) return mid ? " " : "";
+        let t = spaced(g.ans);
+        if (i > 0 && /^[«—]/.test(g.ans)) t = " " + t;
+        if (i < n && !/«$/.test(g.ans) && !g.br) t += " ";
+        return `<span class="gapok">${t}</span>`;
+      }
+      cls += " no"; inner = (f ? `<s>${spaced(f)}</s>` : "") + (g.ans ? `<span class="need">${spaced(g.ans)}</span>` : "");
+      const ref = g.ans || f;
+      return (i > 0 && /^[«—]/.test(ref) ? " " : "") + `<span class="${cls}">${inner}</span>` + (i < n && !g.br && !/«$/.test(ref) ? " " : "");
+    }
+    return `<button class="${cls}" data-g="${i}" aria-label="Пропуск ${i + 1}" ${checked ? "tabindex='-1'" : ""}>${inner}</button>`;
+  };
+  cur.words.forEach((w, i) => {
+    html += gapHTML(i) + (cur.gaps[i].br ? `<span class="br"></span>` : "");
+    html += `<span class="w">` + w.map(p => {
+      if (!p.cs) return p.t;
+      const k = ci++, up = cases[k], letter = up ? p.cs.toUpperCase() : p.cs.toLowerCase();
+      let cls = "cs";
+      if (checked) cls += (letter === p.cs) ? " ok" : " no";
+      return `<button class="${cls}" data-c="${k}" aria-label="Прописная или строчная">${checked && letter !== p.cs ? `<s>${letter}</s>${p.cs}` : letter}</button>`;
+    }).join("") + `</span>`;
+  });
+  html += gapHTML(cur.words.length);
+  $("sent").innerHTML = html;
+}
+$("sent").onclick = e => {
+  if (checked) return;
+  const g = e.target.closest(".gap"), c = e.target.closest(".cs");
+  if (c) { cases[+c.dataset.c] = !cases[+c.dataset.c]; draw(); return; }
+  if (g) { sel = +g.dataset.g; draw(); }
+};
+function press(k) {
+  if (checked) return;
+  if (k === "back") fills[sel].pop(); else fills[sel].push(k);
+  draw();
+}
+$("keys").onclick = e => { const b = e.target.closest(".key"); if (b) press(b.dataset.k); };
+$("reset").onclick = () => { fills = cur.gaps.map(() => []); cases = cases.map(() => false); draw(); };
+$("check").onclick = check;
+function check() {
+  checked = true;
+  let ok = cur.gaps.every((g, i) => norm(fills[i].join("")) === g.ans);
+  let ci = 0; cur.words.forEach(w => w.forEach(p => { if (p.cs) { const L = cases[ci++] ? p.cs.toUpperCase() : p.cs.toLowerCase(); if (L !== p.cs) ok = false; } }));
+  if (ok) right++; else wrongItems.push(cur);
+  draw();
+  $("expl").className = "expl " + (ok ? "ok" : "no");
+  $("expl").innerHTML = `<span class="v">${ok ? "Всё верно!" : "Есть ошибки: красным — лишнее, зелёным — то, что нужно."}</span>${EXPL[cur.t]}` +
+    (ok ? "" : `<div class="answer">${answerHTML(cur)}</div>`);
+  $("check").classList.add("hidden"); $("reset").classList.add("hidden"); $("keys").classList.add("hidden");
+  $("next").classList.remove("hidden"); $("next").focus();
+}
+$("next").onclick = () => { pos++; load(); };
+$("stop").onclick = () => finish();
+document.addEventListener("keydown", e => {
+  if ($("scrQ").classList.contains("hidden")) return;
+  if (e.key === "Enter") { e.preventDefault(); if (checked) { pos++; load(); } else check(); return; }
+  if (checked) return;
+  const map = { "<": "«", ">": "»", "«": "«", "»": "»", ":": ":", ",": ",", "-": "—", "—": "—", ".": ".", "?": "?", "!": "!" };
+  if (e.key === "Backspace") { e.preventDefault(); press("back"); return; }
+  if (e.key === "ArrowRight") { e.preventDefault(); sel = Math.min(sel + 1, cur.gaps.length - 1); draw(); return; }
+  if (e.key === "ArrowLeft") { e.preventDefault(); sel = Math.max(sel - 1, 0); draw(); return; }
+  if (map[e.key]) { e.preventDefault(); press(map[e.key]); }
+});
+function finish() {
+  const done = pos + (checked && pos < queue.length ? 1 : 0);
+  $("score").textContent = `${right} из ${done}`;
+  $("finText").textContent = done ? (wrongItems.length ? "Предложения с ошибками по темам:" : "Ни одной ошибки — отлично!") : "Ни одного предложения не пройдено.";
+  const by = {}; wrongItems.forEach(i => by[i.t] = (by[i.t] || 0) + 1);
+  $("weak").innerHTML = Object.keys(by).map(k => `<li><span>${TOPICS[k]}</span><b>${by[k]}</b></li>`).join("");
+  $("fErr").classList.toggle("hidden", !wrongItems.length);
+  show("scrFin");
+}
+$("fErr").onclick = () => { lastSet = shuffle(wrongItems); start(lastSet); };
+$("fAgain").onclick = () => start(shuffle(lastSet));
+$("fMenu").onclick = () => show("scrStart");
+renderTopics();
+</script>
+</body>
+</html>

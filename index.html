@@ -245,7 +245,7 @@
 
   <div class="sec-switch" role="tablist">
     <button class="sec-btn" id="sb-orfo" onclick="setSection('orfo')">Орфография<small>по частям речи</small></button>
-    <button class="sec-btn" id="sb-punct" onclick="setSection('punct')">Пунктуация<small>в простом и сложном предложении</small></button>
+    <button class="sec-btn" id="sb-punct" onclick="setSection('punct')">Пунктуация<small>предложения, чужая речь и цитаты</small></button>
     <button class="sec-btn" id="sb-slovar" onclick="setSection('slovar')">Словарные слова<small>карточки для 6–11 классов</small></button>
   </div>
 
@@ -1062,6 +1062,16 @@ const PUNCT = [
       ex: "Когда стемнело, мы вернулись, и дома нас ждал ужин.",
       file: "trenazher_raznye_vidy_svyazi.html",
       algo: "sp_raznye_vidy_svyazi_schema.html" }
+  ]},
+  { id: "chuzh", name: "Чужая речь и цитаты", sets: [
+    { title: "Цитаты в сочинении",
+      desc: "Правила и тренировка: цитата как прямая речь и как часть предложения, после вводных слов, многоточие, стихи столбиком и в строку, знак после кавычек, типичные ошибки.",
+      ex: "Чехов писал, что «краткость — сестра таланта». «Береги честь смолоду», — гласит эпиграф.",
+      file: "trenazher_citaty.html" },
+    { title: "Знаки при цитатах: расставь сам",
+      desc: "Ученик сам ставит кавычки, двоеточие, запятую, тире и точку и выбирает прописную или строчную букву. Все случаи: автор впереди и после, часть предложения, вводные слова, многоточие, стихи в строку и столбиком.",
+      ex: "Чехов писал_ что _краткость — сестра таланта_",
+      file: "trenazher_citaty_znaki.html" }
   ]}
 ];
 
