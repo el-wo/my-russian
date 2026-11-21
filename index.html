@@ -234,6 +234,34 @@
     a.mix-btn.algo-btn { border-color: var(--text); color: var(--text); }
     a.mix-btn.algo-btn:hover { background: var(--bg); }
     .chips-label { font-size: 0.78rem; color: var(--hint); font-weight: 600; margin-bottom: 6px; }
+
+    /* ---------- цветное меню (палитра как в «лестнице заданий») ---------- */
+    body { background: #efebe5; }
+    .sec-btn { border-color: transparent; background: var(--cl); color: var(--cd); box-shadow: 0 1px 6px rgba(0,0,0,.05); }
+    .sec-btn small { color: var(--cd); opacity: .85; }
+    .sec-btn:hover { border-color: var(--c); }
+    .sec-btn.active { background: var(--c); border-color: var(--c); color: #fff; }
+    .sec-btn.active small { color: #fff; opacity: .85; }
+    #sb-orfo   { --c: #5E7A95; --cl: #E1E9F1; --cd: #3E5A75; }
+    #sb-punct  { --c: #B98D6B; --cl: #F2E7DC; --cd: #84573A; }
+    #sb-slovar { --c: #6A4C93; --cl: #ECE6F4; --cd: #4F3473; }
+    .pos-btn { border-color: transparent; background: var(--cl, var(--surface)); color: var(--cd, var(--text)); }
+    .pos-btn .n { color: var(--cd, var(--hint)); opacity: .75; }
+    .pos-btn:hover { border-color: var(--c, var(--accent)); color: var(--cd, var(--accent)); }
+    .pos-btn.active { background: var(--c, var(--accent)); border-color: var(--c, var(--accent)); color: #fff; }
+    .pos-btn.active .n { color: #fff; opacity: .8; }
+    .pos-btn.empty { background: transparent; border: 2px dashed var(--c, var(--border)); }
+    .set { border: 0; border-top: 7px solid var(--c, var(--border)); box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+    .set:not(.soon):hover { border-color: var(--c, var(--accent)); transform: translateY(-2px); }
+    .set h3 { color: var(--cd, var(--text)); }
+    .set.soon { border: 1.5px dashed var(--c, var(--border)); border-top-width: 7px; opacity: .75; }
+    .set .lnk.go { border-color: var(--c, var(--accent)); color: #fff; background: var(--c, var(--accent)); }
+    .set .lnk.go:hover { filter: brightness(1.08); }
+    .set .lnk.algo { border-color: var(--c, var(--border)); color: var(--cd, var(--text)); background: #fff; }
+    .set .lnk.algo:hover { background: var(--cl, var(--accent-bg)); }
+    .ortho { border: 0; border-left: 7px solid var(--c, var(--border)); box-shadow: 0 1px 6px rgba(0,0,0,.06); }
+    .ortho h3 { color: var(--cd, var(--text)); }
+    .section-head h2 { color: var(--cd, var(--text)); }
   </style>
 </head>
 <body>
@@ -1231,6 +1259,22 @@ function renderAll() {
   }
 }
 
+/* ---------- раскраска меню ---------- */
+const PALETTE = [
+  ["#5E7A95", "#E1E9F1", "#3E5A75"], ["#B98D6B", "#F2E7DC", "#84573A"], ["#6A4C93", "#ECE6F4", "#4F3473"], ["#7E8E86", "#E6EBE7", "#4F5F57"],
+  ["#B07A7E", "#F3E4E4", "#844B50"], ["#4F8A8B", "#DFEEEE", "#2F6667"], ["#B5973F", "#F4EED9", "#7A621C"]
+];
+function paint() {
+  const tint = (el, k) => { const [c, cl, cd] = PALETTE[k % PALETTE.length]; el.style.setProperty("--c", c); el.style.setProperty("--cl", cl); el.style.setProperty("--cd", cd); };
+  document.querySelectorAll("#pos .pos-btn").forEach((b, i) => tint(b, i));
+  document.querySelectorAll("#content .set").forEach((el, i) => tint(el, i));
+  document.querySelectorAll("#content .ortho").forEach((el, i) => tint(el, i));
+  const act = document.querySelector("#pos .pos-btn.active"), head = document.querySelector("#content .section-head");
+  if (head && act && getComputedStyle(document.getElementById("pos")).display !== "none") head.style.setProperty("--cd", act.style.getPropertyValue("--cd"));
+  else if (head) head.style.setProperty("--cd", section === "slovar" ? "#4F3473" : "#3E5A75");
+}
+const renderAllPlain = renderAll;
+renderAll = function () { renderAllPlain(); paint(); };
 renderAll();
 </script>
 </body>
