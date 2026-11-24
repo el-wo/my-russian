@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тренажёр: образование деепричастий</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --surface: #fffdf8; --border: #ddd6c4; --text: #2a2118;
+      --muted: #7a6e5f; --hint: #b0a48c; --green: #3a7d44; --green-bg: #eaf4ec;
+      --red: #c0392b; --red-bg: #fdf0ee; --accent: #5b4fcf; --accent-bg: #efedfa;
+      --shadow: 0 4px 24px rgba(60,40,10,0.10);
+      --serif: 'Merriweather', Georgia, 'Times New Roman', serif;
+      --sans: 'Nunito', 'Segoe UI', Arial, sans-serif;
+    }
+    body {
+      background: var(--bg); font-family: var(--sans); color: var(--text);
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      padding: 2rem 1rem 4rem;
+    }
+    header { text-align: center; margin-bottom: 2rem; }
+    header h1 { font-family: var(--serif); font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+    header p { font-size: 0.85rem; color: var(--muted); margin-top: 0.35rem; }
+    .progress-wrap { width: 100%; max-width: 560px; margin-bottom: 1.5rem; }
+    .progress-bar { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width 0.4s ease; width: 0%; }
+    .card-wrap { width: 100%; max-width: 560px; }
+    .card, .finish-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 20px;
+      padding: 2.5rem 2rem 2rem; text-align: center; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .top-msg { font-size: 1.1rem; font-weight: 700; min-height: 30px; margin-bottom: 0.6rem; opacity: 0; transition: opacity 0.3s; letter-spacing: 0.5px; }
+    .top-msg.show { opacity: 1; }
+    .top-msg.good { color: var(--green); }
+    .top-msg.remind { color: var(--muted); }
+    .mode-badge {
+      display: inline-block; font-size: 0.75rem; font-weight: 600; color: var(--red);
+      background: var(--red-bg); border: 1px solid #f0c4be; border-radius: 99px;
+      padding: 3px 14px; margin-bottom: 0.8rem;
+    }
+    .counter { font-size: 0.78rem; color: var(--hint); margin-bottom: 1.2rem; font-weight: 600; letter-spacing: 1px; }
+    .word-display {
+      font-family: var(--serif); font-size: 1.6rem; font-weight: 400; margin-bottom: 1.8rem;
+      line-height: 1.5; word-break: break-word;
+    }
+    .q { font-weight: 700; color: var(--red); }
+    .q.correct { color: var(--green); }
+    .q.reveal { color: var(--red); }
+    .choices { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.6rem; }
+    .choice-btn {
+      font-family: var(--serif); font-size: 1.2rem; font-weight: 700;
+      min-width: 150px; padding: 14px 20px; border-radius: 14px;
+      border: 2px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s, box-shadow 0.15s;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .choice-btn small { font-family: var(--sans); font-size: 0.72rem; font-weight: 600; color: var(--hint); }
+    .choice-btn:hover:not(:disabled) { background: var(--accent-bg); border-color: var(--accent); color: var(--accent); box-shadow: 0 2px 12px rgba(91,79,207,0.13); }
+    .choice-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .choice-btn:active:not(:disabled) { transform: scale(0.96); }
+    .choice-btn.wrong-flash { background: var(--red-bg); border-color: var(--red); color: var(--red); animation: shake 0.35s; }
+    .choice-btn.right { background: var(--green-bg); border-color: var(--green); color: var(--green); }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-8px)} 75%{transform:translateX(8px)} }
+    .explanation { font-size: 0.92rem; color: var(--muted); line-height: 1.8; max-width: 440px; opacity: 0; transition: opacity 0.4s; min-height: 60px; }
+    .explanation.show { opacity: 1; }
+    .explanation b { color: var(--text); font-weight: 700; }
+    .explanation i { color: var(--hint); }
+    .nav-row { display: flex; justify-content: center; margin-top: 1.4rem; }
+    .nav-btn, .btn-restart, .btn-errors, .btn-start {
+      padding: 11px 26px; border-radius: 99px; border: 2px solid var(--border); background: var(--surface);
+      color: var(--text); font-family: var(--sans); font-size: 0.9rem; font-weight: 700; cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .nav-btn:hover, .btn-restart:hover, .btn-start:hover { background: var(--bg); border-color: var(--muted); }
+    .btn-start.primary { border-color: var(--accent); color: var(--accent); }
+    .btn-start.primary:hover { background: var(--accent-bg); }
+    .btn-errors { border-color: var(--red); color: var(--red); background: transparent; }
+    .btn-errors:hover { background: var(--red-bg); }
+    .finish-icon { font-size: 2.8rem; margin-bottom: 0.6rem; }
+    .finish-title { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--green); margin-bottom: 0.4rem; }
+    .finish-sub { font-size: 0.95rem; color: var(--muted); margin-bottom: 1.6rem; line-height: 1.6; }
+    .mistakes-title { font-size: 0.85rem; font-weight: 700; color: var(--muted); margin-bottom: 0.8rem; }
+    .mistake-item { font-family: var(--serif); font-size: 1.02rem; color: var(--text); margin: 7px 0; }
+    .mistake-item span { color: var(--red); font-weight: 700; }
+    .all-correct { font-size: 0.95rem; color: var(--green); font-weight: 700; margin-bottom: 0.6rem; }
+    .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 1.8rem; }
+    .kbd-hint { font-size: 0.75rem; color: var(--hint); margin-top: 1rem; }
+    @media (max-width: 480px) {
+      header h1 { font-size: 1.2rem; }
+      .word-display { font-size: 1.3rem; }
+      .choice-btn { min-width: 0; width: 100%; font-size: 1.1rem; }
+      .card, .finish-card { padding: 2rem 1.2rem 1.5rem; }
+      .kbd-hint { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+    .home-link { position: absolute; top: 1rem; left: 1rem; font-size: 0.85rem; font-weight: 700; color: var(--muted); text-decoration: none; padding: 6px 14px; border: 2px solid var(--border); border-radius: 99px; background: var(--surface); }
+    .home-link:hover { color: var(--accent); border-color: var(--accent); }
+    body { position: relative; }
+    @media (max-width: 480px) { .home-link { position: static; align-self: flex-start; margin-bottom: 1rem; } }
+  </style>
+</head>
+<body>
+
+<a class="home-link" href="index.html">← На главную</a>
+
+<header>
+  <h1>Образование деепричастий</h1>
+  <p>Выбери правильную форму — или реши, что её нет</p>
+</header>
+
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="prog"></div></div></div>
+<div class="card-wrap"><div id="main"></div></div>
+
+<script>
+// [контекст с #, вопрос, правильно, неправильно, тип (s — слитно, r — раздельно, d — через дефис), пояснение]
+const RAW = [
+  ["#  →  ? (что делая?)", "мазать", "нет деепричастия", "мажа", "x", "От этого глагола <b>нельзя</b> образовать деепричастие несовершенного вида: мешает чередование согласных в основе (з/ж: мазать — мажу). Замени оборот: <i>намазав, когда мажешь</i>."],
+  ["#  →  ? (что делая?)", "резать", "нет деепричастия", "режа", "x", "От этого глагола <b>нельзя</b> образовать деепричастие несовершенного вида: мешает чередование согласных в основе (з/ж: резать — режу). Замени оборот: <i>нарезав, пока режешь</i>."],
+  ["#  →  ? (что делая?)", "писать", "нет деепричастия", "пиша", "x", "От этого глагола <b>нельзя</b> образовать деепричастие несовершенного вида: мешает чередование согласных в основе (с/ш: писать — пишу). Замени оборот: <i>когда пишешь; написав</i>."],
+  ["#  →  ? (что делая?)", "плясать", "нет деепричастия", "пляша", "x", "От этого глагола <b>нельзя</b> образовать деепричастие несовершенного вида: мешает чередование согласных в основе (с/ш: плясать — пляшу). Замени оборот: <i>когда пляшешь; сплясав</i>."],
+  ["#  →  ? (что делая?)", "чесать", "нет деепричастия", "чеша", "x", "От этого глагола <b>нельзя</b> образовать деепричастие несовершенного вида: мешает чередование согласных в основе (с/ш: чесать — чешу). Замени оборот: <i>почесав, когда чешешь</i>."],
+  ["#  →  ? (что делая?)", "беречь", "нет деепричастия", "бережа", "x", "Глаголы с основой на Г/К (на -чь) деепричастий несовершенного вида <b>не образуют</b>. Замени оборот: <i>сберегая, когда бережёшь</i>."],
+  ["#  →  ? (что делая?)", "печь", "нет деепричастия", "пекя", "x", "Глаголы с основой на Г/К (на -чь) деепричастий несовершенного вида <b>не образуют</b>. Замени оборот: <i>когда печёшь пироги…</i>"],
+  ["#  →  ? (что делая?)", "стричь", "нет деепричастия", "стрига", "x", "Глаголы с основой на Г/К (на -чь) деепричастий несовершенного вида <b>не образуют</b>. Замени оборот: <i>подстригая, когда стрижёшь</i>."],
+  ["#  →  ? (что делая?)", "жечь", "нет деепричастия", "жгя", "x", "Глаголы с основой на Г/К (на -чь) деепричастий несовершенного вида <b>не образуют</b>. Замени оборот: <i>сжигая, когда жжёшь</i>."],
+  ["#  →  ? (что делая?)", "сохнуть", "нет деепричастия", "сохнув", "x", "Глаголы несовершенного вида на -НУТЬ (сохнуть, мокнуть, блёкнуть) деепричастий <b>не образуют</b>. Форма на -в возможна только от приставочного глагола: <i>высохнув, пока сохнет</i>."],
+  ["#  →  ? (что делая?)", "мокнуть", "нет деепричастия", "мокнув", "x", "Глаголы несовершенного вида на -НУТЬ (сохнуть, мокнуть, блёкнуть) деепричастий <b>не образуют</b>. Форма на -в возможна только от приставочного глагола: <i>промокнув, пока мокнешь</i>."],
+  ["#  →  ? (что делая?)", "блёкнуть", "нет деепричастия", "блёкнув", "x", "Глаголы несовершенного вида на -НУТЬ (сохнуть, мокнуть, блёкнуть) деепричастий <b>не образуют</b>. Форма на -в возможна только от приставочного глагола: <i>поблёкнув</i>."],
+  ["#  →  ? (что делая?)", "гаснуть", "нет деепричастия", "гаснув", "x", "Глаголы несовершенного вида на -НУТЬ (сохнуть, мокнуть, блёкнуть) деепричастий <b>не образуют</b>. Форма на -в возможна только от приставочного глагола: <i>погаснув</i>."],
+  ["#  →  ? (что делая?)", "ждать", "нет деепричастия", "ждя", "x", "У глаголов с односложной основой настоящего времени (ж-ут, пь-ют, рв-ут) деепричастия <b>нет</b>. Замени оборот: <i>ожидая, пока ждёшь</i>."],
+  ["#  →  ? (что делая?)", "пить", "нет деепричастия", "пья", "x", "У глаголов с односложной основой настоящего времени (ж-ут, пь-ют, рв-ут) деепричастия <b>нет</b>. Замени оборот: <i>выпив, когда пьёшь</i>."],
+  ["#  →  ? (что делая?)", "шить", "нет деепричастия", "шья", "x", "У глаголов с односложной основой настоящего времени (ж-ут, пь-ют, рв-ут) деепричастия <b>нет</b>. Замени оборот: <i>сшив, когда шьёшь</i>."],
+  ["#  →  ? (что делая?)", "рвать", "нет деепричастия", "рвя", "x", "У глаголов с односложной основой настоящего времени (ж-ут, пь-ют, рв-ут) деепричастия <b>нет</b>. Замени оборот: <i>сорвав, когда рвёшь</i>."],
+  ["#  →  ? (что делая?)", "лгать", "нет деепричастия", "лжя", "x", "У глаголов с односложной основой настоящего времени (ж-ут, пь-ют, рв-ут) деепричастия <b>нет</b>. Замени оборот: <i>солгав, когда лжёшь</i>."],
+  ["#  →  ? (что делая?)", "читать", "читая", "читав", "x", "Глагол несовершенного вида (что делать?) → суффикс <b>-а (-я)</b>: читая."],
+  ["#  →  ? (что делая?)", "играть", "играя", "играв", "x", "Несовершенный вид → суффикс <b>-я</b>: играя."],
+  ["#  →  ? (что делая?)", "давать", "давая", "дая", "x", "Глаголы на <b>-авать</b> сохраняют -ва-: давать → дав<b>ая</b> (не «дая»)."],
+  ["#  →  ? (что делая?)", "вставать", "вставая", "вставя", "x", "Глаголы на <b>-авать</b> сохраняют -ва-: вставать → встав<b>ая</b>."],
+  ["#  →  ? (что делая?)", "узнавать", "узнавая", "узная", "x", "Глаголы на <b>-авать</b> сохраняют -ва-: узнавать → узнав<b>ая</b>."],
+  ["#  →  ? (что делая?)", "плакать", "плача", "плакая", "x", "Чередование к/ч здесь не мешает: плакать → плач<b>а</b> — нормативная форма."],
+  ["#  →  ? (что делая?)", "прятать", "пряча", "прятая", "x", "Чередование т/ч не мешает: прятать → пряч<b>а</b>."],
+  ["#  →  ? (что делая?)", "звать", "зовя", "звая", "x", "От «звать» деепричастие есть: зов<b>я</b> (от основы зов-ут)."],
+  ["#  →  ? (что сделав?)", "прочитать", "прочитав", "прочитая", "x", "Совершенный вид (что сделать?) → суффикс <b>-в</b>: прочитав. Форма «прочитая» ненормативна."],
+  ["#  →  ? (что сделав?)", "увидеть", "увидев", "увидя", "x", "Совершенный вид → <b>-в</b>: увидев. «Увидя» — устаревшая, просторечная форма."],
+  ["#  →  ? (что сделав?)", "вернуться", "вернувшись", "вернув", "x", "Возвратный глагол совершенного вида → <b>-вшись</b>: вернувшись. «Вернув» — от другого глагола (вернуть что-то)."],
+  ["#  →  ? (что сделав?)", "умыться", "умывшись", "умыв", "x", "Возвратный глагол → <b>-вшись</b>: умывшись. «Умыв» — от «умыть кого-то»."],
+  ["#  →  ? (что сделав?)", "войти", "войдя", "вошедши", "x", "Глаголы на <b>-ти</b> образуют деепричастие на <b>-я</b>: войдя. «Вошедши» — устаревшая форма."],
+  ["#  →  ? (что сделав?)", "найти", "найдя", "нашедши", "x", "Глагол на -ти → <b>-я</b>: найдя. «Нашедши» — устаревшая форма."],
+  ["#  →  ? (что сделав?)", "принести", "принеся", "принёсши", "x", "Глагол на -ти → <b>-я</b>: принеся. «Принёсши» — устарело."],
+  ["#  →  ? (что сделав?)", "перевести", "переведя", "перевёдши", "x", "Глагол на -ти → <b>-я</b>: переведя."],
+  ["#  →  ? (что сделав?)", "озябнуть", "оба варианта верны", "озябнув|озябши", "x", "Нормативны <b>оба</b> варианта: <i>озябнув</i> и <i>озябши</i>. Глаголы на -нуть допускают обе формы: на -в и на -ши."],
+  ["#  →  ? (что сделав?)", "растереть", "растерев", "растёрши", "x", "Основа на гласный (<i>растере</i>) → суффикс <b>-в</b>: <i>растерев</i>. Форма «растёрши» устарела."],
+  ["#  →  ? (что сделав?)", "запереть", "заперев", "запёрши", "x", "Основа на гласный (<i>запере</i>) → суффикс <b>-в</b>: <i>заперев</i>. Форма «запёрши» устарела."],
+  ["#  →  ? (что сделав?)", "привыкнуть", "оба варианта верны", "привыкнув|привыкши", "x", "Нормативны <b>оба</b> варианта: <i>привыкнув</i> и <i>привыкши</i>. Глаголы на -нуть допускают обе формы: на -в и на -ши."],
+  ["#  →  ? (что сделав?)", "промокнуть", "оба варианта верны", "промокнув|промокши", "x", "Нормативны <b>оба</b> варианта: <i>промокнув</i> и <i>промокши</i>. Глаголы на -нуть допускают обе формы: на -в и на -ши."],
+  ["бежать # голову", "___", "сломя", "сломав", "x", "Фразеологизм: <i>бежать сломя голову</i> (очень быстро). Старая форма деепричастия на -я сохранилась <b>только в устойчивых выражениях</b>."],
+  ["согласиться, # сердце", "___", "скрепя", "скрепив", "x", "Фразеологизм: <i>согласиться, скрепя сердце</i> (неохотно, через силу). Старая форма деепричастия на -я сохранилась <b>только в устойчивых выражениях</b>."],
+  ["работать # рукава", "___", "спустя", "спустив", "x", "Фразеологизм: <i>работать спустя рукава</i> (небрежно). Старая форма деепричастия на -я сохранилась <b>только в устойчивых выражениях</b>."],
+  ["сидеть # руки", "___", "сложа", "сложив", "x", "Фразеологизм: <i>сидеть сложа руки</i> (бездельничать). Старая форма деепричастия на -я сохранилась <b>только в устойчивых выражениях</b>."],
+  ["#  руку на сердце, скажу честно", "___", "положа", "положив", "x", "Фразеологизм: <i>положа руку на сердце, скажу честно</i> (искренне). Старая форма деепричастия на -я сохранилась <b>только в устойчивых выражениях</b>."],
+  ["броситься # голову", "___", "очертя", "очертив", "x", "Фразеологизм: <i>броситься очертя голову</i> (безрассудно). Старая форма деепричастия на -я сохранилась <b>только в устойчивых выражениях</b>."]
+];
+
+const TYPE = { o: "буква О", e: "буква Е", yo: "буква Ё" };
+const SOURCE = RAW.map(([ctx, q, correct, wrong, t, expl]) => ({ ctx, q, correct, wrongs: wrong.split('|'), t, expl }));
+
+function typeOf(str) {
+  if (str.includes("-")) return "через дефис";
+  return null;
+}
+function labelFor(w, variant) { return ''; }
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+
+let deck = [], idx = 0, mistakes = [], answered = false, hadMistake = false, isErrorMode = false, choices = [], deckSize = 0;
+
+function sentence(w, mode) {
+  if (w.q === '___') {
+    const inner = mode === 'blank' ? `<span class="q">___</span>` : `<span class="q ${mode}">${w.correct}</span>`;
+    return w.ctx.replace('#', inner);
+  }
+  const ans = mode === 'blank' ? '?' : `<span class="q ${mode}">${w.correct}</span>`;
+  return `<b>${w.q}</b> → ${ans} <span style="font-size:.7em;color:var(--muted)">${w.ctx.match(/\(.*\)/)[0]}</span>`;
+}
+
+function startScreen() {
+  document.getElementById('prog').style.width = '0%';
+  document.getElementById('main').innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">✍️</div>
+      <div class="finish-title" style="color:var(--text)">Выбери тренировку</div>
+      <div class="finish-sub">Всего в наборе ${SOURCE.length} карточек.<br>Выбери правильное деепричастие.<br>
+<b>Помни:</b> несовершенный вид — <b>-а (-я)</b>: <i>читая</i>; совершенный — <b>-в, -вши(сь)</b>: <i>прочитав, вернувшись</i>; на -ти — <b>-я</b>: <i>войдя</i>.<br>
+Не образуют деепричастий: глаголы с чередованием <i>з/ж, с/ш</i> (мазать, писать), на <i>-чь</i> (беречь), на <i>-нуть</i> несов. вида (сохнуть), с односложной основой (ждать, пить, рвать).<br>
+Старые формы живут только во фразеологизмах: <i>сломя голову, скрепя сердце</i>.</div>
+      <div class="btn-row" style="margin-top:0.4rem">
+        <button class="btn-start primary" onclick="begin(10)">10 случайных</button>
+                <button class="btn-start" onclick="begin(0)">Все ${SOURCE.length}</button>
+      </div>
+    </div>`;
+}
+
+function begin(n) {
+  deckSize = n;
+  const all = shuffle(SOURCE);
+  deck = n ? all.slice(0, n) : all;
+  roundSet = [...deck];
+  idx = 0; mistakes = []; isErrorMode = false;
+  render();
+}
+
+function render() {
+  if (idx >= deck.length) { showFinish(); return; }
+  const w = deck[idx];
+  hadMistake = false; answered = false;
+  document.getElementById('prog').style.width = (idx / deck.length * 100) + '%';
+  const opts = [w.correct, ...w.wrongs];
+  if (w.q !== '___' && !opts.includes('нет деепричастия')) opts.push('нет деепричастия');
+  if (w.correct === 'оба варианта верны') choices = [w.wrongs[0], w.wrongs[1], w.correct];
+  else choices = shuffle(opts);
+  const badge = isErrorMode ? '<div class="mode-badge">Работа над ошибками</div>' : '';
+  document.getElementById('main').innerHTML = `
+    <div class="card">
+      <div class="top-msg" id="topmsg"></div>
+      ${badge}
+      <div class="counter">${idx + 1} / ${deck.length}</div>
+      <div class="word-display" id="wdisp">${sentence(w, 'blank')}</div>
+      <div class="choices">
+        ${choices.map((ch, i) => `<button class="choice-btn" data-i="${i}" onclick="choose(${i})">${ch}</button>`).join('')}
+      </div>
+      <div class="explanation" id="expl">${w.expl}</div>
+    </div>
+    <div class="nav-row" id="nav" style="display:none">
+      <button class="nav-btn" id="nextBtn" onclick="next()">Следующее →</button>
+    </div>
+    <div class="kbd-hint" style="text-align:center">Клавиши: 1 / 2 / 3 — выбор, Enter — дальше</div>`;
+}
+
+function choose(i) {
+  if (answered) return;
+  const w = deck[idx];
+  const ch = choices[i];
+  const btns = document.querySelectorAll('.choice-btn');
+  const btn = btns[i];
+  if (ch === w.correct) {
+    answered = true;
+    btns.forEach(b => b.disabled = true);
+    btn.classList.add('right');
+    const topMsg = document.getElementById('topmsg');
+    document.getElementById('wdisp').innerHTML = sentence(w, hadMistake ? 'reveal' : 'correct');
+    document.getElementById('expl').classList.add('show');
+    document.getElementById('nav').style.display = 'flex';
+    document.getElementById('nextBtn').focus();
+    if (hadMistake) {
+      topMsg.textContent = 'Запомни!'; topMsg.className = 'top-msg remind show';
+      if (!mistakes.includes(w)) mistakes.push(w);
+    } else {
+      topMsg.textContent = 'МОЛОДЕЦ!'; topMsg.className = 'top-msg good show';
+    }
+  } else {
+    hadMistake = true;
+    btn.classList.add('wrong-flash'); btn.disabled = true;
+    setTimeout(() => { btn.classList.remove('wrong-flash'); btn.disabled = false; }, 500);
+  }
+}
+
+function next() { idx++; render(); }
+
+document.addEventListener('keydown', e => {
+  if (!deck.length || idx >= deck.length) return;
+  if (!answered && ['1','2','3'].includes(e.key) && Number(e.key) <= choices.length) choose(Number(e.key) - 1);
+  else if (answered && e.key === 'Enter') { e.preventDefault(); next(); }
+});
+
+function showFinish() {
+  document.getElementById('prog').style.width = '100%';
+  const total = deck.length, correct = total - mistakes.length;
+  const mistakesHTML = mistakes.length
+    ? `<div class="mistakes-title">Сочетания с ошибками</div>` +
+      mistakes.map(w => `<div class="mistake-item">${sentence(w, 'correct')}</div>`).join('')
+    : `<div class="all-correct">Всё написано без ошибок! 🎉</div>`;
+  const errBtn = mistakes.length ? `<button class="btn-errors" onclick="startErrorMode()">Работа над ошибками</button>` : '';
+  document.getElementById('main').innerHTML = `
+    <div class="finish-card">
+      <div class="finish-icon">${mistakes.length === 0 ? '🏆' : '📝'}</div>
+      <div class="finish-title">${isErrorMode ? 'Работа над ошибками завершена!' : 'Тренировка завершена!'}</div>
+      <div class="finish-sub">Верно с первого раза: ${correct} из ${total}</div>
+      ${mistakesHTML}
+      <div class="btn-row">
+        <button class="btn-restart" onclick="repeatRound()">Повторить эти же задания</button>
+        <button class="btn-restart" onclick="startScreen()">Начать заново</button>
+        <a class="btn-restart" href="index.html" style="text-decoration:none">На главную</a>
+        ${errBtn}
+      </div>
+    </div>`;
+}
+
+let roundSet = [];
+function repeatRound() {
+  deck = shuffle(roundSet);
+  idx = 0; mistakes = [];
+  render();
+}
+
+function startErrorMode() {
+  const errs = [...mistakes];
+  mistakes = []; deck = shuffle(errs); roundSet = [...deck]; idx = 0; isErrorMode = true;
+  render();
+}
+
+startScreen();
+</script>
+</body>
+</html>
