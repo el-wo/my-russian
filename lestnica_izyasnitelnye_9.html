@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лестница заданий — придаточные изъяснительные</title>
+<style>
+:root{--ink:#22201d;--muted:#6b665f;--line:#e4dfd7;--bg:#efebe5;--deep:#1f2747;
+--l1:#7E8E86;--l1l:#E6EBE7;--l2:#5E7A95;--l2l:#E1E9F1;--l3:#B98D6B;--l3l:#F2E7DC;--l4:#B07A7E;--l4l:#F3E4E4;--l5:#6A4C93;--l5l:#ECE6F4;
+--ok:#2F7A5B;--okl:#E2F1EA;--bad:#B4392A;--badl:#F8E2DE}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PT Serif","Literata",Georgia,"Times New Roman",serif}
+.sans{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:20px 16px 80px}
+header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:6px 0 18px}
+.icon{width:58px;height:58px;border-radius:16px;background:var(--l5l);color:var(--l5);display:grid;place-items:center;flex:none}
+.icon svg{width:36px;height:36px}
+.kicker{font:700 11px system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--l5)}
+h1{margin:2px 0 0;font-size:29px;line-height:1.12;color:var(--deep)}
+.sub{color:var(--muted);font-style:italic;margin-top:3px}
+.grade{margin-left:auto;background:var(--deep);color:#fff;border-radius:14px;padding:8px 14px;text-align:center;font:800 13px/1.1 system-ui,sans-serif}
+.grade b{display:block;font-size:24px}
+/* ladder */
+.ladder{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:end;margin:0 0 22px}
+.step{border-radius:14px 14px 6px 6px;color:#fff;padding:10px 10px 12px;text-decoration:none;display:flex;flex-direction:column;justify-content:flex-end;transition:transform .15s;position:relative}
+.step:hover{transform:translateY(-3px)}
+.step .r{font:700 26px "PT Serif",Georgia,serif;line-height:1}
+.step .nm{font:700 12px system-ui,sans-serif;letter-spacing:.05em;text-transform:uppercase;margin-top:4px}
+.step .dd{font:12px/1.3 system-ui,sans-serif;opacity:.9;margin-top:4px}
+.step .st:empty{display:none}.step .st{position:absolute;top:8px;right:10px;font:700 12px system-ui,sans-serif;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 8px}
+.s1{background:var(--l1);height:110px}.s2{background:var(--l2);height:135px}.s3{background:var(--l3);height:160px}.s4{background:var(--l4);height:185px}.s5{background:var(--l5);height:210px}
+.intro{background:#fff;border-radius:18px;padding:16px 20px;margin-bottom:18px;font-size:16px;line-height:1.55;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.intro b{color:var(--deep)}
+.who{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+label.f{display:block;font:600 12px system-ui,sans-serif;color:var(--muted);margin-bottom:5px}
+input[type=text],select,textarea{font:16px system-ui,sans-serif;padding:9px 11px;border:1.5px solid var(--line);border-radius:12px;background:#fff;color:var(--ink)}
+input[type=text],textarea{width:100%}
+textarea{min-height:92px;resize:vertical;line-height:1.5;font-family:"PT Serif",Georgia,serif;font-size:17px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--c,#6A4C93)}
+/* level */
+.level{margin:28px 0 0;scroll-margin-top:10px}
+.lh{display:flex;gap:14px;align-items:stretch;border-radius:18px 18px 0 0;background:var(--c);color:#fff;padding:14px 18px}
+.lh .big{font:700 38px/1 "PT Serif",Georgia,serif;align-self:center;min-width:46px;text-align:center}
+.lh h2{margin:0;font-size:21px}
+.lh .what{font:13.5px/1.45 system-ui,sans-serif;opacity:.95;margin-top:4px}
+.lh .goal{font:700 13px system-ui,sans-serif;background:rgba(255,255,255,.2);border-radius:10px;padding:5px 10px;margin-top:8px;display:inline-block}
+.lb{background:#fff;border-radius:0 0 18px 18px;padding:6px 20px 18px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.task{border-top:1px solid var(--line);padding:16px 0 4px}
+.task:first-child{border-top:0}
+.tt{display:flex;gap:10px;align-items:flex-start}
+.tn{flex:none;font:800 13px system-ui,sans-serif;color:var(--c);background:var(--cl);border-radius:9px;padding:4px 8px;margin-top:2px}
+.tq{font-size:18px;font-weight:700;color:var(--deep);line-height:1.4}
+.ti{font:13px system-ui,sans-serif;color:var(--muted);margin:4px 0 10px 0}
+.verb{font:700 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--c);margin-left:auto;flex:none;padding-top:5px}
+.opts{display:grid;gap:7px}
+.opt{display:flex;align-items:center;gap:11px;padding:10px 13px;border:1.5px solid var(--line);border-radius:13px;cursor:pointer;font-size:17px;line-height:1.4}
+.opt input{width:19px;height:19px;flex:none;margin:0;accent-color:var(--c)}
+.opt.sel{border-color:var(--c);background:var(--cl)}
+.ok{border-color:var(--ok)!important;background:var(--okl)!important}
+.bad{border-color:var(--bad)!important;background:var(--badl)!important}
+.miss{border-color:var(--ok)!important;border-style:dashed!important}
+.mark{margin-left:auto;font:700 12px system-ui,sans-serif;white-space:nowrap}
+.rows{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:1fr minmax(200px,40%);gap:12px;align-items:center;padding:9px 12px;border:1.5px solid var(--line);border-radius:13px;font-size:17px;line-height:1.45}
+.row select{width:100%}
+.inl{font-size:17px;line-height:2.1;padding:8px 12px;border:1.5px solid var(--line);border-radius:13px}
+.inl select{font-size:15px;padding:4px 8px;margin:0 3px}
+.cm{display:grid;gap:8px}
+.cs{font-size:18px;line-height:2;padding:8px 12px;border:1.5px solid var(--line);border-radius:13px}
+.box{display:inline-block;width:1.05em;height:1.15em;vertical-align:-.2em;border:1.5px dashed #b8b0a5;border-radius:5px;cursor:pointer;text-align:center;line-height:1.05em;font-weight:700;color:var(--c);margin:0 1px 0 0;background:#fffdf8}
+.box.on{border-style:solid;border-color:var(--c);background:var(--cl)}
+.box.okb{border:1.5px solid var(--ok);background:var(--okl);color:var(--ok)}
+.box.badb{border:1.5px solid var(--bad);background:var(--badl);color:var(--bad)}
+.open .samp{font:13px system-ui,sans-serif;color:var(--muted);background:#f7f5f1;border-radius:10px;padding:8px 11px;margin-bottom:8px}
+.oitem{margin-bottom:10px}
+.oitem .q{font-size:17px;margin-bottom:6px;line-height:1.45}
+.model{display:none;margin-top:8px;background:var(--cl);border-left:4px solid var(--c);border-radius:10px;padding:9px 12px;font-size:16px;line-height:1.5}
+.model b{font:700 11px system-ui,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:var(--c);display:block;margin-bottom:2px}
+.shown .model{display:block}
+.chk{display:grid;gap:5px;margin-top:10px;font:14.5px system-ui,sans-serif}
+.chk label{display:flex;gap:8px;align-items:flex-start;cursor:pointer}
+.chk input{accent-color:var(--c);width:17px;height:17px;margin-top:1px}
+.exp{display:none;margin-top:10px;border-radius:12px;padding:10px 13px;font:14.5px/1.5 system-ui,sans-serif;background:var(--cl);color:#2b2a27}
+.done .exp{display:block}
+.exp .v{font-weight:700;display:block;margin-bottom:2px}
+.exp.good .v{color:var(--ok)}.exp.part .v{color:#9a6a12}.exp.no .v{color:var(--bad)}
+.lf{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.btn{font:700 14.5px system-ui,sans-serif;padding:10px 18px;border-radius:999px;border:1.5px solid var(--c,#1f2747);background:#fff;color:var(--c,#1f2747);cursor:pointer}
+.btn.p{background:var(--c,#1f2747);color:#fff}
+.score{font:700 14px system-ui,sans-serif;color:var(--c)}
+.L1{--c:var(--l1);--cl:var(--l1l)}.L2{--c:var(--l2);--cl:var(--l2l)}.L3{--c:var(--l3);--cl:var(--l3l)}.L4{--c:var(--l4);--cl:var(--l4l)}.L5{--c:var(--l5);--cl:var(--l5l)}
+.memo{background:#fff;border-radius:18px;padding:16px 20px;margin-top:28px;box-shadow:0 1px 6px rgba(0,0,0,.05)}
+.memo h2{margin:0 0 8px;font-size:20px;color:var(--deep)}
+.memo ul{margin:0;padding-left:20px;font:15px/1.6 system-ui,sans-serif}
+.memo .sch{font-family:"PT Mono",ui-monospace,monospace;background:#f5f2ed;border-radius:6px;padding:1px 6px}
+@media (max-width:700px){.ladder{grid-template-columns:repeat(5,1fr);gap:4px}.step .dd{display:none}.step{padding:8px 6px}.step .nm{font-size:9.5px}.row{grid-template-columns:1fr}.who{grid-template-columns:1fr}h1{font-size:23px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+ <header>
+  <div class="icon"><svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 56h12V44h12V32h12V20h12V8"/><path d="M8 56V44M20 44V32M32 32V20M44 20V8"/></svg></div>
+  <div>
+   <div class="kicker">Лестница заданий · по уровням Л. Л. Тимофеевой</div>
+   <h1>Сложноподчинённые предложения с придаточными изъяснительными</h1>
+   <div class="sub">Поднимайся ступенька за ступенькой: от узнавания к самостоятельному применению</div>
+  </div>
+  <div class="grade"><span>класс</span><b>9</b></div>
+ </header>
+
+ <nav class="ladder" id="ladder"></nav>
+
+ <section class="intro">
+  <b>Как работать.</b> Выполни задания уровня и нажми «Проверить уровень». Задания I–IV уровней проверяются автоматически. На V уровне сравни свой ответ с образцом и отметь пункты самопроверки. Не переходи на следующую ступеньку, пока не разберёшься с ошибками на этой.
+  <div class="who"><div><label class="f" for="nm">Имя и первая буква фамилии</label><input type="text" id="nm" placeholder="Например: Анна К."></div><div><label class="f" for="dt">Дата</label><input type="text" id="dt" placeholder="дд.мм"></div></div>
+ </section>
+
+ <div id="levels"></div>
+
+ <section class="memo">
+  <h2>Памятка: придаточное изъяснительное</h2>
+  <ul>
+   <li>Отвечает на <b>падежные вопросы</b> (что? о чём? чего?) и относится к слову в главной части со значением <b>речи, мысли, чувства</b>: сказать, думать, известие, рад, жаль.</li>
+   <li>Присоединяется <b>союзами</b> что, чтобы, как, будто, как будто, ли (не члены предложения) и <b>союзными словами</b> кто, что, какой, где, куда, когда, почему, как (члены придаточного).</li>
+   <li>В главной части может быть указательное слово <b>то</b> (о том, в том, тем): запятая ставится <b>перед союзом</b>, а не перед «то».</li>
+   <li><b>Ли</b> — союз в косвенном вопросе; стоит после слова, к которому относится вопрос: <i>спросил, придёт ли он</i>.</li>
+   <li>Вид придаточного определяют <b>по вопросу</b>, а не по союзу: <i>хочу, чтобы…</i> — изъяснительное; <i>пришёл, чтобы…</i> — цели.</li>
+   <li>Схемы: <span class="sch">[ гл. ], (что …).</span> &nbsp; <span class="sch">[ … о том ], (что …).</span> &nbsp; <span class="sch">(что …), [ гл. ].</span></li>
+  </ul>
+ </section>
+</div>
+
+<script>
+const LV=[
+ {id:1,nm:"Нижний",title:"I уровень · Узнаю",what:"Действия на узнавание, распознавание и различение понятий.",goal:"Задача: узнать изучаемое правило среди прочих",tasks:[
+  {type:"multi",verb:"Выбери",q:"Выбери предложения с придаточным изъяснительным.",i:"Несколько верных ответов.",
+   o:["Я знаю, что ты прав.","Мне объяснили, где находится музей.","Я не помню, когда мы виделись.","Мы встретились там, где сливаются реки.","Это дом, где жил писатель.","Он спросил, придёт ли брат.","Когда стемнело, мы вернулись.","Мама попросила, чтобы я позвонил."],
+   a:[0,1,2,5,7],e:"Изъяснительное придаточное отвечает на <b>падежный вопрос</b> (что? о чём?) и зависит от слова со значением речи, мысли, чувства: знаю (что?), объяснили (что?), не помню (что?), спросил (о чём?), попросила (о чём?). «Там, где сливаются реки» — места, «дом, где жил» — определительное, «когда стемнело» — времени."},
+  {type:"rows",verb:"Соотнеси",q:"Соотнеси понятия и определения.",
+   rows:["Слово в главной части, к которому относится придаточное: знаю, сказал, известие, рад.","Средство связи, которое не является членом предложения: что, чтобы, ли, будто.","Средство связи, которое является членом придаточного: кто, где, почему, что.","Слово «то» в главной части, которое указывает на придаточное."],
+   o:["опорное слово","союз","союзное слово","указательное слово"],a:[0,1,2,3],
+   e:"Главное различие: <b>союз</b> только связывает части, а <b>союзное слово</b> ещё и выполняет роль члена предложения в придаточном: <i>Я знаю, <u>кто</u> пришёл</i> (кто — подлежащее)."},
+  {type:"rows",verb:"Сопоставь",q:"Сопоставь схемы и предложения.",
+   rows:["Я знаю, что он придёт.","Что он придёт, я знаю.","Я думаю о том, что скоро каникулы.","Я не знаю, придёт ли он."],
+   o:["[ гл. ], (что …).","(что …), [ гл. ].","[ … о том ], (что …).","[ гл. ], (… ли …)."],a:[0,1,2,3],
+   e:"Придаточное изъяснительное чаще стоит после главной части, но может стоять и перед ней. Указательное слово <b>то</b> находится в главной части, запятая ставится перед <b>что</b>."}
+ ]},
+ {id:2,nm:"Удовлетво­рительный",title:"II уровень · Вспоминаю",what:"Воспроизведение учебного материала на уровне памяти.",goal:"Задача: воспроизвести учебный материал по памяти",tasks:[
+  {type:"inline",verb:"Назови признаки",q:"Восстанови правило: выбери верные слова.",
+   html:"Придаточное изъяснительное отвечает на {0}, относится к {1} и присоединяется {2}. В главной части может быть указательное слово {3}. Частица ЛИ в придаточном работает как {4}.",
+   sel:[{o:["падежные вопросы (что? о чём?)","вопрос «какой?»","вопросы «где? когда?»"],a:0},{o:["слову со значением речи, мысли, чувства","существительному с вопросом «какой?»","всей главной части"],a:0},{o:["союзами и союзными словами","только союзом «что»","сочинительными союзами"],a:0},{o:["то","тот","там"],a:0},{o:["союз","союзное слово","указательное слово"],a:0}],
+   e:"Изъяснительное: <b>падежный вопрос</b> → к слову речи, мысли, чувства → <b>союзы</b> (что, чтобы, как, будто, ли) и <b>союзные слова</b> (кто, что, где, когда, почему, как…). Указательное слово — <b>то</b> в разных падежах."},
+  {type:"multi",verb:"Вспомни",q:"Какие слова могут быть опорными для изъяснительного придаточного?",i:"Несколько верных ответов.",
+   o:["сказать","дом","думать","бежать","известие","рад","высокий","жаль","понимать","вдруг"],a:[0,2,4,5,7,8],
+   e:"Опорными бывают глаголы речи, мысли, чувства (сказать, думать, понимать), существительные (известие, мысль, вопрос), краткие прилагательные (рад, уверен) и слова категории состояния (жаль, известно, видно)."},
+  {type:"open",verb:"Приведи пример",q:"Приведи два своих примера: с союзом и с союзным словом. Запиши к каждому схему.",
+   items:[{q:"Мои примеры и схемы:",model:"С союзом: Я надеюсь, что погода улучшится. [ гл. ], (что …). С союзным словом: Расскажи, где ты провёл каникулы. [ гл. ], (где …)."}],
+   check:["В каждом предложении две грамматические основы.","Придаточное отвечает на падежный вопрос.","В одном примере союз, в другом — союзное слово.","Запятые на месте, схемы совпадают с предложениями."]}
+ ]},
+ {id:3,nm:"Средний",title:"III уровень · Понимаю",what:"Воспроизведение на уровне понимания, описание и анализ.",goal:"Задача: воспроизведение на уровне понимания",tasks:[
+  {type:"rows",verb:"Раздели на группы",q:"Определи вид придаточного. Одно и то же слово может присоединять разные придаточные.",
+   rows:["Я не знаю, где он живёт.","Это город, где он живёт.","Он живёт там, где родился.","Скажи, когда начнётся урок.","Наступила минута, когда всё решилось.","Когда начнётся урок, выключи телефон.","Я надеюсь, что всё будет хорошо.","Письмо, что пришло вчера, лежит на столе."],
+   o:["изъяснительное","определительное","обстоятельственное"],a:[0,1,2,0,1,2,0,1],
+   e:"Задавай вопрос от главной части. <b>Не знаю (что?)</b>, <b>скажи (что?)</b>, <b>надеюсь (на что?)</b> — изъяснительные. <b>Город (какой?)</b>, <b>минута (какая?)</b>, <b>письмо (какое?)</b> — определительные. <b>Живёт (где?)</b>, <b>выключи (когда?)</b> — обстоятельственные."},
+  {type:"rows",verb:"Поясни почему",q:"«Что» — союз или союзное слово? Проверь: можно ли задать к «что» вопрос внутри придаточного?",
+   rows:["Я знаю, что он сделал.","Я знаю, что он пришёл.","Расскажи, что случилось.","Мы рады, что ты с нами.","Он спросил, что я читаю.","Я понял, что опоздал."],
+   o:["союз","союзное слово"],a:[1,0,1,0,1,0],
+   e:"<b>Союзное слово</b> «что» — член предложения, на него падает логическое ударение, его можно заменить: <i>сделал что? = сделал какое дело</i>; <i>что случилось</i> — подлежащее. <b>Союз</b> «что» не член предложения, вопрос к нему не задать: <i>знаю, что он пришёл</i>."},
+  {type:"single",verb:"Сравни и сделай вывод",q:"Сравни: «Я хочу, <u>чтобы ты пришёл</u>» и «Я пришёл, <u>чтобы помочь тебе</u>». Какой вывод верный?",
+   o:["Оба придаточных изъяснительные: в них есть союз «чтобы».","В первом — изъяснительное (хочу чего?), во втором — придаточное цели (пришёл зачем?): вид придаточного определяют по вопросу, а не по союзу.","Оба придаточных цели.","Первое — определительное, второе — изъяснительное."],a:1,
+   e:"Союз <b>чтобы</b> присоединяет разные придаточные. Решает вопрос от главной части: <b>хочу (чего?)</b> — изъяснительное, <b>пришёл (зачем?)</b> — цели."}
+ ]},
+ {id:4,nm:"Достаточный",title:"IV уровень · Применяю по образцу",what:"Применение знаний в знакомой ситуации, действия по чётким правилам и алгоритму.",goal:"Задача: подбирать оптимальный способ решения",tasks:[
+  {type:"commas",verb:"Примени правило",q:"Расставь запятые: нажми на окошко, где нужна запятая.",i:"Повторный клик убирает запятую. Некоторые окошки должны остаться пустыми.",
+   s:["Я долго думал{0} о том{1} что сказать маме{0}.","Никто не знал{1} куда исчез кот{0}.","Учитель спросил{1} все ли поняли задание{0}.","Что он прав{1} понимали все{0}.","Он сказал{1} что придёт{1} и{0} попросил подождать.","Мне жаль{1} что ты уезжаешь{0}."],
+   e:"Запятая отделяет придаточное от главной части. Указательное слово <b>то</b> относится к главной: запятая ставится <b>после «о том», перед «что»</b>. Если придаточное стоит перед главной частью, запятая — после придаточного. В предложении 5 придаточное стоит внутри: «сказал, что придёт, и попросил»."},
+  {type:"inline",verb:"Действуй по алгоритму",q:"Выбери нужное средство связи.",i:"Алгоритм: утверждение — что; просьба, желание — чтобы; вопрос «да или нет» — ли; сомнение — будто.",
+   html:"1. Мама попросила, {0} я купил хлеба.<br>2. Я уверен, {1} мы победим.<br>3. Неизвестно, {2} мы на поезд.<br>4. Он рассказал, {3} добрался до города.<br>5. Казалось, {4} кто-то стучит в окно.",
+   sel:[{o:["чтобы","что","ли"],a:0},{o:["что","чтобы","ли"],a:0},{o:["успеем ли","ли успеем","если успеем"],a:0},{o:["как","чтобы","ли"],a:0},{o:["будто","чтобы","ли"],a:0}],
+   e:"1) попросила — просьба → <b>чтобы</b>. 2) уверен — утверждение → <b>что</b>. 3) вопрос «да или нет» → <b>ли</b>, она стоит после слова, к которому относится вопрос: <i>успеем ли</i>. 4) рассказал (каким образом?) → <b>как</b>. 5) казалось — сомнение, неуверенность → <b>будто</b>."},
+  {type:"open",verb:"Преобразуй по образцу",q:"Замени выделенное дополнение придаточным изъяснительным.",samp:"Образец: Я узнал о его приезде. → Я узнал, что он приехал.",
+   items:[{q:"1. Я догадывался о его намерениях.",model:"Я догадывался, что он задумал."},{q:"2. Учитель попросил нас о тишине.",model:"Учитель попросил, чтобы мы не шумели."},{q:"3. Мы не знали дороги к озеру.",model:"Мы не знали, как пройти к озеру."}],
+   check:["В новом предложении две грамматические основы.","Я выбрал(а) подходящий союз или союзное слово.","Перед придаточным стоит запятая."]},
+  {type:"open",verb:"Обратная задача",q:"Теперь наоборот: замени придаточное дополнением, чтобы предложение стало простым.",
+   items:[{q:"1. Я рад, что ты приехал.",model:"Я рад твоему приезду."},{q:"2. Сообщили, что поезд опаздывает.",model:"Сообщили об опоздании поезда."}],
+   check:["Предложение стало простым.","Смысл сохранился.","Запятая больше не нужна."]}
+ ]},
+ {id:5,nm:"Высокий",title:"V уровень · Создаю",what:"Применение знаний в незнакомых, нестандартных ситуациях; описание, объяснение и преобразование.",goal:"Задача: решать качественно новые задачи",tasks:[
+  {type:"open",verb:"Найди и исправь",q:"Редактор. В каждом предложении есть ошибка. Запиши исправленный вариант и объясни ошибку.",
+   items:[{q:"1. Я думаю о том что, скоро каникулы.",model:"Я думаю о том, что скоро каникулы. Запятая ставится перед «что»: «о том» — указательное слово в главной части."},{q:"2. Мама спросила, что ли я сделал уроки.",model:"Мама спросила, сделал ли я уроки. «Ли» — союз, он стоит после слова, к которому относится вопрос; «что ли» здесь не нужно."},{q:"3. Он сказал, что «я приду завтра».",model:"Он сказал, что придёт завтра. Смешаны прямая и косвенная речь: в придаточном местоимение и глагол меняются, кавычки не ставятся."},{q:"4. Учитель попросил, что мы выключили телефоны.",model:"Учитель попросил, чтобы мы выключили телефоны. После слов просьбы и желания нужен союз «чтобы»."}],
+   check:["Я исправил(а) все четыре предложения.","Я объяснил(а), почему это ошибка.","Я заметил(а), что в 3-м предложении смешаны прямая и косвенная речь."]},
+  {type:"open",verb:"Преобразуй",q:"Замени прямую речь косвенной. Подумай, какой союз или союзное слово нужен для вопроса, просьбы, сообщения.",
+   items:[{q:"1. — Ты прочитал книгу? — спросил брат.",model:"Брат спросил, прочитал ли я книгу."},{q:"2. — Принеси, пожалуйста, словарь, — попросила учительница.",model:"Учительница попросила, чтобы я принёс словарь."},{q:"3. — Где ты был вчера? — поинтересовался друг.",model:"Друг поинтересовался, где я был вчера."}],
+   check:["Вопрос без вопросительного слова → ли.","Просьба → чтобы.","Вопрос с вопросительным словом → это слово становится союзным.","Местоимения и формы глаголов изменены, кавычек нет."]},
+  {type:"open",verb:"Создай",q:"Напиши 4–5 предложений «Что я узнал(а) за эту неделю». Используй изъяснительные придаточные с союзами что, чтобы, ли и союзными словами (где, как, почему).",
+   items:[{q:"Мой текст:",model:"На этой неделе я узнал, что в нашем городе открылся новый музей. Я давно хотел понять, как устроен старинный телескоп. Экскурсовод объяснил, почему звёзды мерцают. Я спросил, можно ли прийти ещё раз. Мама попросила, чтобы в следующий раз я взял с собой брата."}],
+   check:["Есть придаточные с союзами что, чтобы, ли.","Есть придаточные с союзными словами.","Каждое придаточное отвечает на падежный вопрос.","Все запятые на месте."]}
+ ]}
+];
+const ladder=document.getElementById('ladder'),levels=document.getElementById('levels');
+LV.forEach(L=>{
+ ladder.insertAdjacentHTML('beforeend',`<a class="step s${L.id}" href="#lv${L.id}"><span class="st" id="st${L.id}"></span><span class="r">${["I","II","III","IV","V"][L.id-1]}</span><span class="nm">${L.nm}</span><span class="dd">${L.title.split("· ")[1]}</span></a>`);
+ const sec=document.createElement('section');sec.className='level L'+L.id;sec.id='lv'+L.id;
+ let h=`<div class="lh"><span class="big">${["I","II","III","IV","V"][L.id-1]}</span><div><h2>${L.title}</h2><div class="what">${L.what}</div><span class="goal">${L.goal}</span></div></div><div class="lb">`;
+ L.tasks.forEach((t,ti)=>{
+  const tid=`t${L.id}_${ti}`;
+  h+=`<div class="task" id="${tid}"><div class="tt"><span class="tn">${L.id}.${ti+1}</span><div class="tq">${t.q}</div><span class="verb">${t.verb}</span></div>`;
+  if(t.i)h+=`<div class="ti">${t.i}</div>`;else h+=`<div class="ti"></div>`;
+  if(t.type==="multi"||t.type==="single"){const ty=t.type==="multi"?"checkbox":"radio";h+=`<div class="opts">`+t.o.map((o,j)=>`<label class="opt"><input type="${ty}" name="${tid}" value="${j}"><span>${o}</span><span class="mark"></span></label>`).join("")+`</div>`;}
+  if(t.type==="rows"){h+=`<div class="rows">`+t.rows.map((r,j)=>{const op=t.opts?t.opts[j]:t.o;return `<div class="row"><span>${r}</span><select data-j="${j}"><option value="">— выбери —</option>${op.map((o,k)=>`<option value="${k}">${o}</option>`).join("")}</select></div>`}).join("")+`</div>`;}
+  if(t.type==="inline"){let k=0;h+=`<div class="inl">`+t.html.replace(/\{(\d)\}/g,(m,n)=>{const s=t.sel[+n];return `<select data-j="${n}"><option value="">…</option>${s.o.map((o,i)=>`<option value="${i}">${o}</option>`).join("")}</select>`})+`</div>`;}
+  if(t.type==="commas"){h+=`<div class="cm">`+t.s.map((s,j)=>`<div class="cs">${j+1}. `+s.replace(/\{([01])\}/g,(m,a)=>`<span class="box" data-a="${a}"></span>`)+`</div>`).join("")+`</div>`;}
+  if(t.type==="open"){h+=`<div class="open">`+(t.samp?`<div class="samp">${t.samp}</div>`:"")+t.items.map(it=>`<div class="oitem"><div class="q">${it.q}</div><textarea placeholder="Пиши здесь…"></textarea><div class="model"><b>Возможный ответ</b>${it.model}</div></div>`).join("")+`<div class="chk">${t.check.map(c=>`<label><input type="checkbox"><span>${c}</span></label>`).join("")}</div></div>`;}
+  h+=`<div class="exp"></div></div>`;
+ });
+ h+=`<div class="lf"><button class="btn p" data-chk="${L.id}">${L.id<5?"Проверить уровень":"Показать образцы"}</button><button class="btn" data-rs="${L.id}">Начать уровень заново</button><span class="score" id="sc${L.id}"></span></div></div>`;
+ sec.innerHTML=h;levels.appendChild(sec);
+});
+document.addEventListener('change',e=>{const l=e.target.closest('.opt');if(l){l.closest('.opts').querySelectorAll('.opt').forEach(x=>x.classList.toggle('sel',x.querySelector('input').checked))}});
+document.addEventListener('click',e=>{const b=e.target.closest('.box');if(b&&!b.closest('.done')){b.classList.toggle('on');b.textContent=b.classList.contains('on')?',':''}});
+function verdict(got,max){return got===max?['good','Верно!']:(got>0?['part','Частично верно']:['no','Есть ошибки'])}
+function checkLevel(id){
+ const L=LV[id-1];let G=0,M=0;
+ L.tasks.forEach((t,ti)=>{
+  const el=document.getElementById(`t${id}_${ti}`);if(el.classList.contains('done'))return;
+  let got=0,max=0;
+  if(t.type==="multi"||t.type==="single"){
+   const sel=[...el.querySelectorAll('input:checked')].map(x=>+x.value);const A=t.type==="single"?[t.a]:t.a;max=t.type==="single"?1:A.length;
+   el.querySelectorAll('.opt').forEach((l,j)=>{const inA=A.includes(j),s=sel.includes(j);l.classList.remove('sel');
+    if(s&&inA){l.classList.add('ok');l.querySelector('.mark').textContent='✓'}else if(s){l.classList.add('bad');l.querySelector('.mark').textContent='✗'}else if(inA){l.classList.add('miss');l.querySelector('.mark').textContent='верный ответ'}});
+   if(t.type==="single")got=(sel.length===1&&sel[0]===t.a)?1:0;else got=Math.max(0,sel.filter(x=>A.includes(x)).length-sel.filter(x=>!A.includes(x)).length);
+  }
+  if(t.type==="rows"){el.querySelectorAll('select').forEach(s=>{const j=+s.dataset.j;max++;const ok=s.value!==""&&+s.value===t.a[j];if(ok)got++;s.closest('.row').classList.add(ok?'ok':'bad');if(!ok){const op=t.opts?t.opts[j]:t.o;s.insertAdjacentHTML('afterend',`<div class="sans" style="font-size:12.5px;color:var(--ok);margin-top:4px">верно: ${op[t.a[j]]}</div>`)}})}
+  if(t.type==="inline"){el.querySelectorAll('select').forEach(s=>{const j=+s.dataset.j;max++;const ok=s.value!==""&&+s.value===t.sel[j].a;if(ok)got++;s.classList.add(ok?'ok':'bad');if(!ok)s.insertAdjacentHTML('afterend',`<b class="sans" style="color:var(--ok);font-size:14px">→ ${t.sel[j].o[t.sel[j].a]}</b>`)})}
+  if(t.type==="commas"){el.querySelectorAll('.box').forEach(b=>{max++;const need=b.dataset.a==="1",on=b.classList.contains('on');if(need===on){got++;if(need)b.classList.add('okb')}else{b.classList.add('badb');b.textContent=need?',':'×'}})}
+  if(t.type==="open"){el.classList.add('shown')}
+  el.querySelectorAll('input,select,textarea').forEach(x=>{if(!(t.type==="open"&&(x.type==="checkbox"||x.tagName==="TEXTAREA")))x.disabled=true});
+  el.classList.add('done');
+  const ex=el.querySelector('.exp');
+  if(t.type==="open"){ex.className='exp';ex.innerHTML=`<span class="v" style="color:var(--c)">Сравни свой ответ с образцом</span>Отметь пункты самопроверки. Если какой-то пункт не выполнен — исправь свой ответ.`}
+  else{const [c,v]=verdict(got,max);ex.className='exp '+c;ex.innerHTML=`<span class="v">${v} · ${got} из ${max}</span>${t.e}`;G+=got;M+=max;}
+  t.res=[got,max];
+ });
+ const auto=L.tasks.filter(t=>t.type!=="open"&&t.res);const g=auto.reduce((a,t)=>a+t.res[0],0),m=auto.reduce((a,t)=>a+t.res[1],0);
+ if(m){const p=Math.round(g/m*100);document.getElementById('sc'+id).textContent=`Результат уровня: ${g} из ${m} (${p}%)`;document.getElementById('st'+id).textContent=p+'%'}
+ else{document.getElementById('st'+id).textContent='✓'}
+}
+document.querySelectorAll('[data-chk]').forEach(b=>b.onclick=()=>checkLevel(+b.dataset.chk));
+document.querySelectorAll('[data-rs]').forEach(b=>b.onclick=()=>{
+ const id=+b.dataset.rs,L=LV[id-1];
+ L.tasks.forEach((t,ti)=>{const el=document.getElementById(`t${id}_${ti}`);t.res=null;
+  el.classList.remove('done','shown');el.querySelector('.exp').innerHTML='';
+  el.querySelectorAll('input,select,textarea').forEach(x=>{x.disabled=false;if(x.type==="checkbox"||x.type==="radio")x.checked=false;else if(x.tagName!=="TEXTAREA")x.value=""});
+  el.querySelectorAll('.ok,.bad,.miss,.sel').forEach(x=>x.classList.remove('ok','bad','miss','sel'));
+  el.querySelectorAll('.mark').forEach(x=>x.textContent='');
+  el.querySelectorAll('.row div.sans,.inl b.sans').forEach(x=>x.remove());
+  el.querySelectorAll('.box').forEach(x=>{x.className='box';x.textContent=''});
+ });
+ document.getElementById('sc'+id).textContent='';document.getElementById('st'+id).textContent='';
+});
+</script>
+</body>
+</html>
